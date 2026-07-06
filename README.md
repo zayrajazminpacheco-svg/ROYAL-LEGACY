@@ -1,12 +1,15 @@
-# Royal Legacy Stream Internal V18
+# Royal Legacy Stream Internal V19
 
-Panel interno con formulario compacto:
-- Producto por categoría: Streaming, Trámites, Pago servicios, Seguidores.
-- Selectores tipo botón/deslizable para producto, modalidad, duración, proveedor y estado.
-- Proveedor estructurado: proveedor + costo + botón de selección.
-- Carga de comprobante de pago y confirmación/garantía a Firebase.
-- Ficha de entrega automática según producto.
-- Botón para copiar ficha y abrir WhatsApp del cliente.
+Cambios principales:
 
-Login: royal2026
-Firebase: Realtime Database ya configurado.
+- Panel compacto con selectores tipo picker para producto, modalidad, duración, proveedor y estado.
+- Categorías: Streaming, Trámites, Pago servicios y Seguidores.
+- YouTube y Spotify usan modalidad especial: Individual Correo nuevo, Individual Invitación y Familiar.
+- Para YouTube/Spotify no aparecen Perfil ni Cuenta completa.
+- Proveedor y costo se eligen juntos; el costo total se calcula por duración.
+- Estados reducidos: Pago verificado y Entregado.
+- Evidencias como fotos: comprobante de pago y confirmación/garantía.
+- Se quitaron notas internas y botón de cargar venta.
+- Ficha de entrega automática adaptada al producto.
+
+Contraseña admin: `royal2026`
