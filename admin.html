@@ -2,124 +2,202 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Royal | Panel interno V19</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Royal | Panel interno V20</title>
 <style>
-:root{--bg:#050711;--panel:#10182b;--panel2:#081225;--txt:#f8fbff;--mut:#9cabc0;--gold:#f5c45d;--blue:#42b8ff;--green:#39e58f;--red:#ff6477;--orange:#ffb75d;--line:rgba(255,255,255,.11)}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--txt);background:radial-gradient(circle at top left,rgba(245,196,93,.15),transparent 34%),radial-gradient(circle at top right,rgba(66,184,255,.18),transparent 32%),linear-gradient(135deg,#03050d,#071223 60%,#050711)}
-.hidden{display:none!important}button,.btn{border:0;border-radius:14px;padding:11px 13px;font-weight:850;color:white;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.08);font-family:inherit}button.primary,.btn.primary{background:linear-gradient(135deg,var(--gold),var(--blue));color:#06101f}.btn{display:inline-flex;text-decoration:none;align-items:center;justify-content:center;gap:7px}input,select,textarea{width:100%;border:1px solid var(--line);background:#071022;color:white;border-radius:14px;padding:12px;font:inherit;outline:none}select{appearance:auto}textarea{min-height:104px;resize:vertical}.login{min-height:100vh;display:grid;place-items:center;padding:18px}.card,.panel,.step{background:linear-gradient(180deg,rgba(16,24,43,.96),rgba(8,12,24,.97));border:1px solid var(--line);border-radius:22px;box-shadow:0 22px 70px rgba(0,0,0,.32)}.login .card{width:min(430px,100%);padding:24px}.logo{width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,var(--gold),var(--blue));display:grid;place-items:center;font-size:25px}h1,h2,h3{margin:0}p{color:var(--mut);line-height:1.5}.app{display:flex;min-height:100vh}.side{position:fixed;inset:0 auto 0 0;width:270px;padding:16px;background:rgba(5,9,20,.95);border-right:1px solid var(--line);backdrop-filter:blur(18px);z-index:20}.brand{display:flex;gap:12px;align-items:center;margin-bottom:18px}.brand small{color:var(--mut)}.nav{display:grid;gap:8px}.nav button{text-align:left}.nav button.active{background:linear-gradient(135deg,#dca33b,var(--blue));color:#06101f}.main{margin-left:270px;width:100%;padding:16px 18px 42px}.head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}.mobile{display:none}.section{display:none}.section.active{display:block}.grid{display:grid;gap:12px}.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.kpi{padding:14px}.kpi small{color:var(--mut);font-size:12px}.kpi strong{display:block;font-size:24px;margin-top:5px}.layout{display:grid;grid-template-columns:1fr .92fr;gap:12px}.panel{padding:15px}.step{padding:13px;margin-bottom:11px}.step h3{font-size:15px}.step small,.mut{color:var(--mut)}label{display:block;font-size:12px;color:var(--mut);margin:0 0 6px}.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.form.three{grid-template-columns:repeat(3,minmax(0,1fr))}.form.one{grid-template-columns:1fr}.picker-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:9px}.select-card{display:grid;gap:6px}.select-card select{font-weight:750;background:linear-gradient(180deg,#0d1b32,#071022)}.select-card .hint{font-size:11px;color:var(--mut)}.money{font-size:23px;font-weight:950}.provider-summary{margin-top:8px;padding:10px 11px;border-radius:14px;background:rgba(66,184,255,.10);border:1px solid rgba(66,184,255,.22);font-size:13px}.status-pill{display:inline-flex;padding:6px 10px;border-radius:999px;font-weight:850;font-size:12px;background:rgba(255,255,255,.08);border:1px solid var(--line)}.green{color:#75f3b1;background:rgba(57,229,143,.12)!important}.orange{color:#ffd092;background:rgba(255,183,93,.13)!important}.red{color:#ff8a99;background:rgba(255,100,119,.13)!important}.photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.photo-card{border:1px dashed rgba(255,255,255,.25);border-radius:17px;padding:12px;background:rgba(255,255,255,.035)}.photo-card input{display:none}.photo-btn{display:flex;width:100%;justify-content:center;align-items:center;min-height:48px;border-radius:14px;background:rgba(255,255,255,.08);font-weight:900}.preview{display:none;margin-top:9px;grid-template-columns:64px 1fr;gap:9px;align-items:center}.preview.show{display:grid}.preview img{width:64px;height:64px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}.copybox{white-space:pre-wrap;background:#061022;border:1px solid var(--line);padding:12px;border-radius:16px;color:#e3f0ff;font-size:13px;line-height:1.45;max-height:430px;overflow:auto}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid rgba(255,255,255,.07);text-align:left;vertical-align:top}th{font-size:12px;color:#b8c7dd;background:rgba(255,255,255,.035)}.row-actions{display:flex;gap:6px;flex-wrap:wrap}.row-actions button{padding:8px 9px;font-size:12px}.toast{position:fixed;left:16px;right:16px;bottom:16px;margin:auto;max-width:560px;background:rgba(16,24,43,.98);border:1px solid var(--line);border-radius:16px;padding:13px 15px;display:none;z-index:60}.toast.show{display:block}.mini{font-size:12px;color:var(--mut)}.danger{color:#ff8a99}.locked{opacity:.55}
-@media(max-width:940px){.mobile{display:inline-flex}.side{transform:translateX(-100%);transition:.22s}.side.open{transform:none}.main{margin-left:0;padding:14px}.kpis{grid-template-columns:repeat(2,1fr)}.layout,.form,.form.three,.photo-grid{grid-template-columns:1fr}.head h1{font-size:24px}}
+:root{
+  --bg:#050711;--card:#101827;--card2:#0b1220;--line:rgba(255,255,255,.11);
+  --txt:#f8fbff;--mut:#94a3b8;--blue:#60a5fa;--gold:#f6c65b;--green:#46e59b;--red:#ff6b7a;
+}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at top left,rgba(96,165,250,.18),transparent 34%),linear-gradient(140deg,#03050d,#07111f 55%,#04050d);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,sans-serif} .hidden{display:none!important}
+button,a.btn{border:1px solid var(--line);background:rgba(255,255,255,.07);color:white;border-radius:16px;padding:12px 14px;font-weight:900;text-decoration:none;font-family:inherit} button.primary,a.primary{background:linear-gradient(135deg,var(--gold),var(--blue));color:#06101f;border:0} button:disabled{opacity:.45} input,select{width:100%;border:1px solid var(--line);background:#071022;color:white;border-radius:16px;padding:13px;font:inherit;outline:none} select{appearance:auto;font-weight:850}.login{min-height:100vh;display:grid;place-items:center;padding:16px}.box{background:linear-gradient(180deg,rgba(16,24,39,.97),rgba(8,13,25,.98));border:1px solid var(--line);border-radius:24px;box-shadow:0 24px 70px rgba(0,0,0,.35)}.login .box{width:min(430px,100%);padding:24px}.logo{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold),var(--blue));font-size:26px}h1,h2,h3{margin:0}p,.mut{color:var(--mut);line-height:1.45}.app{min-height:100vh}.top{position:sticky;top:0;z-index:20;background:rgba(5,7,17,.84);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:12px 14px;display:flex;align-items:center;gap:10px;justify-content:space-between}.brand{display:flex;gap:10px;align-items:center}.brand small{color:var(--mut)}.wrap{max-width:980px;margin:auto;padding:14px}.tabs{display:flex;gap:8px;overflow:auto;padding:8px 0 14px}.tabs button{white-space:nowrap}.tabs button.active{background:linear-gradient(135deg,var(--gold),var(--blue));color:#06101f;border:0}.section{display:none}.section.active{display:block}.panel{padding:14px;margin-bottom:13px}.step{padding:13px;border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:20px;margin-bottom:10px}.step-title{font-size:15px;margin-bottom:10px}.grid{display:grid;gap:9px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}label{font-size:12px;color:var(--mut);display:block;margin:0 0 5px}.readonly{background:#050b16;color:#dbeafe;border-style:dashed}.lock{opacity:.45;pointer-events:none}.mini{font-size:12px;color:var(--mut)}.cost{font-size:28px;font-weight:950}.pill{display:inline-flex;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900;border:1px solid var(--line);background:rgba(255,255,255,.07)}.green{color:#88f7bd;background:rgba(70,229,155,.12)}.red{color:#ff9aaa;background:rgba(255,107,122,.12)}.photos{display:grid;grid-template-columns:1fr 1fr;gap:9px}.photo{border:1px dashed rgba(255,255,255,.26);border-radius:18px;padding:12px;background:rgba(255,255,255,.03)}.photo input{display:none}.photo label.btn{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:15px;background:rgba(255,255,255,.08);font-weight:900}.prev{display:none;margin-top:8px;grid-template-columns:70px 1fr;align-items:center;gap:9px}.prev.show{display:grid}.prev img{width:70px;height:70px;object-fit:cover;border-radius:14px;border:1px solid var(--line)}.copybox{white-space:pre-wrap;background:#050b16;border:1px solid var(--line);border-radius:18px;padding:13px;line-height:1.45;font-size:13px;max-height:420px;overflow:auto}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.warning{border:1px solid rgba(246,198,91,.35);background:rgba(246,198,91,.08);padding:10px;border-radius:16px;color:#ffe2a5;font-size:13px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}td,th{border-bottom:1px solid rgba(255,255,255,.08);padding:9px;text-align:left;vertical-align:top}th{color:#bfdbfe;font-size:12px;background:rgba(255,255,255,.04)}.toast{position:fixed;left:12px;right:12px;bottom:12px;margin:auto;max-width:560px;background:#101827;border:1px solid var(--line);padding:13px;border-radius:16px;display:none;z-index:50}.toast.show{display:block}
+@media(max-width:700px){.g2,.g3,.photos{grid-template-columns:1fr}.wrap{padding:10px}.panel{padding:11px}.cost{font-size:24px}}
 </style>
 </head>
 <body>
 <div id="toast" class="toast"></div>
-<div id="login" class="login"><div class="card"><div class="logo">👑</div><h1>Panel interno Royal</h1><p>Control privado de clientes, proveedores, pedidos, pagos y evidencias.</p><label>Contraseña</label><input id="pass" type="password" placeholder="Contraseña admin"><button class="primary" style="width:100%;margin-top:10px" onclick="login()">Entrar</button></div></div>
+<div id="login" class="login"><div class="box"><div class="logo">👑</div><h1>Royal interno</h1><p>Panel privado V20.</p><input id="pass" type="password" placeholder="Contraseña"><button class="primary" style="width:100%;margin-top:10px" onclick="login()">Entrar</button></div></div>
 <div id="app" class="app hidden">
-<aside class="side" id="side"><div class="brand"><div class="logo">👑</div><div><h2>Royal</h2><small>Control interno V19</small></div></div><nav class="nav"><button class="active" data-sec="dash">🏠 Panel</button><button data-sec="quick">⚡ Registrar venta</button><button data-sec="orders">🧾 Pedidos y pagos</button><button data-sec="clients">👥 Clientes</button><button data-sec="providers">🤝 Proveedores</button><button data-sec="settings">⚙️ Datos de pago</button></nav></aside>
-<main class="main"><header class="head"><div><button class="mobile" onclick="side.classList.toggle('open')">☰</button><h1 id="title">Panel</h1><p id="subtitle">Resumen del negocio.</p></div><button onclick="logout()">Salir</button></header>
+<header class="top"><div class="brand"><div class="logo">👑</div><div><b>Royal Legacy</b><br><small>Panel interno V20</small></div></div><button onclick="logout()">Salir</button></header>
+<div class="wrap">
+<nav class="tabs"><button class="active" data-sec="sale">Registrar venta</button><button data-sec="orders">Pedidos</button><button data-sec="clients">Clientes</button><button data-sec="providers">Proveedores</button></nav>
 
-<section id="dash" class="section active"><div class="grid kpis"><div class="card kpi"><small>Clientes</small><strong id="kClients">0</strong></div><div class="card kpi"><small>Proveedores</small><strong id="kProviders">0</strong></div><div class="card kpi"><small>Pedidos</small><strong id="kOrders">0</strong></div><div class="card kpi"><small>Ganancia</small><strong id="kProfit">$0</strong></div></div><div class="layout" style="margin-top:12px"><div class="panel"><h3>Últimos pedidos</h3><div id="recentOrders"></div></div><div class="panel"><h3>Garantías con foto</h3><div id="warrantyOrders"></div></div></div></section>
+<section id="sale" class="section active">
+<div class="box panel">
+  <h2>Registrar venta</h2>
+  <p class="mut">Solo se escriben nombre, WhatsApp y folio. Lo demás se elige.</p>
 
-<section id="quick" class="section"><div class="layout"><div class="panel"><h2>Registrar venta</h2><p class="mut">Compacto: solo escribe lo necesario; lo demás se elige desde selectores.</p>
-<div class="step"><h3>1. Cliente</h3><small>Estos datos sí se escriben.</small><div class="form three" style="margin-top:9px"><div><label>Nombre</label><input id="qClient" placeholder="Samuel CV"></div><div><label>WhatsApp</label><input id="qWhats" placeholder="525619244751"></div><div><label>Folio</label><input id="qFolio" placeholder="YT-001"></div></div></div>
-<div class="step"><h3>2. Producto</h3><small>Categoría y producto con selector.</small><div class="picker-grid"><div class="select-card"><label>Categoría</label><select id="qCategory" onchange="onCategoryChange()"></select><div class="hint">Streaming, Trámites, Pago servicios o Seguidores.</div></div><div class="select-card"><label>Producto</label><select id="qProduct" onchange="onProductChange()"></select><div class="hint">Se actualiza según categoría.</div></div></div></div>
-<div class="step"><h3>3. Modalidad y duración</h3><small>En YouTube y Spotify cambia automáticamente.</small><div class="picker-grid"><div class="select-card"><label>Modalidad</label><select id="qType" onchange="onTypeDurationChange()"></select><div id="typeHint" class="hint"></div></div><div class="select-card"><label>Duración / cantidad</label><select id="qDuration" onchange="onTypeDurationChange()"></select><div id="durationHint" class="hint"></div></div></div></div>
-<div class="step"><h3>4. Precio y proveedor</h3><small>Escoge proveedor; el costo se llena solo.</small><div class="picker-grid"><div class="select-card"><label>Proveedor / costo</label><select id="qProvider" onchange="onProviderChange()"></select><div id="providerHint" class="hint"></div></div><div><label>Precio venta</label><input id="qAmount" type="number" inputmode="decimal" value="100" oninput="calcQuick()"></div></div><div class="provider-summary" id="providerSummary">Selecciona producto, duración y proveedor.</div><div style="margin-top:8px"><label>Ganancia</label><div class="money" id="qProfit">$0</div></div></div>
-<div class="step"><h3>5. Estado y fechas</h3><small>Solo estados útiles.</small><div class="form three" style="margin-top:9px"><div><label>Estado</label><select id="qStatus" onchange="updatePreview()"><option value="pago_verificado">Pago verificado</option><option value="entregado">Entregado</option></select></div><div><label>Entrega</label><input id="qDeliveryDate" type="date" onchange="updatePreview()"></div><div><label>Vencimiento</label><input id="qExpDate" type="date" onchange="updatePreview()"></div></div></div>
-<div class="step"><h3>6. Acceso entregado</h3><small>Solo si aplica al producto.</small><div class="form"><div><label>Correo / usuario</label><input id="qEmail" placeholder="usuario1yt2026@gmail.com" oninput="updatePreview()"></div><div><label>Contraseña / dato de acceso</label><input id="qPassword" placeholder="zucaritas36A1" oninput="updatePreview()"></div></div></div>
-<div class="step"><h3>7. Evidencias</h3><small>Sube fotos, no documentos.</small><div class="photo-grid"><div class="photo-card"><label>Foto comprobante de pago</label><label class="photo-btn" for="paymentPhoto">📸 Tomar/Subir foto de pago</label><input id="paymentPhoto" type="file" accept="image/*" capture="environment" onchange="handleImage(event,'payment')"><div id="paymentPreview" class="preview"><img><div><b>Pago cargado</b><br><span class="mini"></span></div></div></div><div class="photo-card"><label>Foto garantía / confirmación</label><label class="photo-btn" for="warrantyPhoto">📸 Tomar/Subir foto de garantía</label><input id="warrantyPhoto" type="file" accept="image/*" capture="environment" onchange="handleImage(event,'warranty')"><div id="warrantyPreview" class="preview"><img><div><b>Garantía cargada</b><br><span class="mini"></span></div></div></div></div></div>
-<div class="toolbar"><button class="primary" onclick="registerSale()">Subir a base de datos</button><button onclick="clearQuick()">Limpiar</button></div>
+  <div class="step">
+    <div class="step-title">1. Cliente</div>
+    <div class="grid g3">
+      <div><label>Nombre</label><input id="client" placeholder="Samuel CV"></div>
+      <div><label>WhatsApp</label><input id="whats" placeholder="525619244751"></div>
+      <div><label>Folio</label><div class="grid" style="grid-template-columns:1fr auto"><input id="folio" placeholder="YT-260705-001"><button onclick="makeFolio()">Generar</button></div></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-title">2. Producto</div>
+    <div class="grid g2">
+      <select id="category" onchange="onCategory()"></select>
+      <select id="product" onchange="onProduct()"></select>
+    </div>
+  </div>
+
+  <div class="step" id="typeStep">
+    <div class="step-title">3. Modalidad y duración</div>
+    <div class="grid g2">
+      <select id="type" onchange="onTypeDuration()"></select>
+      <select id="duration" onchange="onTypeDuration()"></select>
+    </div>
+  </div>
+
+  <div class="step" id="providerStep">
+    <div class="step-title">4. Proveedor</div>
+    <div class="grid g2">
+      <select id="provider" onchange="onProvider()"></select>
+      <div><label>Costo proveedor</label><input id="cost" class="readonly" readonly value="$0"></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-title">5. Estado</div>
+    <select id="status" onchange="updatePreview()"><option value="no_entregado">No entregado</option><option value="entregado">Entregado</option></select>
+  </div>
+
+  <div class="step">
+    <div class="step-title">6. Fecha</div>
+    <div class="grid g2">
+      <div><label>Fecha de entrega</label><input id="deliveryDate" type="date" onchange="setDates();updatePreview()"></div>
+      <div id="expWrap"><label>Fecha de vencimiento</label><input id="expDate" type="date" onchange="updatePreview()"></div>
+    </div>
+  </div>
+
+  <div class="step" id="accessStep">
+    <div class="step-title">7. Acceso entregado</div>
+    <div class="grid g2">
+      <div><label>Correo</label><input id="email" placeholder="correo entregado"></div>
+      <div><label>Contraseña</label><input id="password" placeholder="contraseña entregada"></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-title">8. Fotos</div>
+    <div class="photos">
+      <div class="photo"><label class="btn" for="paymentPhoto">Tomar/Subir foto de pago</label><input id="paymentPhoto" type="file" accept="image/*" capture="environment" onchange="readPhoto(this,'payment')"><div id="paymentPrev" class="prev"></div></div>
+      <div class="photo"><label class="btn" for="warrantyPhoto">Tomar/Subir foto de garantía</label><input id="warrantyPhoto" type="file" accept="image/*" onchange="readPhoto(this,'warranty')"><div id="warrantyPrev" class="prev"></div></div>
+    </div>
+    <div id="saveBlock" class="warning" style="margin-top:9px">Para subir a base de datos falta la foto de garantía de los 10 minutos.</div>
+  </div>
+
+  <div class="step">
+    <div class="step-title">Ficha de entrega</div>
+    <div id="ficha" class="copybox"></div>
+    <div class="actions"><button onclick="copyFicha()">Copiar ficha</button><button class="primary" onclick="sendWhatsApp()">Enviar por WhatsApp</button><button id="saveBtn" disabled onclick="saveSale()">Subir a base de datos</button></div>
+  </div>
 </div>
-<div class="panel"><h2>Ficha automática</h2><p class="mut">El texto cambia según producto, modalidad y duración.</p><div id="deliveryPreview" class="copybox"></div><div class="toolbar"><button onclick="copyFicha()">Copiar ficha</button><button class="primary" onclick="sendFichaWhatsApp()">Enviar por WhatsApp</button></div></div></div></section>
+</section>
 
-<section id="orders" class="section"><div class="panel"><h2>Pedidos y pagos</h2><div class="table-wrap"><table><thead><tr><th>Folio</th><th>Cliente</th><th>Producto</th><th>Venta</th><th>Estado</th><th>Proveedor</th><th>Ganancia</th><th>Evidencias</th></tr></thead><tbody id="ordersRows"></tbody></table></div></div></section>
-
-<section id="clients" class="section"><div class="layout"><div class="panel"><h2>Clientes</h2><div class="form"><div><label>Nombre</label><input id="cName"></div><div><label>WhatsApp</label><input id="cWhats"></div><div><label>Reportes</label><input id="cReports" type="number" value="0"></div><div><label>Vencimientos</label><input id="cExp"></div><div><label>Nivel confianza</label><select id="cTrust"><option>nuevo</option><option>frecuente</option><option>buen cliente</option><option>bloqueado</option></select></div></div><input id="cId" type="hidden"><div class="toolbar"><button class="primary" onclick="saveClient()">Guardar cliente</button><button onclick="clearClient()">Limpiar</button></div></div><div class="panel"><h2>Lista</h2><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>WhatsApp</th><th>Reportes</th><th>Vencimientos</th><th>Confianza</th><th></th></tr></thead><tbody id="clientsRows"></tbody></table></div></div></div></section>
-
-<section id="providers" class="section"><div class="layout"><div class="panel"><h2>Proveedores</h2><div class="form"><div><label>Nombre</label><input id="pName" placeholder="DULITA"></div><div><label>WhatsApp</label><input id="pWhats"></div><div><label>Qué vende</label><input id="pSell" placeholder="YouTube, Spotify"></div><div><label>Precio proveedor 1M</label><input id="pPrice" type="number" inputmode="decimal"></div><div><label>Tiempo de entrega</label><input id="pTime" placeholder="5-60 min"></div><div><label>Horario activo</label><input id="pHours" placeholder="10:00 - 22:00"></div></div><label>Método para pedir disponibilidad</label><textarea id="pMethod" placeholder="Hola, ¿tienes disponible YouTube Premium?"></textarea><input id="pId" type="hidden"><div class="toolbar"><button class="primary" onclick="saveProvider()">Guardar proveedor</button><button onclick="seedProvider()">Llenar DULITA</button><button onclick="clearProvider()">Limpiar</button></div></div><div class="panel"><h2>Lista</h2><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>WhatsApp</th><th>Qué vende</th><th>Costo 1M</th><th>Entrega</th><th>Horario</th><th>Método</th><th></th></tr></thead><tbody id="providersRows"></tbody></table></div></div></div></section>
-
-<section id="settings" class="section"><div class="panel"><h2>Datos de pago</h2><div class="form"><div><label>Banco</label><input id="sBank"></div><div><label>Nombre</label><input id="sName"></div><div><label>CLABE</label><input id="sClabe"></div><div><label>Tarjeta</label><input id="sCard"></div></div><label>Indicaciones</label><textarea id="sInstructions">Después de pagar manda foto del comprobante y el producto solicitado. No pongas la plataforma en el concepto de pago.</textarea><div class="toolbar"><button class="primary" onclick="saveSettings()">Guardar datos</button></div></div></section>
-</main></div>
+<section id="orders" class="section"><div class="box panel"><h2>Pedidos</h2><div class="table"><table><thead><tr><th>Folio</th><th>Cliente</th><th>Producto</th><th>Estado</th><th>Proveedor</th><th>Costo</th><th>Fotos</th></tr></thead><tbody id="ordersRows"></tbody></table></div></div></section>
+<section id="clients" class="section"><div class="box panel"><h2>Clientes</h2><div class="table"><table><thead><tr><th>Nombre</th><th>WhatsApp</th><th>Reportes</th><th>Vencimientos</th><th>Confianza</th></tr></thead><tbody id="clientsRows"></tbody></table></div></div></section>
+<section id="providers" class="section"><div class="box panel"><h2>Proveedores</h2><p class="mut">Vista rápida. En productos de pago de servicios se usa DARDO.</p><div class="table"><table><thead><tr><th>Proveedor</th><th>WhatsApp</th><th>Qué vende</th><th>Tiempo</th><th>Horario</th><th>Método</th></tr></thead><tbody id="providersRows"></tbody></table></div></div></section>
+</div></div>
 <script>
 const DB='https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com';
-const PASS='royal2026';
-const $=id=>document.getElementById(id);
-let data={clients:{},providers:{},orders:{},settings:{}};
-let tempImages={payment:null,warranty:null};
-const CATS={
-  'Streaming':['Netflix','Disney+','HBO Max','Prime Video','Paramount+','Crunchyroll','ViX Premium','YouTube Premium','Spotify'],
-  'Trámites':['Acta de nacimiento','CURP','RFC','NSS','Constancia fiscal','Carta de antecedentes'],
-  'Pago servicios':['CFE','Telmex','Megacable','Izzi','Totalplay','Recarga celular'],
-  'Seguidores':['Instagram seguidores','Facebook seguidores','TikTok seguidores','Instagram likes','TikTok vistas']
+const $=id=>document.getElementById(id); const fmt=n=>'$'+Number(n||0).toFixed(0); const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+let data={orders:{},clients:{},providers:{}}; let photos={payment:null,warranty:null};
+const products={
+  'Streaming':['YouTube Premium','Spotify','Netflix','Disney+','HBO Max','Prime Video','Paramount+','Crunchyroll','ViX Premium'],
+  'Trámites':['Acta de nacimiento','CURP','RFC','NSS','Constancia fiscal'],
+  'Pago servicios':['CFE / Luz','Agua','Internet','Teléfono','Gas'],
+  'Seguidores':['Instagram','Facebook','TikTok']
 };
-const NORMAL_TYPES=['Perfil','Cuenta completa','Invitación'];
-const SPECIAL_TYPES=['Individual Correo nuevo','Individual Invitación','Familiar'];
-const DURATIONS=['1M','2M','3M','6M','12M'];
-const STATUS={pago_verificado:'Pago verificado',entregado:'Entregado'};
-const PROVIDER_DEFAULTS={
-  'YouTube Premium':[{name:'DULITA',unit:15,priority:'Proveedor 1'},{name:'COMODÍN',unit:20,priority:'Proveedor 2'}],
-  'Spotify':[{name:'DULITA',unit:18,priority:'Proveedor 1'},{name:'COMODÍN',unit:25,priority:'Proveedor 2'}],
-  'Netflix':[{name:'Proveedor 1',unit:35,priority:'Proveedor 1'},{name:'COMODÍN',unit:45,priority:'Proveedor 2'}],
-  'Disney+':[{name:'Proveedor 1',unit:30,priority:'Proveedor 1'},{name:'COMODÍN',unit:40,priority:'Proveedor 2'}],
-  'HBO Max':[{name:'Proveedor 1',unit:30,priority:'Proveedor 1'},{name:'COMODÍN',unit:40,priority:'Proveedor 2'}]
+const special=['YouTube Premium','Spotify'];
+const providerCatalog={
+  'YouTube Premium':[ {name:'DULITA', monthly:15}, {name:'COMODÍN', monthly:20} ],
+  'Spotify':[ {name:'DULITA', monthly:15}, {name:'COMODÍN', monthly:20} ],
+  'Netflix':[ {name:'Proveedor 1', monthly:35}, {name:'COMODÍN', monthly:45} ],
+  'Disney+':[ {name:'Proveedor 1', monthly:25}, {name:'COMODÍN', monthly:35} ],
+  'HBO Max':[ {name:'Proveedor 1', monthly:25}, {name:'COMODÍN', monthly:35} ],
+  'Prime Video':[ {name:'Proveedor 1', monthly:20}, {name:'COMODÍN', monthly:30} ],
+  'Paramount+':[ {name:'Proveedor 1', monthly:20}, {name:'COMODÍN', monthly:30} ],
+  'Crunchyroll':[ {name:'Proveedor 1', monthly:20}, {name:'COMODÍN', monthly:30} ],
+  'ViX Premium':[ {name:'Proveedor 1', monthly:20}, {name:'COMODÍN', monthly:30} ],
+  'default':[ {name:'Proveedor 1', flat:0}, {name:'COMODÍN', flat:0} ],
+  'DARDO':[ {name:'DARDO', flat:0} ]
 };
-function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2600)}
-function login(){if($('pass').value===PASS){localStorage.setItem('royalLogin','1');$('login').classList.add('hidden');$('app').classList.remove('hidden');init()}else toast('Contraseña incorrecta')}
+const statusMap={no_entregado:'No entregado',entregado:'Entregado'};
+function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
+function login(){if($('pass').value==='royal2026'){localStorage.setItem('royalLogin','1');$('login').classList.add('hidden');$('app').classList.remove('hidden');init()}else toast('Contraseña incorrecta')}
 function logout(){localStorage.removeItem('royalLogin');location.reload()}
-async function api(path,method='GET',body){const opt={method};if(body){opt.headers={'Content-Type':'application/json'};opt.body=JSON.stringify(body)}const r=await fetch(`${DB}/${path}.json`,opt);return r.json()}
-async function load(){data=await api('')||{};data.clients=data.clients||{};data.providers=data.providers||{};data.orders=data.orders||{};data.settings=data.settings||{};renderAll()}
-function init(){setupNav();setupCategoryOptions();setTodayDefaults();onCategoryChange();load()}
-function setupNav(){document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.sec))}
-function go(sec){document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.sec===sec));document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===sec));$('title').textContent={dash:'Panel',quick:'Registrar venta',orders:'Pedidos y pagos',clients:'Clientes',providers:'Proveedores',settings:'Datos de pago'}[sec];$('subtitle').textContent={dash:'Resumen del negocio.',quick:'Formulario compacto y ficha automática.',orders:'Historial de ventas.',clients:'Control de clientes.',providers:'Control de proveedores.',settings:'Cuenta para transferencias.'}[sec]||'';side.classList.remove('open')}
-function setupCategoryOptions(){fillSelect($('qCategory'),Object.keys(CATS));}
-function setTodayDefaults(){const t=new Date().toISOString().slice(0,10);$('qDeliveryDate').value=t;}
-function fillSelect(sel,items){sel.innerHTML=items.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('')}
-function onCategoryChange(){const cat=$('qCategory').value;fillSelect($('qProduct'),CATS[cat]||[]);onProductChange()}
-function onProductChange(){const cat=$('qCategory').value,prod=$('qProduct').value;const isSpecial=prod==='YouTube Premium'||prod==='Spotify';let typeOptions=[];let durationOptions=[];if(cat==='Streaming'){typeOptions=isSpecial?SPECIAL_TYPES:NORMAL_TYPES;durationOptions=DURATIONS;$('qType').disabled=false;$('qDuration').disabled=false;$('typeHint').textContent=isSpecial?'Solo para YouTube/Spotify: correo nuevo, invitación o familiar.':'Modalidades normales de streaming.';$('durationHint').textContent=isSpecial?'En 2M se marca como no renovable cuando aplica.':'Selecciona duración.'}else if(cat==='Seguidores'){typeOptions=['No aplica'];durationOptions=['100','500','1000','5000','10000'];$('qType').disabled=true;$('qDuration').disabled=false;$('typeHint').textContent='No aplica modalidad.';$('durationHint').textContent='Cantidad aproximada.'}else{typeOptions=['No aplica'];durationOptions=['No aplica'];$('qType').disabled=true;$('qDuration').disabled=true;$('typeHint').textContent='No aplica.';$('durationHint').textContent='No aplica.'}
-fillSelect($('qType'),typeOptions);fillSelect($('qDuration'),durationOptions);setupProviderOptions();autoPrice();calcQuick();updatePreview()}
-function onTypeDurationChange(){setupProviderOptions();autoPrice();calcQuick();updatePreview()}
-function providerList(prod){const stored=Object.values(data.providers||{}).filter(p=>String(p.queVende||'').toLowerCase().includes(prod.toLowerCase().split(' ')[0]));if(stored.length){return stored.slice(0,2).map((p,i)=>({name:p.nombre||`Proveedor ${i+1}`,unit:+p.precioProveedor||0,priority:i===0?'Proveedor 1':'Proveedor 2'}))}return PROVIDER_DEFAULTS[prod]||[{name:'Proveedor 1',unit:0,priority:'Proveedor 1'},{name:'COMODÍN',unit:0,priority:'Proveedor 2'}]}
-function setupProviderOptions(){const prod=$('qProduct').value;const provs=providerList(prod);$('qProvider').innerHTML=provs.map((p,i)=>`<option value="${esc(p.name)}" data-unit="${p.unit}">${p.priority} · ${esc(p.name)} · 1M $${p.unit}</option>`).join('');onProviderChange()}
-function onProviderChange(){calcQuick();updatePreview()}
-function monthsFromDuration(){const d=$('qDuration').value||'1M';const m=d.match(/(\d+)/);if(!m)return 1;return +m[1]||1}
-function selectedProviderUnit(){const opt=$('qProvider').selectedOptions[0];return +(opt?.dataset.unit||0)}
-function totalCost(){const cat=$('qCategory').value;if(cat!=='Streaming')return selectedProviderUnit();return selectedProviderUnit()*monthsFromDuration()}
-function autoPrice(){const prod=$('qProduct').value,dur=$('qDuration').value,type=$('qType').value;if(prod==='YouTube Premium'&&dur==='2M'&&type==='Individual Correo nuevo')$('qAmount').value=100;else if(prod==='YouTube Premium'&&dur==='1M')$('qAmount').value=60;}
-function calcQuick(){const cost=totalCost();const amount=+$('qAmount').value||0;const unit=selectedProviderUnit();const months=monthsFromDuration();const provider=$('qProvider').value||'Proveedor';$('providerSummary').textContent=$('qCategory').value==='Streaming'?`${provider}: ${months} × $${unit} = $${cost} costo total`:`${provider}: costo $${cost}`;$('qProfit').textContent=fmt(amount-cost)}
-function normalizePhone(v){return String(v||'').replace(/\D/g,'').replace(/^0+/,'')}
-function fmt(n){return '$'+(Number(n||0)).toLocaleString('es-MX')}
-function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-async function handleImage(e,type){const f=e.target.files?.[0];if(!f)return;if(!f.type.startsWith('image/')){toast('Solo fotos o imágenes');return}const dataUrl=await compressImage(f);tempImages[type]={name:f.name,type:f.type,size:f.size,dataUrl,uploadedAt:new Date().toISOString()};renderImagePreview(type);updatePreview();toast('Foto cargada')}
-function compressImage(file){return new Promise((res,rej)=>{const img=new Image();const rd=new FileReader();rd.onload=()=>img.src=rd.result;img.onload=()=>{const max=1200;let w=img.width,h=img.height;if(w>h&&w>max){h*=max/w;w=max}else if(h>=w&&h>max){w*=max/h;h=max}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/jpeg',0.72))};img.onerror=rej;rd.readAsDataURL(file)})}
-function renderImagePreview(type){const box=$(type+'Preview');const obj=tempImages[type];if(!obj){box.classList.remove('show');return}box.querySelector('img').src=obj.dataUrl;box.querySelector('.mini').textContent=obj.name||'Foto';box.classList.add('show')}
-function serviceName(){const prod=$('qProduct').value;const cat=$('qCategory').value;const type=$('qType').value;const dur=$('qDuration').value;if(cat!=='Streaming')return prod;if(prod==='YouTube Premium'||prod==='Spotify'){const noRenovable=(type==='Individual Correo nuevo'&&dur!=='1M')?' (No renovables)':'';return `${prod} ${type} ${dur}${noRenovable}`.trim()}return `${prod} ${type} ${dur}`.trim()}
-function formatDate(v){if(!v)return 'Pendiente';const [y,m,d]=v.split('-');return `${d}-${m}-${String(y).slice(2)}`}
-function buildFicha(){const cat=$('qCategory').value,prod=$('qProduct').value,type=$('qType').value,dur=$('qDuration').value,email=$('qEmail').value.trim()||'Pendiente',pass=$('qPassword').value.trim()||'Pendiente',del=$('qDeliveryDate').value,exp=$('qExpDate').value;const service=serviceName();if(cat==='Streaming'){
-const isYTSP=prod==='YouTube Premium'||prod==='Spotify';const noRenew=(isYTSP&&type==='Individual Correo nuevo'&&dur!=='1M');const rules=isYTSP?'🚫 No cambiar contraseña ni configuración de la cuenta.':'🚫 No cambiar nombre, PIN, correo, contraseña ni configuración de la cuenta.';const note=noRenew?'\n\nℹ️ *No renovable:* el periodo se maneja por activaciones mensuales; puede requerir un correo nuevo por mes o invitación al correo indicado según disponibilidad.':'';
-return `*📌 FICHA DE ENTREGA*\n\n📱 Servicio: ${service}\n📧 Correo: ${email}\n🔐 Contraseña: ${pass}\n👥 Acceso asignado: ${type}\n📅 Fecha de entrega: ${formatDate(del)}\n📅 Fecha de vencimiento: ${formatDate(exp)}${note}\n\n\n*⚠️ POLÍTICAS Y CONDICIONES*\n\n✅ La cuenta se entrega funcionando correctamente.\n✅ El cliente cuenta con *10 minutos a partir de la entrega* para verificar que el acceso funciona correctamente.\n✅ Para activar la garantía, el cliente debe confirmar dentro de esos 10 minutos que la cuenta quedó funcionando.\n\n🚫 Si el cliente no confirma dentro del tiempo indicado, la cuenta se dará por recibida y aceptada, por lo que la garantía quedará anulada.\n${rules}\n🚫 No compartir el acceso con más personas o dispositivos no autorizados.\n\n*🔄 En caso de caída, bloqueo o cierre de sesión, la reposición o solución puede tardar hasta 72 horas.*\n\n*🛡️ Garantía x 50 días respetando lo anterior.*\n\n📌 Al recibir la cuenta, aceptas estas políticas y condiciones.`}
-if(cat==='Trámites')return `*📌 ENTREGA DE TRÁMITE*\n\n🧾 Servicio: ${prod}\n📅 Fecha de entrega: ${formatDate(del)}\n\n*⚠️ CONDICIONES*\n\n✅ El trámite se entrega con los datos proporcionados por el cliente.\n✅ El cliente debe revisar la información al recibirla.\n🚫 Si los datos enviados son incorrectos, cualquier corrección puede generar nuevo costo.\n\n📌 Al recibir el servicio, aceptas estas condiciones.`;
-if(cat==='Pago servicios')return `*📌 COMPROBANTE DE SERVICIO*\n\n💳 Servicio: ${prod}\n📅 Fecha: ${formatDate(del)}\n📌 Estado: ${STATUS[$('qStatus').value]||$('qStatus').value}\n\n✅ Pago/gestión registrada.\n📌 Conserva este mensaje como respaldo.`;
-return `*📌 ENTREGA DE SERVICIO DIGITAL*\n\n📲 Servicio: ${prod}\n📦 Cantidad: ${dur}\n📅 Fecha de entrega: ${formatDate(del)}\n\n✅ Servicio registrado según disponibilidad.\n📌 Al recibir el servicio, aceptas las condiciones del servicio.`}
-function updatePreview(){$('deliveryPreview').textContent=buildFicha();calcQuick()}
+async function api(path,method='GET',body){const res=await fetch(`${DB}/${path}.json`,{method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});return res.json()}
+async function load(){try{data.orders=await api('orders')||{};data.clients=await api('clients')||{};data.providers=await api('providers')||{}}catch(e){console.warn(e)} renderAll()}
+function init(){document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));$(b.dataset.sec).classList.add('active')}); setupSelectors(); load()}
+function setupSelectors(){ $('category').innerHTML=Object.keys(products).map(c=>`<option>${c}</option>`).join(''); $('status').value='no_entregado'; const today=new Date().toISOString().slice(0,10); $('deliveryDate').value=today; onCategory(); }
+function onCategory(){const cat=$('category').value; $('product').innerHTML=products[cat].map(p=>`<option>${p}</option>`).join(''); onProduct()}
+function onProduct(){const cat=$('category').value, prod=$('product').value; const type=$('type'), dur=$('duration');
+  if(cat==='Streaming'){
+    $('typeStep').classList.remove('lock'); $('accessStep').classList.remove('lock');
+    type.disabled=false; dur.disabled=false; $('email').disabled=false; $('password').disabled=false;
+    if(special.includes(prod)) type.innerHTML=['Individual Correo nuevo','Individual Invitación','Familiar'].map(x=>`<option>${x}</option>`).join('');
+    else type.innerHTML=['Perfil','Cuenta completa','Invitación'].map(x=>`<option>${x}</option>`).join('');
+    dur.innerHTML=['1M','2M','3M'].map(x=>`<option>${x}</option>`).join('');
+  } else if(cat==='Seguidores'){
+    $('typeStep').classList.remove('lock'); $('accessStep').classList.add('lock');
+    type.disabled=false; dur.disabled=false; $('email').disabled=true; $('password').disabled=true; $('email').value=''; $('password').value='';
+    type.innerHTML=['Servicio digital'].map(x=>`<option>${x}</option>`).join('');
+    dur.innerHTML=['100','500','1000','5000'].map(x=>`<option>${x}</option>`).join('');
+  } else {
+    $('typeStep').classList.add('lock'); $('accessStep').classList.add('lock');
+    type.innerHTML=['No aplica'].map(x=>`<option>${x}</option>`).join(''); dur.innerHTML=['No aplica'].map(x=>`<option>${x}</option>`).join('');
+    type.disabled=true; dur.disabled=true; $('email').disabled=true; $('password').disabled=true; $('email').value=''; $('password').value='';
+  }
+  fillProviders(); setDates(); updatePreview();
+}
+function onTypeDuration(){fillProviders(); setDates(); updatePreview()}
+function months(){const m=String($('duration').value).match(/(\d+)M/);return m?+m[1]:1}
+function fillProviders(){const cat=$('category').value, prod=$('product').value; let arr;
+  if(cat==='Pago servicios') arr=providerCatalog.DARDO;
+  else if(cat==='Trámites') arr=providerCatalog.DARDO;
+  else arr=providerCatalog[prod]||providerCatalog.default;
+  $('provider').innerHTML=arr.map((p,i)=>`<option value="${i}">${p.name}</option>`).join(''); onProvider();
+}
+function selectedProvider(){const cat=$('category').value, prod=$('product').value; let arr=(cat==='Pago servicios'||cat==='Trámites')?providerCatalog.DARDO:(providerCatalog[prod]||providerCatalog.default); return arr[+$('provider').value||0]||arr[0]}
+function calcCost(){const p=selectedProvider(); const cat=$('category').value; if(p.flat!==undefined)return p.flat||0; if(cat==='Streaming')return (p.monthly||0)*months(); return p.flat||0}
+function onProvider(){ $('cost').value=fmt(calcCost()); updatePreview() }
+function setDates(){const now=new Date(); $('deliveryDate').value ||= now.toISOString().slice(0,10); const cat=$('category').value; if(cat==='Streaming'){const d=new Date($('deliveryDate').value||now); d.setMonth(d.getMonth()+months()); $('expDate').disabled=false; $('expWrap').classList.remove('lock'); $('expDate').value=d.toISOString().slice(0,10)} else {$('expDate').value=''; $('expDate').disabled=true; $('expWrap').classList.add('lock')} }
+function serviceName(){const cat=$('category').value, prod=$('product').value, type=$('type').value, dur=$('duration').value; if(cat==='Streaming'){let extra=(special.includes(prod)&&type==='Individual Correo nuevo'&&dur!=='1M')?' (No renovables)':''; return `${prod} ${type} ${dur}${extra}`} if(cat==='Seguidores')return `${prod} ${dur}`; return prod}
+function prefix(){const p=$('product').value; if(p.includes('YouTube'))return 'YT'; if(p.includes('Spotify'))return 'SP'; if($('category').value==='Trámites')return 'TR'; if($('category').value==='Pago servicios')return 'PS'; if($('category').value==='Seguidores')return 'SEG'; return p.slice(0,3).toUpperCase().replace(/[^A-Z]/g,'')||'RL'}
+function makeFolio(){const d=new Date(); const yy=String(d.getFullYear()).slice(2), mm=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0'); const date=yy+mm+dd; const all=Object.keys(data.orders||{}); const n=all.filter(k=>k.includes(date)).length+1; $('folio').value=`${prefix()}-${date}-${String(n).padStart(3,'0')}`; updatePreview(); toast('Folio generado')}
+function formatDate(v){if(!v)return 'No aplica'; const [y,m,d]=v.split('-'); const meses=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC']; return `${d}-${meses[+m-1]}-${String(y).slice(2)}`}
+function buildFicha(){const cat=$('category').value, prod=$('product').value, type=$('type').value, dur=$('duration').value, email=$('email').value.trim(), pass=$('password').value.trim(); const delivery=formatDate($('deliveryDate').value), exp=formatDate($('expDate').value), service=serviceName();
+ if(cat==='Streaming'){
+  const ytsp=special.includes(prod); const noRen=ytsp&&type==='Individual Correo nuevo'&&dur!=='1M';
+  const accessLines=(email||pass)?`📧 Correo: ${email||'Pendiente'}\n🔐 Contraseña: ${pass||'Pendiente'}\n`:'';
+  const noRenTxt=noRen?'\nℹ️ *No renovable:* el periodo se cubre por activaciones mensuales; puede requerir correo nuevo por mes o invitación al correo indicado según disponibilidad.\n':'';
+  const rule=ytsp?'🚫 No cambiar contraseña ni configuración de la cuenta.':'🚫 No cambiar nombre, PIN, correo, contraseña ni configuración de la cuenta.';
+  return `*📌 FICHA DE ENTREGA*\n\n📱 Servicio: ${service}\n${accessLines}👥 Acceso asignado: ${type}\n📅 Fecha de entrega: ${delivery}\n📅 Fecha de vencimiento: ${exp}${noRenTxt}\n\n*⚠️ POLÍTICAS Y CONDICIONES*\n\n✅ La cuenta se entrega funcionando correctamente.\n✅ El cliente cuenta con *10 minutos a partir de la entrega* para verificar que el acceso funciona correctamente.\n✅ Para activar la garantía, el cliente debe confirmar dentro de esos 10 minutos que la cuenta quedó funcionando.\n\n🚫 Si el cliente no confirma dentro del tiempo indicado, la cuenta se dará por recibida y aceptada, por lo que la garantía quedará anulada.\n${rule}\n🚫 No compartir el acceso con más personas o dispositivos no autorizados.\n\n*🔄 En caso de caída, bloqueo o cierre de sesión, la reposición o solución puede tardar hasta 72 horas.*\n\n*🛡️ Garantía x 50 días respetando lo anterior.*\n\n📌 Al recibir la cuenta, aceptas estas políticas y condiciones.`;
+ }
+ if(cat==='Trámites') return `*📌 ENTREGA DE TRÁMITE*\n\n🧾 Servicio: ${service}\n📅 Fecha de entrega: ${delivery}\n\n✅ El trámite se entrega con los datos proporcionados por el cliente.\n✅ El cliente debe revisar la información al recibirla.\n🚫 Si los datos enviados son incorrectos, cualquier corrección puede generar nuevo costo.\n\n📌 Al recibir el servicio, aceptas estas condiciones.`;
+ if(cat==='Pago servicios') return `*📌 COMPROBANTE DE SERVICIO*\n\n💳 Servicio: ${service}\n📅 Fecha de entrega: ${delivery}\n📌 Estado: ${statusMap[$('status').value]}\n\n✅ Gestión registrada.\n📌 Conserva este mensaje como respaldo.`;
+ return `*📌 ENTREGA DE SERVICIO DIGITAL*\n\n📲 Servicio: ${service}\n📅 Fecha de entrega: ${delivery}\n📌 Estado: ${statusMap[$('status').value]}\n\n✅ Servicio registrado según disponibilidad.\n📌 Al recibir el servicio, aceptas las condiciones.`;
+}
+function updatePreview(){ $('ficha').textContent=buildFicha(); $('cost').value=fmt(calcCost()); const ready=!!photos.warranty; $('saveBtn').disabled=!ready; $('saveBlock').textContent=ready?'Listo: ya puedes subir a base de datos.':'Para subir a base de datos falta la foto de garantía de los 10 minutos.'; }
+async function readPhoto(input,key){const file=input.files?.[0]; if(!file)return; if(!file.type.startsWith('image/'))return toast('Solo fotos'); const dataUrl=await compress(file); photos[key]={name:file.name,type:'image/jpeg',dataUrl,createdAt:new Date().toISOString()}; renderPrev(key); updatePreview()}
+function compress(file){return new Promise(resolve=>{const img=new Image(); const r=new FileReader(); r.onload=e=>{img.onload=()=>{const max=1000; let w=img.width,h=img.height; if(w>h&&w>max){h=Math.round(h*max/w);w=max}else if(h>max){w=Math.round(w*max/h);h=max} const c=document.createElement('canvas'); c.width=w;c.height=h; const ctx=c.getContext('2d'); ctx.drawImage(img,0,0,w,h); resolve(c.toDataURL('image/jpeg',.74))}; img.src=e.target.result}; r.readAsDataURL(file)})}
+function renderPrev(key){const el=$(key==='payment'?'paymentPrev':'warrantyPrev'); const p=photos[key]; el.innerHTML=p?`<img src="${p.dataUrl}"><span>${key==='payment'?'Foto de pago lista':'Foto de garantía lista'}</span>`:''; el.classList.toggle('show',!!p)}
+function normalizePhone(v){return String(v||'').replace(/\D/g,'').replace(/^521/,'52')}
+async function saveSale(){if(!photos.warranty)return toast('Falta foto de garantía'); const client=$('client').value.trim(), whats=normalizePhone($('whats').value), folio=$('folio').value.trim(); if(!client||!whats||!folio)return toast('Faltan nombre, WhatsApp o folio'); const p=selectedProvider(); const order={folio,cliente:client,whatsapp:whats,categoria:$('category').value,producto:serviceName(),productoBase:$('product').value,modalidad:$('type').value,duracion:$('duration').value,estado:$('status').value,estadoTexto:statusMap[$('status').value],proveedorUsado:p.name,costoProveedor:calcCost(),fechaEntrega:$('deliveryDate').value,vencimiento:$('expDate').value||null,correoEntregado:$('email').value.trim(),contrasenaEntregada:$('password').value.trim(),fichaEntrega:buildFicha(),paymentImage:photos.payment,warrantyImage:photos.warranty,garantiaActiva:true,updatedAt:new Date().toISOString()}; await api('orders/'+folio,'PUT',order); await api('clients/'+whats,'PUT',{id:whats,nombre:client,whatsapp:whats,reportes:0,vencimientos:order.vencimiento?`${order.producto} vence ${order.vencimiento}`:'No aplica',confianza:'nuevo',updatedAt:new Date().toISOString()}); await load(); toast('Subido a base de datos')}
+function sendWhatsApp(){const phone=normalizePhone($('whats').value); if(!phone)return toast('Falta WhatsApp'); $('status').value='entregado'; updatePreview(); window.open(`https://wa.me/${phone}?text=${encodeURIComponent(buildFicha())}`,'_blank')}
 function copyFicha(){navigator.clipboard.writeText(buildFicha()).then(()=>toast('Ficha copiada'))}
-function sendFichaWhatsApp(){const phone=normalizePhone($('qWhats').value);if(!phone)return toast('Falta WhatsApp del cliente');window.open(`https://wa.me/${phone}?text=${encodeURIComponent(buildFicha())}`,'_blank')}
-async function registerSale(){const client=$('qClient').value.trim(),whats=normalizePhone($('qWhats').value),folio=$('qFolio').value.trim();if(!client||!whats||!folio)return toast('Falta nombre, WhatsApp o folio');const amount=+$('qAmount').value||0,cost=totalCost(),profit=amount-cost;const order={folio,cliente:client,whatsapp:whats,categoria:$('qCategory').value,productoBase:$('qProduct').value,modalidad:$('qType').value,duracion:$('qDuration').value,producto:serviceName(),montoRecibido:amount,costoProveedor:cost,ganancia:profit,comprobante:tempImages.payment?'Foto guardada':'Pendiente',estado:$('qStatus').value,adminVerifico:'5582852169',fechaEntrega:$('qDeliveryDate').value,vencimiento:$('qExpDate').value,proveedorUsado:$('qProvider').value,correoEntregado:$('qEmail').value,contrasenaEntregada:$('qPassword').value,fichaEntrega:buildFicha(),paymentImage:tempImages.payment,warrantyImage:tempImages.warranty,garantiaActiva:!!tempImages.warranty,updatedAt:new Date().toISOString()};const clientObj={id:whats,nombre:client,whatsapp:whats,reportes:0,vencimientos:order.producto+(order.vencimiento?' vence '+order.vencimiento:''),confianza:'nuevo',updatedAt:new Date().toISOString()};await api('clients/'+whats,'PUT',clientObj);await api('orders/'+folio,'PUT',order);await load();toast('Venta subida a base de datos')}
-function clearQuick(){['qClient','qWhats','qFolio','qEmail','qPassword'].forEach(id=>$(id).value='');$('qAmount').value='';tempImages={payment:null,warranty:null};renderImagePreview('payment');renderImagePreview('warranty');setTodayDefaults();onCategoryChange()}
-function renderAll(){renderKpis();renderOrders();renderClients();renderProviders();renderSettings();updatePreview()}
+function renderAll(){renderOrders();renderClients();renderProviders();updatePreview()}
 function arr(o){return Object.values(o||{})}
-function renderKpis(){const orders=arr(data.orders);$('kClients').textContent=arr(data.clients).length;$('kProviders').textContent=arr(data.providers).length;$('kOrders').textContent=orders.length;$('kProfit').textContent=fmt(orders.reduce((s,o)=>s+(+o.ganancia||0),0));$('recentOrders').innerHTML=orders.slice(-5).reverse().map(o=>`<p><b>${esc(o.folio)}</b> · ${esc(o.cliente)}<br><span class="mini">${esc(o.producto)} · ${fmt(o.ganancia)}</span></p>`).join('')||'<p class="mut">Sin pedidos.</p>';$('warrantyOrders').innerHTML=orders.filter(o=>o.warrantyImage?.dataUrl).slice(-5).reverse().map(o=>`<p>🛡️ <b>${esc(o.folio)}</b> · ${esc(o.cliente)}<br><span class="mini">Garantía con foto.</span></p>`).join('')||'<p class="mut">Sin garantías con foto.</p>'}
-function renderOrders(){const rows=arr(data.orders).sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));$('ordersRows').innerHTML=rows.map(o=>`<tr><td><b>${esc(o.folio)}</b></td><td>${esc(o.cliente)}<br><span class="mini">${esc(o.whatsapp)}</span></td><td>${esc(o.producto)}</td><td>${fmt(o.montoRecibido)}</td><td><span class="status-pill ${o.estado==='entregado'?'green':'orange'}">${esc(STATUS[o.estado]||o.estado)}</span></td><td>${esc(o.proveedorUsado)}</td><td>${fmt(o.ganancia)}</td><td>${evidenceLinks(o)}</td></tr>`).join('')||'<tr><td colspan="8">Sin pedidos.</td></tr>'}
-function evidenceLinks(o){let h='';if(o.paymentImage?.dataUrl)h+=`💳 <a href="${o.paymentImage.dataUrl}" target="_blank">Pago</a><br>`;if(o.warrantyImage?.dataUrl)h+=`🛡️ <a href="${o.warrantyImage.dataUrl}" target="_blank">Garantía</a>`;return h||'<span class="mini">Sin fotos</span>'}
-async function saveClient(){const whats=normalizePhone($('cWhats').value),id=$('cId').value||whats;if(!id)return toast('Falta WhatsApp');const obj={id,nombre:$('cName').value,whatsapp:whats,reportes:+$('cReports').value||0,vencimientos:$('cExp').value,confianza:$('cTrust').value,updatedAt:new Date().toISOString()};await api('clients/'+id,'PUT',obj);clearClient();await load();toast('Cliente guardado')}
-function renderClients(){$('clientsRows').innerHTML=arr(data.clients).map(c=>`<tr><td>${esc(c.nombre)}</td><td>${esc(c.whatsapp)}</td><td>${esc(c.reportes||0)}</td><td>${esc(c.vencimientos||'')}</td><td>${esc(c.confianza||'nuevo')}</td><td><button onclick='editClient(${JSON.stringify(c)})'>Editar</button></td></tr>`).join('')||'<tr><td colspan="6">Sin clientes.</td></tr>'}
-function editClient(c){$('cId').value=c.id;$('cName').value=c.nombre||'';$('cWhats').value=c.whatsapp||'';$('cReports').value=c.reportes||0;$('cExp').value=c.vencimientos||'';$('cTrust').value=c.confianza||'nuevo'}function clearClient(){['cId','cName','cWhats','cExp'].forEach(id=>$(id).value='');$('cReports').value=0;$('cTrust').value='nuevo'}
-async function saveProvider(){const key=$('pId').value||$('pName').value.toLowerCase().replace(/[^a-z0-9]+/g,'_');if(!key)return toast('Falta proveedor');const obj={id:key,nombre:$('pName').value,whatsapp:normalizePhone($('pWhats').value),queVende:$('pSell').value,precioProveedor:+$('pPrice').value||0,tiempoEntrega:$('pTime').value,horarioActivo:$('pHours').value,metodoDisponibilidad:$('pMethod').value,updatedAt:new Date().toISOString()};await api('providers/'+key,'PUT',obj);clearProvider();await load();toast('Proveedor guardado')}
-function renderProviders(){$('providersRows').innerHTML=arr(data.providers).map(p=>`<tr><td>${esc(p.nombre)}</td><td>${esc(p.whatsapp)}</td><td>${esc(p.queVende)}</td><td>${fmt(p.precioProveedor)}</td><td>${esc(p.tiempoEntrega)}</td><td>${esc(p.horarioActivo)}</td><td>${esc(p.metodoDisponibilidad)}</td><td><button onclick='editProvider(${JSON.stringify(p)})'>Editar</button></td></tr>`).join('')||'<tr><td colspan="8">Sin proveedores.</td></tr>'}
-function editProvider(p){$('pId').value=p.id;$('pName').value=p.nombre||'';$('pWhats').value=p.whatsapp||'';$('pSell').value=p.queVende||'';$('pPrice').value=p.precioProveedor||'';$('pTime').value=p.tiempoEntrega||'';$('pHours').value=p.horarioActivo||'';$('pMethod').value=p.metodoDisponibilidad||''}function clearProvider(){['pId','pName','pWhats','pSell','pPrice','pTime','pHours','pMethod'].forEach(id=>$(id).value='')}function seedProvider(){$('pName').value='DULITA';$('pSell').value='YouTube Premium, Spotify';$('pPrice').value='15';$('pTime').value='5-60 min';$('pMethod').value='Hola, ¿tienes disponible YouTube Premium?'}
-function renderSettings(){const s=data.settings?.paymentInfo||{};$('sBank').value=s.banco||'';$('sName').value=s.nombre||'';$('sClabe').value=s.clabe||'';$('sCard').value=s.tarjeta||'';$('sInstructions').value=s.instrucciones||$('sInstructions').value}
-async function saveSettings(){await api('settings/paymentInfo','PUT',{banco:$('sBank').value,nombre:$('sName').value,clabe:$('sClabe').value,tarjeta:$('sCard').value,instrucciones:$('sInstructions').value,updatedAt:new Date().toISOString()});await load();toast('Datos guardados')}
-if(localStorage.getItem('royalLogin')==='1'){document.addEventListener('DOMContentLoaded',()=>{$('login').classList.add('hidden');$('app').classList.remove('hidden');init()})}
-document.addEventListener('DOMContentLoaded',()=>{if(!$('app').classList.contains('hidden'))init()})
+function renderOrders(){const rows=arr(data.orders).sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||''))); $('ordersRows').innerHTML=rows.map(o=>`<tr><td><b>${esc(o.folio)}</b></td><td>${esc(o.cliente)}<br><span class="mini">${esc(o.whatsapp)}</span></td><td>${esc(o.producto)}</td><td><span class="pill ${o.estado==='entregado'?'green':'red'}">${esc(o.estadoTexto||statusMap[o.estado]||o.estado)}</span></td><td>${esc(o.proveedorUsado||'')}</td><td>${fmt(o.costoProveedor)}</td><td>${o.paymentImage?.dataUrl?`<a href="${o.paymentImage.dataUrl}" target="_blank">Pago</a>`:'—'} ${o.warrantyImage?.dataUrl?`<br><a href="${o.warrantyImage.dataUrl}" target="_blank">Garantía</a>`:''}</td></tr>`).join('')||'<tr><td colspan="7">Sin pedidos.</td></tr>'}
+function renderClients(){ $('clientsRows').innerHTML=arr(data.clients).map(c=>`<tr><td>${esc(c.nombre)}</td><td>${esc(c.whatsapp)}</td><td>${esc(c.reportes||0)}</td><td>${esc(c.vencimientos||'')}</td><td>${esc(c.confianza||'nuevo')}</td></tr>`).join('')||'<tr><td colspan="5">Sin clientes.</td></tr>' }
+function renderProviders(){const rows=[{nombre:'DULITA',whatsapp:'',queVende:'YouTube Premium, Spotify',tiempoEntrega:'5-60 min',horarioActivo:'Variable',metodoDisponibilidad:'Preguntar disponibilidad'}, {nombre:'COMODÍN',whatsapp:'',queVende:'Respaldo streaming',tiempoEntrega:'Variable',horarioActivo:'Variable',metodoDisponibilidad:'Preguntar disponibilidad'}, {nombre:'DARDO',whatsapp:'',queVende:'Pago servicios / trámites',tiempoEntrega:'Variable',horarioActivo:'Variable',metodoDisponibilidad:'Servicio directo'}]; $('providersRows').innerHTML=rows.map(p=>`<tr><td>${p.nombre}</td><td>${p.whatsapp}</td><td>${p.queVende}</td><td>${p.tiempoEntrega}</td><td>${p.horarioActivo}</td><td>${p.metodoDisponibilidad}</td></tr>`).join('') }
+$('deliveryDate')?.addEventListener('change',()=>{setDates();updatePreview()}); $('expDate')?.addEventListener('change',updatePreview); ['client','whats','folio','email','password'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)updatePreview()}));
+document.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('royalLogin')==='1'){ $('login').classList.add('hidden'); $('app').classList.remove('hidden'); init() }});
+if(localStorage.getItem('royalLogin')==='1'){}
 </script>
 </body>
 </html>
