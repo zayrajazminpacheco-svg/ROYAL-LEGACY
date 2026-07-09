@@ -1,27 +1,23 @@
-# Royal CRM + API V3
+# Royal CRM + API V5
 
-Base nueva del CRM de LEGACY ROYAL STREAM.
+Corrección de garantía:
 
-## Incluye
-- Dashboard
-- Nueva venta
-- Clientes
-- Catálogo Maestro
-- Proveedores
-- Pedidos
-- Garantías
-- API Firebase
+- 1M = 25 días
+- 2M = 50 días
+- 3M = 75 días
 
-## API base
-https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/api
+Fórmula:
+Garantía = meses × 25 días
 
-## Archivos a subir a GitHub Pages
+## Archivos a subir/reemplazar en GitHub Pages
+
 - index.html
 - admin.html
 - README.md
 - api-schema.json
 
-## Acceso admin
+## Acceso
+
 /admin.html
 
 Contraseña:

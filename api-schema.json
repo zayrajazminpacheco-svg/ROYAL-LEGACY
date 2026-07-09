@@ -1,12 +1,16 @@
 {
-  "version": "crm-api-v3",
-  "database": "https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/api",
-  "modules": {
-    "clientes": ["nombre", "whatsapp", "reportes", "vencimientos", "nivelConfianza"],
-    "proveedores": ["nombre", "whatsapp", "queVende", "precioProveedor", "tiempoEntrega", "horarioActivo", "metodoDisponibilidad"],
-    "catalogo": ["categoria", "producto", "codigo", "modalidades", "duraciones", "politicas", "plantillaFicha", "activo"],
-    "pedidos": ["folio", "cliente", "producto", "montoRecibido", "comprobante", "estado", "adminVerifico", "fecha", "proveedorUsado", "costoProveedor", "fotoGarantia", "fichaEntrega"],
-    "garantias": ["folio", "clienteId", "estado", "fotoConfirmacion", "fechaInicio", "diasGarantia", "condicion"],
-    "bot": ["catalogoPublico", "comandos_lr", "gruposAutorizados", "estado"]
-  }
+  "version": "crm-api-v5",
+  "garantiaReglas": {
+    "formula": "meses * 25",
+    "1M": 25,
+    "2M": 50,
+    "3M": 75
+  },
+  "rutas": [
+    "/api/clientes",
+    "/api/pedidos",
+    "/api/garantias",
+    "/api/catalogo",
+    "/api/proveedores"
+  ]
 }
