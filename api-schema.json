@@ -1,16 +1,17 @@
 {
-  "version": "crm-api-v5",
+  "version": "crm-api-v6",
   "garantiaReglas": {
-    "formula": "meses * 25",
+    "formula": "meses*25",
     "1M": 25,
     "2M": 50,
     "3M": 75
   },
-  "rutas": [
-    "/api/clientes",
-    "/api/pedidos",
-    "/api/garantias",
-    "/api/catalogo",
-    "/api/proveedores"
-  ]
+  "costos": {
+    "DULITA": {
+      "YouTube Premium": {
+        "1M": 15,
+        "2M": 30
+      }
+    }
+  }
 }
