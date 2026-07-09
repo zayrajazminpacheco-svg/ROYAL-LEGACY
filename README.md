@@ -1,9 +1,9 @@
-# Royal CRM Stock V8
+# Royal CRM Catálogo V9
 
-Incluye stock-seed.json con proveedores, costos base y precio público inicial.
+Catálogo Maestro como centro del CRM.
 
-Archivos a subir:
+Subir:
 - index.html
 - admin.html
 - README.md
-- stock-seed.json
+- catalogo-seed.json

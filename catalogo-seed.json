@@ -1,0 +1,128 @@
+{
+  "items": [
+    {
+      "categoria": "Streaming",
+      "producto": "YouTube Premium",
+      "modalidad": "Individual Correo nuevo",
+      "duracion": "1M",
+      "garantiaDias": 25,
+      "proveedor": "DULITA",
+      "costo": 15,
+      "precioPublico": 0,
+      "activo": true
+    },
+    {
+      "categoria": "Streaming",
+      "producto": "YouTube Premium",
+      "modalidad": "Individual Correo nuevo",
+      "duracion": "2M",
+      "garantiaDias": 50,
+      "proveedor": "DULITA",
+      "costo": 30,
+      "precioPublico": 100,
+      "activo": true
+    },
+    {
+      "categoria": "Streaming",
+      "producto": "Spotify Premium",
+      "modalidad": "Individual Correo nuevo",
+      "duracion": "1M",
+      "garantiaDias": 25,
+      "proveedor": "DULITA",
+      "costo": 15,
+      "precioPublico": 0,
+      "activo": true
+    },
+    {
+      "categoria": "Streaming",
+      "producto": "Disney+",
+      "modalidad": "Perfil",
+      "duracion": "1M",
+      "garantiaDias": 25,
+      "proveedor": "DULITA",
+      "costo": 15,
+      "precioPublico": 0,
+      "activo": true
+    },
+    {
+      "categoria": "Streaming",
+      "producto": "Prime Video",
+      "modalidad": "Perfil",
+      "duracion": "1M",
+      "garantiaDias": 25,
+      "proveedor": "DULITA",
+      "costo": 10,
+      "precioPublico": 0,
+      "activo": true
+    },
+    {
+      "categoria": "Streaming",
+      "producto": "Paramount",
+      "modalidad": "Perfil",
+      "duracion": "1M",
+      "garantiaDias": 25,
+      "proveedor": "DULITA",
+      "costo": 15,
+      "precioPublico": 0,
+      "activo": true
+    },
+    {
+      "categoria": "Streaming",
+      "producto": "Max / HBO Max",
+      "modalidad": "Perfil Platino",
+      "duracion": "1M",
+      "garantiaDias": 25,
+      "proveedor": "DULITA",
+      "costo": 15,
+      "precioPublico": 0,
+      "activo": true
+    },
+    {
+      "categoria": "Streaming",
+      "producto": "Crunchyroll",
+      "modalidad": "Perfil",
+      "duracion": "1M",
+      "garantiaDias": 25,
+      "proveedor": "DULITA",
+      "costo": 12,
+      "precioPublico": 0,
+      "activo": true
+    },
+    {
+      "categoria": "Streaming",
+      "producto": "ViX",
+      "modalidad": "Perfil",
+      "duracion": "1M",
+      "garantiaDias": 25,
+      "proveedor": "DULITA",
+      "costo": 7,
+      "precioPublico": 0,
+      "activo": true
+    },
+    {
+      "categoria": "Pago servicios",
+      "producto": "Pago de servicio",
+      "modalidad": "Servicio",
+      "duracion": "No aplica",
+      "garantiaDias": 0,
+      "proveedor": "DARDO",
+      "costo": 0,
+      "precioPublico": 0,
+      "activo": true
+    }
+  ],
+  "reglas": {
+    "garantia": "meses * 25",
+    "youtube_spotify_modalidades": [
+      "Individual Correo nuevo",
+      "Individual Invitación",
+      "Familiar"
+    ],
+    "categorias": [
+      "Streaming",
+      "Trámites",
+      "Pago servicios",
+      "Seguidores"
+    ]
+  }
+}

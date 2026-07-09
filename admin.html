@@ -1,58 +1,116 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Royal CRM Stock V8</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Royal CRM Catálogo V9</title>
 <style>
-body{margin:0;background:#060914;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Arial}
-.card{background:#10192b;border:1px solid #ffffff18;border-radius:22px;padding:16px;margin:12px}
-button{border:0;border-radius:14px;padding:12px 14px;background:linear-gradient(135deg,#d8c276,#74b9ff);font-weight:900;color:#071022}
-input{width:100%;background:#071022;color:white;border:1px solid #ffffff18;border-radius:14px;padding:13px}
-.hidden{display:none}.row{background:#10182a;border:1px solid #ffffff18;border-radius:16px;padding:12px;margin:8px 0}.mut{color:#9daabe}
+:root{--bg:#060914;--card:#10192b;--soft:#17233b;--line:#ffffff18;--mut:#9daabe;--gold:#d8c276;--blue:#74b9ff;--green:#22d47b;--red:#ff5364}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#050816,#080d18);color:white;font-family:system-ui,-apple-system,Segoe UI,Arial}
+button{border:0;border-radius:15px;padding:12px 14px;background:linear-gradient(135deg,var(--gold),var(--blue));color:#071022;font-weight:900}button.ghost{background:#17233b;color:white;border:1px solid var(--line)}
+input,select{width:100%;background:#071022;color:white;border:1px solid var(--line);border-radius:15px;padding:13px;font-size:16px}input[readonly]{background:#10182a;color:#c0cee4}
+label{display:block;color:var(--mut);font-size:12px;font-weight:800;margin:10px 0 6px}
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.login,.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:16px;margin:12px}.app{display:none}
+.top{position:sticky;top:0;z-index:10;background:#060914ee;border-bottom:1px solid var(--line);padding:14px}.brand{display:flex;gap:12px;align-items:center}.logo{width:52px;height:52px;border-radius:17px;background:linear-gradient(135deg,var(--gold),var(--blue));display:grid;place-items:center;font-size:28px}.brand h1{margin:0;font-size:21px;line-height:1.05}.brand small{color:var(--mut)}
+.tabs{display:flex;gap:8px;overflow:auto;margin-top:12px}.tabs button{white-space:nowrap;background:#17233b;color:white}.tabs button.active{background:linear-gradient(135deg,var(--gold),var(--blue));color:#071022}
+.main{padding:12px 12px 70px;max-width:1000px;margin:auto}.section{display:none}.section.active{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}.kpi{background:#10182a;border:1px solid var(--line);border-radius:20px;padding:14px}.kpi span{color:var(--mut);font-size:12px}.kpi b{display:block;font-size:27px}
+.row{background:#10182a;border:1px solid var(--line);border-radius:17px;padding:12px;margin:8px 0}.row small{color:var(--mut)}.ficha{white-space:pre-wrap;background:#060b17;border:1px solid var(--line);border-radius:18px;padding:14px;font-family:monospace;font-size:12.5px;line-height:1.45}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#20304d;color:#bcd1ff;font-size:12px;font-weight:800}.hidden{display:none!important}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.brand h1{font-size:19px}}
 </style>
 </head>
 <body>
-<div id="auth" class="card">
-<h1>Royal CRM Stock V8</h1>
-<p class="mut">Stock base + proveedores listos para importar.</p>
-<input id="pass" type="password" placeholder="Contraseña">
-<button onclick="login()" style="margin-top:10px">Entrar</button>
+<div id="auth" class="auth"><div class="login"><div class="logo">👑</div><h1>Catálogo Maestro V9</h1><label>Contraseña</label><input id="pass" type="password" placeholder="royal2026"><button style="width:100%;margin-top:12px" onclick="login()">Entrar</button></div></div>
+<div id="app" class="app">
+<header class="top"><div class="brand"><div class="logo">👑</div><div><h1>Legacy Royal<br>Stream</h1><small>CRM Catálogo V9</small></div></div>
+<div class="tabs"><button class="active" onclick="show('dashboard',this)">Dashboard</button><button onclick="show('catalogo',this)">Catálogo</button><button onclick="show('venta',this)">Nueva venta</button><button onclick="show('pedidos',this)">Pedidos</button><button onclick="show('api',this)">API</button></div></header>
+
+<main class="main">
+<section id="dashboard" class="section active">
+<div class="kpis"><div class="kpi"><span>Catálogo</span><b id="kCatalogo">0</b></div><div class="kpi"><span>Pedidos</span><b id="kPedidos">0</b></div><div class="kpi"><span>Ganancia total</span><b id="kGanancia">$0</b></div><div class="kpi"><span>Sin precio público</span><b id="kSinPrecio">0</b></div></div>
+<div class="card"><h2>Centro de Operaciones</h2><div id="dashList"></div></div>
+</section>
+
+<section id="catalogo" class="section">
+<div class="card"><h2>Catálogo Maestro</h2>
+<div class="grid">
+<div><label>Categoría</label><select id="cCategoria"><option>Streaming</option><option>Trámites</option><option>Pago servicios</option><option>Seguidores</option></select></div>
+<div><label>Producto</label><input id="cProducto" placeholder="YouTube Premium"></div>
+<div><label>Modalidad</label><input id="cModalidad" placeholder="Individual Correo nuevo"></div>
+<div><label>Duración</label><input id="cDuracion" placeholder="1M / 2M"></div>
+<div><label>Proveedor</label><input id="cProveedor" placeholder="DULITA"></div>
+<div><label>Costo proveedor</label><input id="cCosto" type="number"></div>
+<div><label>Precio público</label><input id="cPrecio" type="number"></div>
+<div><label>Activo</label><select id="cActivo"><option value="true">Activo</option><option value="false">Inactivo</option></select></div>
 </div>
-<div id="app" class="hidden">
-<div class="card">
-<h2>Stock base preparado</h2>
-<p class="mut">Esta versión trae el archivo <b>stock-seed.json</b> para subir proveedores, costos y precio público inicial.</p>
-<button onclick="importStock()">Importar stock base a Firebase</button>
+<button style="margin-top:10px" onclick="guardarCatalogo()">Guardar producto</button>
+<button class="ghost" style="margin-top:10px" onclick="importarBase()">Importar stock base</button>
 </div>
-<div class="card"><h2>Vista rápida</h2><div id="list"></div></div>
+<div class="card"><h3>Productos registrados</h3><div id="catalogoList"></div></div>
+</section>
+
+<section id="venta" class="section">
+<div class="card"><h2>Nueva venta</h2>
+<div class="grid">
+<div><label>Cliente</label><input id="vCliente" value="Samuel CV"></div><div><label>WhatsApp</label><input id="vWhats" value="525619244751"></div>
+<div><label>Producto del catálogo</label><select id="vItem" onchange="cargarVenta()"></select></div><div><label>Folio</label><input id="vFolio" readonly></div>
+<div><label>Proveedor</label><input id="vProveedor" readonly></div><div><label>Costo proveedor</label><input id="vCosto" readonly></div>
+<div><label>Precio público</label><input id="vPrecio" readonly></div><div><label>Ganancia</label><input id="vGanancia" readonly></div>
+<div><label>Garantía</label><input id="vGarantia" readonly></div><div><label>Estado</label><select id="vEstado"><option>No entregado</option><option>Entregado</option></select></div>
+<div><label>Fecha entrega</label><input id="vFecha" type="date" onchange="ficha()"></div><div><label>Fecha vencimiento</label><input id="vVence" type="date" onchange="ficha()"></div>
 </div>
+</div>
+<div class="card"><h2>Ficha</h2><div id="vFicha" class="ficha"></div><button onclick="copiarFicha()">Copiar</button><button onclick="guardarVenta()">Guardar venta</button></div>
+</section>
+
+<section id="pedidos" class="section"><div class="card"><h2>Pedidos</h2><div id="pedidosList"></div></div></section>
+<section id="api" class="section"><div class="card"><h2>API</h2><div class="ficha">/api/catalogo
+/api/pedidos
+/api/clientes
+/api/garantias
+
+Regla garantía:
+meses × 25 días</div></div></section>
+</main></div>
+
 <script>
 const DB='https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/api';
+let catalogo={}, pedidos={};
+function login(){if(pass.value!=='royal2026')return alert('Contraseña incorrecta');auth.classList.add('hidden');app.style.display='block';init()}
+function show(id,b){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()}
 async function api(path,method='GET',body=null){let opt={method,headers:{'Content-Type':'application/json'}};if(body)opt.body=JSON.stringify(body);let r=await fetch(DB+'/'+path+'.json',opt);return r.json()}
-function login(){if(pass.value!=='royal2026')return alert('Contraseña incorrecta');auth.classList.add('hidden');app.classList.remove('hidden');render()}
-async function importStock(){
- const seed=await fetch('stock-seed.json').then(r=>r.json());
- const proveedores={};
- Object.values(seed.proveedores).forEach(p=>{
-   Object.entries(p.productos).forEach(([producto,mods])=>{
-     Object.entries(mods).forEach(([modalidad,durs])=>{
-       Object.entries(durs).forEach(([duracion,costo])=>{
-         const id=(p.nombre+'_'+producto+'_'+modalidad+'_'+duracion).toLowerCase().replace(/[^a-z0-9]+/g,'_');
-         proveedores[id]={id,nombre:p.nombre,producto,modalidad,duracion,costoBase:Number(costo)||0,queVende:producto,tiempoEntrega:'Variable',horarioActivo:'Variable',metodoDisponibilidad:'WhatsApp'};
-       });
-     });
-   });
- });
- const precios={};
- Object.entries(seed.preciosPublicos).forEach(([k,v])=>precios[k.replaceAll('/','-').replaceAll('.','')]={key:k,precio:v});
- await api('proveedores','PATCH',proveedores);
- await api('precios','PATCH',precios);
- alert('Stock base importado.');
- render();
-}
-async function render(){
- const seed=await fetch('stock-seed.json').then(r=>r.json());
- list.innerHTML=Object.values(seed.proveedores).map(p=>'<div class=row><b>'+p.nombre+'</b><br><span class=mut>'+Object.keys(p.productos).join(', ')+'</span></div>').join('');
-}
+function idItem(x){return [x.categoria,x.producto,x.modalidad,x.duracion,x.proveedor].join('|').replace(/[^a-zA-Z0-9]+/g,'_').toLowerCase()}
+function meses(d){return Number(String(d||'').replace(/\D/g,''))||0}
+function garantia(d){return meses(d)*25}
+function hoy(){return new Date().toISOString().slice(0,10)}
+function fmx(d){if(!d)return'';let[y,m,da]=d.split('-');return `${da}-${m}-${y.slice(2)}`}
+async function importarBase(){const seed=await fetch('catalogo-seed.json').then(r=>r.json());let obj={};seed.items.forEach(x=>{x.id=idItem(x);x.garantiaDias=garantia(x.duracion)||x.garantiaDias;obj[x.id]=x});await api('catalogo','PATCH',obj);alert('Catálogo base importado');await load();render()}
+async function guardarCatalogo(){let x={categoria:cCategoria.value,producto:cProducto.value,modalidad:cModalidad.value,duracion:cDuracion.value,proveedor:cProveedor.value,costo:Number(cCosto.value||0),precioPublico:Number(cPrecio.value||0),activo:cActivo.value==='true'};x.garantiaDias=garantia(x.duracion);x.id=idItem(x);await api('catalogo/'+x.id,'PUT',x);await load();render();alert('Producto guardado')}
+async function load(){catalogo=await api('catalogo')||{};pedidos=await api('pedidos')||{}}
+function render(){kCatalogo.textContent=Object.keys(catalogo).length;kPedidos.textContent=Object.keys(pedidos).length;kGanancia.textContent='$'+Object.values(pedidos).reduce((a,x)=>a+Number(x.ganancia||0),0);kSinPrecio.textContent=Object.values(catalogo).filter(x=>!Number(x.precioPublico)).length;dashList.innerHTML=Object.values(catalogo).slice(0,5).map(x=>`<div class=row><b>${x.producto}</b> <span class=badge>${x.duracion}</span><br><small>${x.modalidad} · ${x.proveedor} · Costo $${x.costo} · Público $${x.precioPublico||0}</small></div>`).join('')||'<small>Importa el stock base.</small>';catalogoList.innerHTML=Object.values(catalogo).map(x=>`<div class=row><b>${x.producto}</b> <span class=badge>${x.duracion}</span><br><small>${x.categoria} · ${x.modalidad} · ${x.proveedor} · Costo $${x.costo} · Público $${x.precioPublico||0} · Garantía ${x.garantiaDias} días</small></div>`).join('')||'<small>Sin catálogo.</small>';vItem.innerHTML=Object.values(catalogo).filter(x=>x.activo!==false).map(x=>`<option value="${x.id}">${x.producto} · ${x.modalidad} · ${x.duracion} · ${x.proveedor}</option>`).join('');pedidosList.innerHTML=Object.values(pedidos).map(x=>`<div class=row><b>${x.folio}</b><br><small>${x.cliente} · ${x.producto} · Público $${x.precioPublico} · Ganancia $${x.ganancia}</small></div>`).join('')||'<small>Sin pedidos.</small>';cargarVenta()}
+function folio(x){let d=new Date(),y=String(d.getFullYear()).slice(2),m=String(d.getMonth()+1).padStart(2,'0'),da=String(d.getDate()).padStart(2,'0');let code=x.producto.includes('YouTube')?'YT':x.producto.includes('Spotify')?'SP':'RY';return `${code}-${y}${m}${da}-001`}
+function cargarVenta(){let x=catalogo[vItem.value];if(!x)return;vFolio.value=folio(x);vProveedor.value=x.proveedor;vCosto.value='$'+x.costo;vPrecio.value=x.precioPublico?('$'+x.precioPublico):'Sin precio público';vGanancia.value=x.precioPublico?('$'+(Number(x.precioPublico)-Number(x.costo))):'Sin datos';vGarantia.value=(x.garantiaDias||garantia(x.duracion))+' días';vFecha.value=vFecha.value||hoy();ficha()}
+function servicio(x){if(!x)return'';if((x.producto.includes('YouTube')||x.producto.includes('Spotify'))&&x.modalidad.includes('Correo'))return `${x.producto} Individual ${x.duracion}`;if((x.producto.includes('YouTube')||x.producto.includes('Spotify'))&&x.modalidad.includes('Invitación'))return `${x.producto} Individual ${x.duracion}`;if((x.producto.includes('YouTube')||x.producto.includes('Spotify'))&&x.modalidad.includes('Familiar'))return `${x.producto} Familiar ${x.duracion}`;return `${x.producto} ${x.modalidad} ${x.duracion}`}
+function acceso(x){if(!x)return'';if(x.modalidad.includes('Correo'))return'Correo nuevo';if(x.modalidad.includes('Invitación'))return'Invitación';if(x.modalidad.includes('Familiar'))return'Familiar';return x.modalidad}
+function ficha(){let x=catalogo[vItem.value];if(!x)return;vFicha.textContent=`*📌 FICHA DE ENTREGA*
+
+📱 Servicio: ${servicio(x)}
+👥 Acceso asignado: ${acceso(x)}
+📅 Fecha de entrega: ${fmx(vFecha.value)}
+📅 Fecha de vencimiento: ${fmx(vVence.value)}
+🛡️ Garantía: ${x.garantiaDias||garantia(x.duracion)} días
+
+*⚠️ POLÍTICAS Y CONDICIONES*
+
+✅ La cuenta se entrega funcionando correctamente.
+✅ El cliente cuenta con *1 hora a partir de la entrega* para verificar el acceso y confirmar que quedó funcionando; de lo contrario, se dará por recibida y aceptada y la garantía quedará anulada.
+🚫 No cambiar contraseña ni configuración de la cuenta.
+🚫 No compartir el acceso con más personas o dispositivos no autorizados.
+
+*🔄 En caso de caída, bloqueo o cierre de sesión, la reposición o solución puede tardar hasta 72 horas.*
+
+📌 Al recibir la cuenta, aceptas estas políticas y condiciones.`}
+function copiarFicha(){navigator.clipboard.writeText(vFicha.textContent);alert('Ficha copiada')}
+async function guardarVenta(){let x=catalogo[vItem.value];if(!x)return;let p={folio:vFolio.value,cliente:vCliente.value,whatsapp:vWhats.value,...x,precioPublico:Number(x.precioPublico||0),costoProveedor:Number(x.costo||0),ganancia:Number(x.precioPublico||0)-Number(x.costo||0),estado:vEstado.value,fecha:vFecha.value,vencimiento:vVence.value,fichaEntrega:vFicha.textContent};await api('clientes/'+vWhats.value,'PATCH',{nombre:vCliente.value,whatsapp:vWhats.value,nivelConfianza:'nuevo'});await api('pedidos/'+p.folio,'PUT',p);alert('Venta guardada');await load();render()}
+async function init(){vFecha.value=hoy();await load();render()}
 </script>
-</body></html>
+</body>
+</html>
