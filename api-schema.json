@@ -1,0 +1,36 @@
+{
+  "name": "Royal CRM API V1",
+  "type": "Firebase Realtime Database REST API",
+  "baseUrl": "https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/royal_crm_v1",
+  "paths": {
+    "clients": {
+      "description": "Clientes del negocio",
+      "fields": ["id", "nombre", "whatsapp", "reportes", "vencimientos", "confianza", "createdAt", "updatedAt"]
+    },
+    "providers": {
+      "description": "Proveedores registrados",
+      "fields": ["id", "nombre", "whatsapp", "queVende", "precioProveedor", "tiempoEntrega", "horarioActivo", "metodoDisponibilidad"]
+    },
+    "products": {
+      "description": "Catálogo maestro",
+      "fields": ["id", "categoria", "nombre", "modalidades", "duraciones", "providers", "aplicaVencimiento", "aplicaAcceso"]
+    },
+    "orders": {
+      "description": "Pedidos, pagos, evidencia y garantía",
+      "fields": ["folio", "cliente", "whatsapp", "producto", "modalidad", "duracion", "montoRecibido", "costoProveedor", "ganancia", "proveedorUsado", "estado", "adminVerifico", "fecha", "vencimiento", "paymentImage", "warrantyImage", "fichaEntrega"]
+    },
+    "config": {
+      "description": "Configuración del CRM y bot futuro",
+      "fields": ["businessName", "admins", "botPrefix", "paymentInfo"]
+    }
+  },
+  "exampleEndpoints": {
+    "listOrders": "GET /orders.json",
+    "createOrder": "PUT /orders/{folio}.json",
+    "listClients": "GET /clients.json",
+    "createClient": "PUT /clients/{whatsapp}.json",
+    "listProviders": "GET /providers.json",
+    "createProvider": "PUT /providers/{id}.json",
+    "listProducts": "GET /products.json"
+  }
+}

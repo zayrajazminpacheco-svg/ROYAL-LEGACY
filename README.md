@@ -1,17 +1,42 @@
-# Royal Legacy Stream Internal V20
+# Royal CRM + API V1
 
-Cambios principales:
+Archivos para GitHub Pages:
 
-- Folio automático con botón **Generar**: prefijo del producto + fecha + consecutivo.
-- Producto, modalidad, duración, proveedor, estado y fechas con selectores compactos.
-- YouTube Premium y Spotify usan únicamente: Individual Correo nuevo, Individual Invitación y Familiar.
-- Proveedor muestra solo el nombre; el costo se llena automáticamente.
-- Se removieron precio de venta, ganancia, costo manual, notas internas y botones de carga demo.
-- Estado simplificado: No entregado / Entregado.
-- La ficha se adapta por categoría y producto.
-- Para YouTube/Spotify la política se ajusta a: no cambiar contraseña ni configuración.
-- Pago servicios y trámites bloquean acceso y vencimiento cuando no aplica.
-- Las evidencias aceptan solo imágenes/fotos.
-- No permite subir a base de datos hasta tener foto de garantía.
+- `index.html`
+- `admin.html`
+- `api-schema.json`
 
-Contraseña admin: `royal2026`
+## Acceso
+
+Abrir:
+
+`/admin.html`
+
+Contraseña:
+
+`royal2026`
+
+## Base de datos
+
+Usa Firebase Realtime Database como API inicial:
+
+`https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/royal_crm_v1`
+
+## Módulos incluidos
+
+- Dashboard
+- Nueva venta
+- Clientes
+- Proveedores
+- Productos
+- Pedidos
+- Garantías
+- Vencimientos
+- API
+
+## Notas importantes
+
+- El bot de WhatsApp sigue apagado/desvinculado.
+- Esta versión es CRM interno.
+- Las fotos se comprimen y se guardan en Firebase como imagen base64 para demo.
+- Cuando el sistema crezca, conviene mover fotos a Firebase Storage o servidor propio.
