@@ -1,17 +1,6 @@
 {
-  "version": "crm-api-v6",
-  "garantiaReglas": {
-    "formula": "meses*25",
-    "1M": 25,
-    "2M": 50,
-    "3M": 75
-  },
-  "costos": {
-    "DULITA": {
-      "YouTube Premium": {
-        "1M": 15,
-        "2M": 30
-      }
-    }
-  }
+  "version": "crm-api-v7",
+  "garantia": "meses*25",
+  "precioPublico": "producto+modalidad+duracion",
+  "costoProveedor": "costoBase*meses"
 }

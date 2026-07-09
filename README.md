@@ -1,27 +1,10 @@
-# Royal CRM + API V6
+# Royal CRM + API V7
 
-Corrección de diseño y cálculo de costo.
+- Monto recibido cambió a Precio público.
+- Precio público se llena automático desde Precios.
+- Se agregó Proveedores.
+- Costo proveedor = costo base x meses.
+- Ganancia automática.
+- Garantía = meses x 25 días.
 
-## Garantía
-
-- 1M = 25 días
-- 2M = 50 días
-- 3M = 75 días
-
-Fórmula:
-
-meses × 25 días
-
-## Corrección costo proveedor
-
-Ejemplo:
-- DULITA YouTube Premium 1M = $15
-- Si se elige 2M, costo proveedor = $30
-
-## Subir a GitHub
-
-Reemplazar:
-- index.html
-- admin.html
-- README.md
-- api-schema.json
+Subir index.html, admin.html, README.md y api-schema.json.
