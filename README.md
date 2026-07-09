@@ -1,10 +1,9 @@
-# Royal CRM + API V7
+# Royal CRM Stock V8
 
-- Monto recibido cambió a Precio público.
-- Precio público se llena automático desde Precios.
-- Se agregó Proveedores.
-- Costo proveedor = costo base x meses.
-- Ganancia automática.
-- Garantía = meses x 25 días.
+Incluye stock-seed.json con proveedores, costos base y precio público inicial.
 
-Subir index.html, admin.html, README.md y api-schema.json.
+Archivos a subir:
+- index.html
+- admin.html
+- README.md
+- stock-seed.json

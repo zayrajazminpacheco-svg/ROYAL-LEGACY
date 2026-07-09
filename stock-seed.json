@@ -1,0 +1,241 @@
+{
+  "version": "stock-v8",
+  "proveedores": {
+    "DULITA": {
+      "nombre": "DULITA",
+      "productos": {
+        "YouTube Premium": {
+          "Individual Correo nuevo": {
+            "1M": 15,
+            "2M": 30
+          }
+        },
+        "Spotify Premium": {
+          "Individual Correo nuevo": {
+            "1M": 15,
+            "2M": 30
+          }
+        },
+        "Disney+": {
+          "Perfil": {
+            "1M": 15
+          }
+        },
+        "Prime Video": {
+          "Perfil": {
+            "1M": 10
+          }
+        },
+        "Paramount": {
+          "Perfil": {
+            "1M": 15
+          }
+        },
+        "Max / HBO Max": {
+          "Perfil Platino": {
+            "1M": 15
+          },
+          "Perfil Estándar": {
+            "1M": 10
+          }
+        },
+        "Crunchyroll": {
+          "Perfil": {
+            "1M": 12
+          }
+        },
+        "ViX": {
+          "Perfil": {
+            "1M": 7
+          }
+        }
+      }
+    },
+    "ALAN SHOP": {
+      "nombre": "ALAN SHOP",
+      "productos": {
+        "YouTube Premium": {
+          "Familiar": {
+            "1M": 50
+          }
+        },
+        "Disney+": {
+          "Perfil": {
+            "1M": 20
+          },
+          "Cuenta completa": {
+            "1M": 110
+          }
+        },
+        "Prime Video": {
+          "Perfil": {
+            "1M": 20
+          },
+          "Cuenta completa": {
+            "1M": 70
+          }
+        },
+        "Paramount": {
+          "Cuenta completa": {
+            "1M": 30
+          }
+        },
+        "Crunchyroll": {
+          "Cuenta completa": {
+            "1M": 60
+          }
+        },
+        "ViX": {
+          "Cuenta completa": {
+            "1M": 25,
+            "2M": 40,
+            "12M": 89
+          }
+        },
+        "Max / HBO Max": {
+          "Perfil Platino": {
+            "1M": 25
+          }
+        }
+      }
+    },
+    "Stream Mora": {
+      "nombre": "Stream Mora",
+      "productos": {
+        "Netflix": {
+          "Perfil": {
+            "1M": 65
+          },
+          "Cuenta completa": {
+            "1M": 250
+          },
+          "Perfil privado": {
+            "1M": 70
+          }
+        },
+        "Disney+": {
+          "Perfil": {
+            "1M": 25
+          },
+          "Cuenta completa": {
+            "1M": 130
+          }
+        },
+        "Max / HBO Max": {
+          "Perfil": {
+            "1M": 22
+          },
+          "Cuenta completa": {
+            "1M": 90
+          }
+        },
+        "Prime Video": {
+          "Cuenta completa": {
+            "1M": 45
+          }
+        },
+        "ViX": {
+          "Perfil": {
+            "1M": 8,
+            "2M": 12,
+            "3M": 15
+          },
+          "Cuenta completa": {
+            "1M": 25,
+            "2M": 35,
+            "3M": 45
+          }
+        }
+      }
+    },
+    "FADECLOUD": {
+      "nombre": "FADECLOUD",
+      "productos": {
+        "Netflix": {
+          "Original": {
+            "27D": 41.31,
+            "33D": 53
+          }
+        },
+        "Disney+": {
+          "Premium LATAM": {
+            "1M": 30
+          },
+          "Premium Hulu": {
+            "1M": 11
+          },
+          "Estándar": {
+            "1M": 8
+          }
+        },
+        "Max / HBO Max": {
+          "Platino Original": {
+            "1M": 19
+          },
+          "Genérico": {
+            "1M": 11
+          },
+          "Estándar Genérico": {
+            "1M": 7
+          }
+        },
+        "Prime Video": {
+          "Original": {
+            "1M": 17
+          },
+          "Genérico": {
+            "1M": 6
+          },
+          "6M": {
+            "6M": 14
+          }
+        },
+        "Crunchyroll": {
+          "Original": {
+            "1M": 16
+          },
+          "Genérico": {
+            "1M": 6
+          }
+        },
+        "Paramount": {
+          "Premium": {
+            "1M": 9
+          }
+        },
+        "ViX": {
+          "Perfil": {
+            "1M": 2
+          }
+        }
+      }
+    },
+    "DARDO": {
+      "nombre": "DARDO",
+      "productos": {
+        "Pago de servicio": {
+          "Servicio": {
+            "No aplica": 0
+          }
+        }
+      }
+    }
+  },
+  "preciosPublicos": {
+    "YouTube Premium|Individual Correo nuevo|2M": 100
+  },
+  "reglas": {
+    "garantia": "meses * 25 días",
+    "youtube_spotify_modalidades": [
+      "Individual Correo nuevo",
+      "Individual Invitación",
+      "Familiar"
+    ],
+    "categorias": [
+      "Streaming",
+      "Trámites",
+      "Pago servicios",
+      "Seguidores"
+    ]
+  }
+}

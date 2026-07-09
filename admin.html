@@ -1,82 +1,58 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>Royal CRM + API V7</title>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Royal CRM Stock V8</title>
 <style>
-:root{--bg:#060914;--card:#10192b;--soft:#17233b;--line:#ffffff18;--txt:#f8fbff;--mut:#9daabe;--gold:#d8c276;--blue:#74b9ff}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#050816,#080d18);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Arial}
-button{border:0;border-radius:15px;padding:12px 14px;background:linear-gradient(135deg,var(--gold),var(--blue));color:#071022;font-weight:900}button.ghost{background:#17233b;color:white;border:1px solid var(--line)}
-input,select{width:100%;background:#071022;color:white;border:1px solid var(--line);border-radius:15px;padding:13px;font-size:16px}input[readonly]{background:#10182a;color:#c0cee4}
-label{display:block;color:var(--mut);font-size:12px;font-weight:800;margin:10px 0 6px}.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.login,.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:16px;margin:12px}.app{display:none}
-.top{position:sticky;top:0;z-index:10;background:#060914ee;border-bottom:1px solid var(--line);padding:14px}.brand{display:flex;gap:12px;align-items:center}.logo{width:52px;height:52px;border-radius:17px;background:linear-gradient(135deg,var(--gold),var(--blue));display:grid;place-items:center;font-size:28px}.brand h1{margin:0;font-size:21px;line-height:1.05}.brand small{color:var(--mut)}
-.tabs{display:flex;gap:8px;overflow:auto;margin-top:12px}.tabs button{white-space:nowrap;background:#17233b;color:white}.tabs button.active{background:linear-gradient(135deg,var(--gold),var(--blue));color:#071022}
-.main{padding:12px 12px 70px;max-width:960px;margin:auto}.section{display:none}.section.active{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}.kpi{background:#10182a;border:1px solid var(--line);border-radius:20px;padding:14px}.kpi span{color:var(--mut);font-size:12px}.kpi b{display:block;font-size:27px}
-.row{background:#10182a;border:1px solid var(--line);border-radius:17px;padding:12px;margin:8px 0}.row small{color:var(--mut)}.ficha{white-space:pre-wrap;background:#060b17;border:1px solid var(--line);border-radius:18px;padding:14px;font-family:monospace;font-size:12.5px;line-height:1.45}.preview{max-width:100%;border-radius:15px;margin-top:8px;border:1px solid var(--line)}.hidden{display:none!important}
-@media(max-width:650px){.grid{grid-template-columns:1fr}.brand h1{font-size:19px}}
-</style></head><body>
-<div id=auth class=auth><div class=login><div class=logo>👑</div><h1>Royal CRM + API V7</h1><label>Contraseña</label><input id=pass type=password placeholder=royal2026><button style="width:100%;margin-top:12px" onclick=login()>Entrar</button></div></div>
-<div id=app class=app><header class=top><div class=brand><div class=logo>👑</div><div><h1>Legacy Royal<br>Stream</h1><small>CRM + API V7</small></div></div><div class=tabs><button class=active onclick="show('dashboard',this)">Dashboard</button><button onclick="show('venta',this)">Nueva venta</button><button onclick="show('precios',this)">Precios</button><button onclick="show('proveedores',this)">Proveedores</button><button onclick="show('clientes',this)">Clientes</button><button onclick="show('pedidos',this)">Pedidos</button><button onclick="show('api',this)">API</button></div></header>
-<main class=main>
-<section id=dashboard class="section active"><div class=kpis><div class=kpi><span>Clientes</span><b id=kClientes>0</b></div><div class=kpi><span>Pedidos</span><b id=kPedidos>0</b></div><div class=kpi><span>Ganancia total</span><b id=kGanancia>$0</b></div><div class=kpi><span>Pedidos hoy</span><b id=kHoy>0</b></div></div><div class=card><h2>Centro de Operaciones</h2><div id=dashList></div></div></section>
-<section id=venta class=section><div class=card><h2>Nueva venta</h2><div class=grid>
-<div><label>Nombre</label><input id=nombre value="Samuel CV"></div><div><label>WhatsApp</label><input id=whatsapp value="525619244751"></div><div><label>Folio</label><input id=folio readonly></div><div><label>Generar folio</label><button class=ghost style="width:100%" onclick=genFolio()>Generar</button></div>
-<div><label>Categoría</label><select id=categoria onchange=loadProducts()><option>Streaming</option><option>Trámites</option><option>Pago servicios</option><option>Seguidores</option></select></div><div><label>Producto</label><select id=producto onchange=loadModalidades()></select></div><div><label>Modalidad</label><select id=modalidad onchange=updateAll()></select></div><div><label>Duración</label><select id=duracion onchange=updateAll()><option>1M</option><option selected>2M</option><option>3M</option><option>4M</option></select></div>
-<div><label>Proveedor</label><select id=proveedor onchange=updateAll()></select></div><div><label>Costo proveedor</label><input id=costo readonly></div><div><label>Precio público</label><input id=precioPublico readonly></div><div><label>Ganancia</label><input id=ganancia readonly></div>
-<div><label>Estado</label><select id=estado><option>No entregado</option><option>Entregado</option></select></div><div><label>Fecha entrega</label><input id=entrega type=date onchange=updateFicha()></div><div><label>Fecha vencimiento</label><input id=vencimiento type=date onchange=updateFicha()></div>
-<div><label>Foto pago</label><input id=fotoPago type=file accept="image/*" capture=environment><img id=prevPago class="preview hidden"></div><div><label>Foto garantía</label><input id=fotoGarantia type=file accept="image/*" capture=environment><img id=prevGarantia class="preview hidden"></div>
-</div></div><div class=card><h2>Ficha</h2><div id=ficha class=ficha></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button onclick=copyFicha()>Copiar</button><button onclick=sendWA()>Enviar WhatsApp</button><button class=ghost onclick=saveSale()>Guardar</button></div></div></section>
-<section id=precios class=section><div class=card><h2>Precios públicos</h2><div class=grid><div><label>Producto</label><select id=ppProducto></select></div><div><label>Modalidad</label><select id=ppModalidad><option>Individual Correo nuevo</option><option>Individual Invitación</option><option>Familiar</option><option>Perfil</option><option>Cuenta completa</option><option>Invitación</option><option>Servicio</option></select></div><div><label>Duración</label><select id=ppDuracion><option>1M</option><option>2M</option><option>3M</option><option>4M</option></select></div><div><label>Precio público</label><input id=ppPrecio type=number></div></div><button style="margin-top:10px" onclick=savePrice()>Guardar precio</button></div><div class=card><h3>Lista de precios</h3><div id=priceList></div></div></section>
-<section id=proveedores class=section><div class=card><h2>Proveedores</h2><div class=grid><div><label>Nombre</label><input id=prNombre placeholder=DULITA></div><div><label>WhatsApp</label><input id=prWhats></div><div><label>Qué vende</label><input id=prVende></div><div><label>Producto</label><select id=prProducto></select></div><div><label>Costo 1M/base</label><input id=prCosto type=number></div><div><label>Tiempo entrega</label><input id=prTiempo placeholder="5 a 60 min"></div><div><label>Horario activo</label><input id=prHorario></div><div><label>Método disponibilidad</label><input id=prMetodo placeholder=WhatsApp></div></div><button style="margin-top:10px" onclick=saveProvider()>Guardar proveedor</button></div><div class=card><h3>Proveedores registrados</h3><div id=providerList></div></div></section>
-<section id=clientes class=section><div class=card><h2>Clientes</h2><div id=clientes></div></div></section><section id=pedidos class=section><div class=card><h2>Pedidos</h2><div id=pedidos></div></div></section>
-<section id=api class=section><div class=card><h2>API</h2><div class=ficha>/api/clientes
-/api/pedidos
-/api/proveedores
-/api/precios
-/api/garantias
-
-Garantía = meses × 25 días</div></div></section></main></div>
+body{margin:0;background:#060914;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Arial}
+.card{background:#10192b;border:1px solid #ffffff18;border-radius:22px;padding:16px;margin:12px}
+button{border:0;border-radius:14px;padding:12px 14px;background:linear-gradient(135deg,#d8c276,#74b9ff);font-weight:900;color:#071022}
+input{width:100%;background:#071022;color:white;border:1px solid #ffffff18;border-radius:14px;padding:13px}
+.hidden{display:none}.row{background:#10182a;border:1px solid #ffffff18;border-radius:16px;padding:12px;margin:8px 0}.mut{color:#9daabe}
+</style>
+</head>
+<body>
+<div id="auth" class="card">
+<h1>Royal CRM Stock V8</h1>
+<p class="mut">Stock base + proveedores listos para importar.</p>
+<input id="pass" type="password" placeholder="Contraseña">
+<button onclick="login()" style="margin-top:10px">Entrar</button>
+</div>
+<div id="app" class="hidden">
+<div class="card">
+<h2>Stock base preparado</h2>
+<p class="mut">Esta versión trae el archivo <b>stock-seed.json</b> para subir proveedores, costos y precio público inicial.</p>
+<button onclick="importStock()">Importar stock base a Firebase</button>
+</div>
+<div class="card"><h2>Vista rápida</h2><div id="list"></div></div>
+</div>
 <script>
 const DB='https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/api';
-const productos={'Streaming':['YouTube Premium','Spotify Premium','Netflix','Disney+','Max / HBO Max','Prime Video','Crunchyroll','Paramount','ViX'],'Trámites':['Acta de nacimiento'],'Pago servicios':['Pago de servicio'],'Seguidores':['Seguidores Instagram','Seguidores Facebook','Seguidores TikTok']};
-function login(){if(pass.value!=='royal2026')return alert('Contraseña incorrecta');auth.classList.add('hidden');app.style.display='block';init()}
-function show(id,btn){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render()}
-function today(){return new Date().toISOString().slice(0,10)}function fmt(d){if(!d)return'';let[y,m,da]=d.split('-');return `${da}-${m}-${y.slice(2)}`}function meses(){return Number((duracion.value||'1M').replace(/\D/g,''))||1}function garantiaDias(){return meses()*25}
 async function api(path,method='GET',body=null){let opt={method,headers:{'Content-Type':'application/json'}};if(body)opt.body=JSON.stringify(body);let r=await fetch(DB+'/'+path+'.json',opt);return r.json()}
-function allProducts(){return Object.values(productos).flat()}function fillProductSelects(){let opts=allProducts().map(x=>`<option>${x}</option>`).join('');ppProducto.innerHTML=opts;prProducto.innerHTML=opts}
-function loadProducts(){producto.innerHTML=productos[categoria.value].map(x=>`<option>${x}</option>`).join('');loadModalidades()}
-function loadModalidades(){let p=producto.value;if(p.includes('YouTube')||p.includes('Spotify'))modalidad.innerHTML='<option>Individual Correo nuevo</option><option>Individual Invitación</option><option>Familiar</option>';else if(categoria.value==='Streaming')modalidad.innerHTML='<option>Perfil</option><option>Cuenta completa</option><option>Invitación</option>';else modalidad.innerHTML='<option>Servicio</option>';updateAll()}
-function key(prod,mod,dur){return [prod,mod,dur].join('|').replaceAll('/','-').replaceAll('.','')}
-async function getPrices(){return await api('precios')||{}}async function getProviders(){return await api('proveedores')||{}}
-async function updateAll(){await loadProviderOptions();let c=await costoProveedor();costo.value=c?('$'+c):'Sin costo';let pp=await precioPub();precioPublico.value=pp?('$'+pp):'Sin precio';ganancia.value=(pp&&c)?('$'+(pp-c)):'Sin datos';updateFicha()}
-async function loadProviderOptions(){let prov=await getProviders();let filtered=Object.values(prov).filter(p=>p.producto===producto.value);if(!filtered.length){filtered=[{id:'dulita',nombre:'DULITA',producto:'YouTube Premium',costoBase:15},{id:'comodin',nombre:'COMODÍN',producto:producto.value,costoBase:0}]}proveedor.innerHTML=filtered.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('')}
-async function costoProveedor(){let prov=await getProviders();let p=prov[proveedor.value];if(!p){if(proveedor.value==='dulita'&&producto.value.includes('YouTube'))return 15*meses();return 0}return Number(p.costoBase||0)*meses()}
-async function precioPub(){let prices=await getPrices();let k=key(producto.value,modalidad.value,duracion.value);return Number((prices[k]&&prices[k].precio)||0)}
-function genFolio(){let d=new Date(),y=String(d.getFullYear()).slice(2),m=String(d.getMonth()+1).padStart(2,'0'),da=String(d.getDate()).padStart(2,'0');let code=producto.value.includes('YouTube')?'YT':producto.value.includes('Spotify')?'SP':'RY';folio.value=`${code}-${y}${m}${da}-001`;updateFicha()}
-function servicio(){let p=producto.value,d=duracion.value,m=modalidad.value;if((p.includes('YouTube')||p.includes('Spotify'))&&m.includes('Correo'))return `${p} Individual ${d}`;if((p.includes('YouTube')||p.includes('Spotify'))&&m.includes('Invitación'))return `${p} Individual ${d}`;if((p.includes('YouTube')||p.includes('Spotify'))&&m.includes('Familiar'))return `${p} Familiar ${d}`;if(categoria.value!=='Streaming')return p;return `${p} ${m} ${d}`}
-function acceso(){let m=modalidad.value;if(m.includes('Correo'))return 'Correo nuevo';if(m.includes('Invitación'))return 'Invitación';if(m.includes('Familiar'))return 'Familiar';return m}
-function updateFicha(){ficha.textContent=`*📌 FICHA DE ENTREGA*
-
-📱 Servicio: ${servicio()}
-👥 Acceso asignado: ${acceso()}
-📅 Fecha de entrega: ${fmt(entrega.value)}
-📅 Fecha de vencimiento: ${fmt(vencimiento.value)}
-🛡️ Garantía: ${garantiaDias()} días
-
-*⚠️ POLÍTICAS Y CONDICIONES*
-
-✅ La cuenta se entrega funcionando correctamente.
-✅ El cliente cuenta con *1 hora a partir de la entrega* para verificar el acceso y confirmar que quedó funcionando; de lo contrario, se dará por recibida y aceptada y la garantía quedará anulada.
-🚫 No cambiar contraseña ni configuración de la cuenta.
-🚫 No compartir el acceso con más personas o dispositivos no autorizados.
-
-*🔄 En caso de caída, bloqueo o cierre de sesión, la reposición o solución puede tardar hasta 72 horas.*
-
-📌 Al recibir la cuenta, aceptas estas políticas y condiciones.`}
-function copyFicha(){navigator.clipboard.writeText(ficha.textContent);alert('Ficha copiada')}function sendWA(){estado.value='Entregado';window.open('https://wa.me/'+whatsapp.value+'?text='+encodeURIComponent(ficha.textContent),'_blank')}
-function file64(el){return new Promise(r=>{let f=el.files[0];if(!f)return r('');let rd=new FileReader();rd.onload=e=>r(e.target.result);rd.readAsDataURL(f)})}
-fotoPago.onchange=async()=>{let b=await file64(fotoPago);if(b){prevPago.src=b;prevPago.classList.remove('hidden')}};fotoGarantia.onchange=async()=>{let b=await file64(fotoGarantia);if(b){prevGarantia.src=b;prevGarantia.classList.remove('hidden')}}
-async function saveSale(){if(!fotoPago.files[0])return alert('Falta foto de pago');if(!fotoGarantia.files[0])return alert('Falta foto de garantía');if(!folio.value)genFolio();let c=Number(costo.value.replace(/\D/g,''))||0,pp=Number(precioPublico.value.replace(/\D/g,''))||0;let pedido={folio:folio.value,cliente:nombre.value,whatsapp:whatsapp.value,producto:producto.value,modalidad:modalidad.value,duracion:duracion.value,precioPublico:pp,costoProveedor:c,ganancia:pp-c,proveedorUsado:proveedor.options[proveedor.selectedIndex].text,estado:estado.value,fecha:entrega.value,vencimiento:vencimiento.value,diasGarantia:garantiaDias(),fichaEntrega:ficha.textContent,comprobantePago:await file64(fotoPago),fotoGarantia:await file64(fotoGarantia)};await api('clientes/'+whatsapp.value,'PATCH',{nombre:nombre.value,whatsapp:whatsapp.value,nivelConfianza:'nuevo'});await api('pedidos/'+folio.value,'PUT',pedido);await api('garantias/'+folio.value,'PUT',{folio:folio.value,whatsapp:whatsapp.value,estado:'Activa',diasGarantia:garantiaDias(),fotoGarantia:pedido.fotoGarantia});alert('Guardado');render()}
-async function savePrice(){let k=key(ppProducto.value,ppModalidad.value,ppDuracion.value);await api('precios/'+k,'PUT',{producto:ppProducto.value,modalidad:ppModalidad.value,duracion:ppDuracion.value,precio:Number(ppPrecio.value||0)});alert('Precio guardado');render();updateAll()}
-async function saveProvider(){let id=prNombre.value.toLowerCase().replace(/\s+/g,'_');await api('proveedores/'+id,'PUT',{id,nombre:prNombre.value,whatsapp:prWhats.value,queVende:prVende.value,producto:prProducto.value,costoBase:Number(prCosto.value||0),tiempoEntrega:prTiempo.value,horarioActivo:prHorario.value,metodoDisponibilidad:prMetodo.value});alert('Proveedor guardado');render();updateAll()}
-async function render(){let c=await api('clientes')||{},p=await api('pedidos')||{},pr=await api('proveedores')||{},prices=await api('precios')||{};kClientes.textContent=Object.keys(c).length;kPedidos.textContent=Object.keys(p).length;kGanancia.textContent='$'+Object.values(p).reduce((a,x)=>a+Number(x.ganancia||0),0);kHoy.textContent=Object.values(p).filter(x=>x.fecha===today()).length;dashList.innerHTML=Object.values(p).slice(-5).reverse().map(x=>`<div class=row><b>${x.folio}</b><br><small>${x.cliente} · ${x.producto} · Ganancia $${x.ganancia||0}</small></div>`).join('')||'<small>No hay movimientos.</small>';clientes.innerHTML=Object.values(c).map(x=>`<div class=row><b>${x.nombre}</b><br><small>${x.whatsapp}</small></div>`).join('')||'<small>Sin clientes.</small>';pedidos.innerHTML=Object.values(p).map(x=>`<div class=row><b>${x.folio}</b><br><small>${x.cliente} · ${x.producto} · Público $${x.precioPublico||0} · Costo $${x.costoProveedor||0}</small></div>`).join('')||'<small>Sin pedidos.</small>';providerList.innerHTML=Object.values(pr).map(x=>`<div class=row><b>${x.nombre}</b><br><small>${x.producto} · Costo base $${x.costoBase||0}</small></div>`).join('')||'<small>Sin proveedores.</small>';priceList.innerHTML=Object.values(prices).map(x=>`<div class=row><b>${x.producto}</b><br><small>${x.modalidad} · ${x.duracion} · Público $${x.precio}</small></div>`).join('')||'<small>Sin precios públicos.</small>'}
-function init(){fillProductSelects();entrega.value=new Date().toISOString().slice(0,10);loadProducts();genFolio();render()}
+function login(){if(pass.value!=='royal2026')return alert('Contraseña incorrecta');auth.classList.add('hidden');app.classList.remove('hidden');render()}
+async function importStock(){
+ const seed=await fetch('stock-seed.json').then(r=>r.json());
+ const proveedores={};
+ Object.values(seed.proveedores).forEach(p=>{
+   Object.entries(p.productos).forEach(([producto,mods])=>{
+     Object.entries(mods).forEach(([modalidad,durs])=>{
+       Object.entries(durs).forEach(([duracion,costo])=>{
+         const id=(p.nombre+'_'+producto+'_'+modalidad+'_'+duracion).toLowerCase().replace(/[^a-z0-9]+/g,'_');
+         proveedores[id]={id,nombre:p.nombre,producto,modalidad,duracion,costoBase:Number(costo)||0,queVende:producto,tiempoEntrega:'Variable',horarioActivo:'Variable',metodoDisponibilidad:'WhatsApp'};
+       });
+     });
+   });
+ });
+ const precios={};
+ Object.entries(seed.preciosPublicos).forEach(([k,v])=>precios[k.replaceAll('/','-').replaceAll('.','')]={key:k,precio:v});
+ await api('proveedores','PATCH',proveedores);
+ await api('precios','PATCH',precios);
+ alert('Stock base importado.');
+ render();
+}
+async function render(){
+ const seed=await fetch('stock-seed.json').then(r=>r.json());
+ list.innerHTML=Object.values(seed.proveedores).map(p=>'<div class=row><b>'+p.nombre+'</b><br><span class=mut>'+Object.keys(p.productos).join(', ')+'</span></div>').join('');
+}
 </script>
 </body></html>
