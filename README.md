@@ -1,46 +1,28 @@
-# Royal CRM + API V2
+# Royal CRM + API V3
 
-Archivos para GitHub Pages:
+Base nueva del CRM de LEGACY ROYAL STREAM.
 
-- `index.html`
-- `admin.html`
-- `api-schema.json`
-
-## Acceso
-
-Abrir:
-
-`/admin.html`
-
-Contraseña:
-
-`royal2026`
-
-## Base de datos
-
-Usa Firebase Realtime Database como API inicial:
-
-`https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/royal_crm_v1`
-
-## Módulos incluidos
-
+## Incluye
 - Dashboard
 - Nueva venta
 - Clientes
+- Catálogo Maestro
 - Proveedores
-- Productos
 - Pedidos
 - Garantías
-- Vencimientos
-- API
+- API Firebase
 
-## Notas importantes
+## API base
+https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/api
 
-- El bot de WhatsApp sigue apagado/desvinculado.
-- Esta versión es CRM interno.
-- Las fotos se comprimen y se guardan en Firebase como imagen base64 para demo.
-- Cuando el sistema crezca, conviene mover fotos a Firebase Storage o servidor propio.
+## Archivos a subir a GitHub Pages
+- index.html
+- admin.html
+- README.md
+- api-schema.json
 
+## Acceso admin
+/admin.html
 
-## V2
-- Tiempo de confirmación/garantía actualizado de 10 minutos a 1 hora.
+Contraseña:
+royal2026
