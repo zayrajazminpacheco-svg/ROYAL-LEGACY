@@ -1,4 +1,4 @@
-# Royal CRM + API V1
+# Royal CRM + API V2
 
 Archivos para GitHub Pages:
 
@@ -40,3 +40,7 @@ Usa Firebase Realtime Database como API inicial:
 - Esta versión es CRM interno.
 - Las fotos se comprimen y se guardan en Firebase como imagen base64 para demo.
 - Cuando el sistema crezca, conviene mover fotos a Firebase Storage o servidor propio.
+
+
+## V2
+- Tiempo de confirmación/garantía actualizado de 10 minutos a 1 hora.
