@@ -1,9 +1,5 @@
-# Royal CRM Catálogo V9
+# Royal CRM Catálogo V10
 
-Catálogo Maestro como centro del CRM.
+Catálogo editable, filtros, precios faltantes, editar/eliminar y nueva venta conectada al catálogo.
 
-Subir:
-- index.html
-- admin.html
-- README.md
-- catalogo-seed.json
+Subir index.html, admin.html, README.md y catalogo-seed.json.

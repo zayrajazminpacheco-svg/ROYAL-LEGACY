@@ -110,19 +110,5 @@
       "precioPublico": 0,
       "activo": true
     }
-  ],
-  "reglas": {
-    "garantia": "meses * 25",
-    "youtube_spotify_modalidades": [
-      "Individual Correo nuevo",
-      "Individual Invitación",
-      "Familiar"
-    ],
-    "categorias": [
-      "Streaming",
-      "Trámites",
-      "Pago servicios",
-      "Seguidores"
-    ]
-  }
+  ]
 }
