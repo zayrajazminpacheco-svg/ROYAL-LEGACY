@@ -1,0 +1,355 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  phone         String?
+  passwordHash  String
+  role          Role           @default(CLIENT)
+  status        UserStatus     @default(PENDING)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  auditLogs     AuditLog[]
+  clientProfile ClientProfile?
+  salesAsClient Sale[]         @relation("ClientSales")
+  sales         Sale[]         @relation("EmployeeSales")
+}
+
+model ClientProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  balance   Decimal  @default(0)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  active      Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id          String           @id @default(cuid())
+  categoryId  String
+  name        String
+  slug        String           @unique
+  description String?
+  imageUrl    String?
+  active      Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  category    Category         @relation(fields: [categoryId], references: [id])
+  variants    ProductVariant[]
+}
+
+model ProductVariant {
+  id             String          @id @default(cuid())
+  productId      String
+  accessType     AccessType
+  durationDays   Int
+  publicName     String
+  publicPrice    Decimal
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  inventoryItems InventoryItem[]
+  product        Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  offers         ProviderOffer[]
+  saleItems      SaleItem[]
+}
+
+model Provider {
+  id                String          @id @default(cuid())
+  name              String
+  websiteUrl        String?
+  balance           Decimal         @default(0)
+  status            ProviderStatus  @default(ACTIVE)
+  automationEnabled Boolean         @default(false)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  inventoryItems    InventoryItem[]
+  offers            ProviderOffer[]
+  panels            ProviderPanel[]
+  saleItems         SaleItem[]
+}
+
+model ProviderOffer {
+  id                 String             @id @default(cuid())
+  providerId         String
+  productVariantId   String
+  internalCost       Decimal
+  priority           Int                @default(0)
+  availabilityStatus AvailabilityStatus @default(UNKNOWN)
+  active             Boolean            @default(true)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  productVariant     ProductVariant     @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  provider           Provider           @relation(fields: [providerId], references: [id], onDelete: Cascade)
+}
+
+model Sale {
+  id               String     @id @default(cuid())
+  clientId         String
+  employeeId       String?
+  status           SaleStatus @default(PENDING)
+  subtotal         Decimal
+  total            Decimal
+  internalCost     Decimal    @default(0)
+  profit           Decimal    @default(0)
+  paymentReference String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  client           User       @relation("ClientSales", fields: [clientId], references: [id])
+  employee         User?      @relation("EmployeeSales", fields: [employeeId], references: [id])
+  items            SaleItem[]
+}
+
+model SaleItem {
+  id               String         @id @default(cuid())
+  saleId           String
+  productVariantId String
+  providerId       String?
+  quantity         Int
+  unitPrice        Decimal
+  internalCost     Decimal
+  expirationDate   DateTime?
+  warrantyEndDate  DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  inventoryItem    InventoryItem?
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+  provider         Provider?      @relation(fields: [providerId], references: [id])
+  sale             Sale           @relation(fields: [saleId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model ProviderPanel {
+  id             String          @id @default(cuid())
+  providerId     String
+  name           String
+  panelUrl       String
+  panelType      String?
+  instructions   String?
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  inventoryItems InventoryItem[]
+  provider       Provider        @relation(fields: [providerId], references: [id], onDelete: Cascade)
+}
+
+model InventoryItem {
+  id                        String           @id @default(cuid())
+  productVariantId          String
+  providerId                String?
+  providerPanelId           String?
+  saleItemId                String?          @unique
+  loginEmailEncrypted       String?
+  loginEmailMasked          String?
+  loginEmailHash            String?
+  passwordEncrypted         String?
+  passwordMode              PasswordMode     @default(STATIC)
+  profileNameEncrypted      String?
+  profilePinEncrypted       String?
+  externalLookupIdEncrypted String?
+  externalReference         String?
+  notes                     String?
+  status                    InventoryStatus  @default(AVAILABLE)
+  acquiredAt                DateTime         @default(now())
+  expirationDate            DateTime?
+  soldAt                    DateTime?
+  createdAt                 DateTime         @default(now())
+  updatedAt                 DateTime         @updatedAt
+  codeRequests              CodeRequest[]
+  aliases                   InventoryAlias[]
+  productVariant            ProductVariant   @relation(fields: [productVariantId], references: [id])
+  provider                  Provider?        @relation(fields: [providerId], references: [id])
+  providerPanel             ProviderPanel?   @relation(fields: [providerPanelId], references: [id])
+  saleItem                  SaleItem?        @relation(fields: [saleItemId], references: [id])
+}
+
+model MailDomain {
+  id               String       @id @default(cuid())
+  domain           String       @unique
+  providerName     String?
+  platformGroup    String?
+  catchAllEnabled  Boolean      @default(false)
+  rotationGroup    String?
+  rotationPriority Int          @default(0)
+  status           DomainStatus @default(ACTIVE)
+  verifiedAt       DateTime?
+  expiresAt        DateTime?
+  notes            String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  aliases          EmailAlias[]
+}
+
+model EmailAlias {
+  id                        String           @id @default(cuid())
+  domainId                  String
+  localPart                 String
+  fullAddress               String           @unique
+  destinationEmailEncrypted String?
+  destinationEmailMasked    String?
+  platformGroup             String?
+  status                    AliasStatus      @default(AVAILABLE)
+  assignedAt                DateTime?
+  createdAt                 DateTime         @default(now())
+  updatedAt                 DateTime         @updatedAt
+  domain                    MailDomain       @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  inboxMessages             InboxMessage[]
+  inventoryLinks            InventoryAlias[]
+
+  @@unique([domainId, localPart])
+}
+
+model InventoryAlias {
+  id              String        @id @default(cuid())
+  inventoryItemId String
+  emailAliasId    String
+  active          Boolean       @default(true)
+  assignedAt      DateTime      @default(now())
+  releasedAt      DateTime?
+  emailAlias      EmailAlias    @relation(fields: [emailAliasId], references: [id], onDelete: Cascade)
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
+
+  @@unique([inventoryItemId, emailAliasId])
+}
+
+model InboxMessage {
+  id                        String      @id @default(cuid())
+  emailAliasId              String?
+  externalMessageId         String?     @unique
+  sender                    String?
+  recipient                 String
+  subject                   String?
+  bodyPreview               String?
+  bodyEncrypted             String?
+  verificationCodeEncrypted String?
+  processed                 Boolean     @default(false)
+  receivedAt                DateTime    @default(now())
+  createdAt                 DateTime    @default(now())
+  emailAlias                EmailAlias? @relation(fields: [emailAliasId], references: [id])
+}
+
+model CodeRequest {
+  id              String            @id @default(cuid())
+  inventoryItemId String
+  requestedById   String?
+  codeEncrypted   String?
+  status          CodeRequestStatus @default(PENDING)
+  requestedAt     DateTime          @default(now())
+  receivedAt      DateTime?
+  deliveredAt     DateTime?
+  expiresAt       DateTime?
+  notes           String?
+  inventoryItem   InventoryItem     @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  EMPLOYEE
+  CLIENT
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  PENDING
+}
+
+enum ProviderStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
+  UNKNOWN
+}
+
+enum SaleStatus {
+  PENDING
+  PAID
+  PROCESSING
+  DELIVERED
+  EXPIRED
+  REFUNDED
+}
+
+enum AccessType {
+  PROFILE
+  FULL_ACCOUNT
+  INVITATION
+  NEW_EMAIL
+  FAMILY
+}
+
+enum InventoryStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+  BLOCKED
+  EXPIRED
+  MAINTENANCE
+}
+
+enum PasswordMode {
+  STATIC
+  RESET_IN_PANEL
+  INVITATION
+  NONE
+}
+
+enum DomainStatus {
+  ACTIVE
+  PAUSED
+  REJECTED_BY_PLATFORM
+  EXPIRED
+}
+
+enum AliasStatus {
+  AVAILABLE
+  ASSIGNED
+  PAUSED
+  BLOCKED
+}
+
+enum CodeRequestStatus {
+  PENDING
+  RECEIVED
+  DELIVERED
+  EXPIRED
+  FAILED
+}

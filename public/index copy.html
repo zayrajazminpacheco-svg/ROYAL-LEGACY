@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Royal Legacy - Prueba de autenticación</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top, #17213a 0%, #080b14 55%, #03050a 100%);
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+      width: min(100%, 1100px);
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      color: #f2d675;
+    }
+
+    .subtitle {
+      margin: 0 0 24px;
+      color: #b8c1d9;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      background: rgba(17, 25, 43, 0.92);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .card.full {
+      grid-column: 1 / -1;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #7cc9ff;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      color: #c9d2e6;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      background: #070d19;
+      color: #ffffff;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #f2d675;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f2d675, #79c7ff);
+      color: #07101f;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #1b2a47;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    button.danger {
+      background: #722936;
+      color: #ffffff;
+    }
+
+    pre {
+      min-height: 160px;
+      margin: 0;
+      padding: 16px;
+      overflow: auto;
+      border-radius: 14px;
+      background: #030711;
+      color: #93f7b0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .token-box {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #070d19;
+      color: #cbd5e8;
+      word-break: break-all;
+      font-size: 13px;
+    }
+
+    .status {
+      margin-top: 12px;
+      color: #f2d675;
+      font-weight: 700;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 14px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card.full {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <h1>Royal Legacy</h1>
+    <p class="subtitle">
+      Prueba local de registro, inicio de sesión y token JWT
+    </p>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Registrar cliente</h2>
+
+        <label for="registerName">Nombre</label>
+        <input
+          id="registerName"
+          type="text"
+          value="Cliente Prueba"
+        />
+
+        <label for="registerEmail">Correo</label>
+        <input
+          id="registerEmail"
+          type="email"
+          value="cliente@royallegacy.com"
+        />
+
+        <label for="registerPhone">Teléfono</label>
+        <input
+          id="registerPhone"
+          type="text"
+          value="8112345678"
+        />
+
+        <label for="registerPassword">Contraseña</label>
+        <input
+          id="registerPassword"
+          type="password"
+          value="12345678"
+        />
+
+        <button id="registerButton">
+          Registrar cliente
+        </button>
+      </article>
+
+      <article class="card">
+        <h2>Iniciar sesión</h2>
+
+        <label for="loginEmail">Correo</label>
+        <input
+          id="loginEmail"
+          type="email"
+          value="cliente@royallegacy.com"
+        />
+
+        <label for="loginPassword">Contraseña</label>
+        <input
+          id="loginPassword"
+          type="password"
+          value="12345678"
+        />
+
+        <button id="loginButton">
+          Iniciar sesión
+        </button>
+
+        <button
+          id="testTokenButton"
+          class="secondary"
+        >
+          Probar token en /api/auth/me
+        </button>
+
+        <button
+          id="clearTokenButton"
+          class="danger"
+        >
+          Borrar token guardado
+        </button>
+
+        <p class="status" id="tokenStatus">
+          Token no cargado
+        </p>
+
+        <div class="token-box" id="tokenBox">
+          Sin token
+        </div>
+      </article>
+
+      <article class="card full">
+        <h2>Respuesta de la API</h2>
+        <pre id="result">Esperando una acción...</pre>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const resultElement = document.getElementById('result');
+    const tokenBox = document.getElementById('tokenBox');
+    const tokenStatus = document.getElementById('tokenStatus');
+
+    function showResult(data) {
+      resultElement.textContent = JSON.stringify(data, null, 2);
+    }
+
+    function getToken() {
+      return localStorage.getItem('royalLegacyToken') || '';
+    }
+
+    function saveToken(token) {
+      localStorage.setItem('royalLegacyToken', token);
+      updateTokenDisplay();
+    }
+
+    function clearToken() {
+      localStorage.removeItem('royalLegacyToken');
+      updateTokenDisplay();
+    }
+
+    function updateTokenDisplay() {
+      const token = getToken();
+
+      if (token) {
+        tokenStatus.textContent = 'Token guardado correctamente';
+        tokenBox.textContent = token;
+      } else {
+        tokenStatus.textContent = 'Token no cargado';
+        tokenBox.textContent = 'Sin token';
+      }
+    }
+
+    async function apiRequest(url, options = {}) {
+      try {
+        showResult({
+          message: 'Procesando solicitud...'
+        });
+
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        showResult({
+          httpStatus: response.status,
+          ...data
+        });
+
+        return data;
+      } catch (error) {
+        showResult({
+          success: false,
+          message: error.message || 'Error de conexión'
+        });
+
+        return null;
+      }
+    }
+
+    document
+      .getElementById('registerButton')
+      .addEventListener('click', async () => {
+        const payload = {
+          name: document.getElementById('registerName').value,
+          email: document.getElementById('registerEmail').value,
+          phone: document.getElementById('registerPhone').value,
+          password: document.getElementById('registerPassword').value
+        };
+
+        const data = await apiRequest('/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (data?.token) {
+          saveToken(data.token);
+        }
+      });
+
+    document
+      .getElementById('loginButton')
+      .addEventListener('click', async () => {
+        const payload = {
+          email: document.getElementById('loginEmail').value,
+          password: document.getElementById('loginPassword').value
+        };
+
+        const data = await apiRequest('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (data?.token) {
+          saveToken(data.token);
+        }
+      });
+
+    document
+      .getElementById('testTokenButton')
+      .addEventListener('click', async () => {
+        const token = getToken();
+
+        if (!token) {
+          showResult({
+            success: false,
+            message: 'Primero debes registrar o iniciar sesión.'
+          });
+          return;
+        }
+
+        await apiRequest('/api/auth/me', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+      });
+
+    document
+      .getElementById('clearTokenButton')
+      .addEventListener('click', () => {
+        clearToken();
+
+        showResult({
+          success: true,
+          message: 'Token eliminado del navegador'
+        });
+      });
+
+    updateTokenDisplay();
+  </script>
+</body>
+</html>
