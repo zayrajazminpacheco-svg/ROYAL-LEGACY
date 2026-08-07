@@ -1,30 +1,1551 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Royal CRM V10</title><style>
-body{margin:0;background:#060914;color:white;font-family:system-ui}.card{background:#10192b;border:1px solid #ffffff18;border-radius:22px;padding:16px;margin:12px}button{border:0;border-radius:14px;padding:11px 13px;background:linear-gradient(135deg,#d8c276,#74b9ff);font-weight:900;color:#071022}button.ghost{background:#17233b;color:white;border:1px solid #ffffff18}button.red{background:#7b2430;color:white}input,select{width:100%;background:#071022;color:white;border:1px solid #ffffff18;border-radius:14px;padding:12px;font-size:16px}label{display:block;color:#9daabe;font-size:12px;font-weight:800;margin:9px 0 5px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.row{background:#10182a;border:1px solid #ffffff18;border-radius:16px;padding:12px;margin:8px 0}.row small{color:#9daabe}.hidden{display:none}.tabs{display:flex;gap:8px;overflow:auto;padding:12px;position:sticky;top:0;background:#060914}.tabs button{white-space:nowrap}.section{display:none}.section.active{display:block}.badge{padding:4px 8px;border-radius:999px;background:#20304d;font-size:12px}.warn{background:#49381f;color:#ffd27a}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.ficha{white-space:pre-wrap;background:#060b17;border:1px solid #ffffff18;border-radius:16px;padding:13px;font-family:monospace;font-size:12px}@media(max-width:650px){.grid{grid-template-columns:1fr}}
-</style></head><body>
-<div id=auth class=card><h1>Catálogo Maestro V10</h1><label>Contraseña</label><input id=pass type=password><button onclick=login() style="margin-top:10px">Entrar</button></div>
-<div id=app class=hidden><div class=tabs><button onclick="show('dash')">Dashboard</button><button onclick="show('catalogo')">Catálogo</button><button onclick="show('venta')">Nueva venta</button><button onclick="show('pedidos')">Pedidos</button></div>
-<section id=dash class="section active"><div class=card><h2>Resumen</h2><div id=resumen></div></div></section>
-<section id=catalogo class=section><div class=card><h2>Catálogo Maestro</h2><div class=grid><div><label>Categoría</label><select id=fCat onchange=renderCatalogo()><option value="">Todas</option><option>Streaming</option><option>Trámites</option><option>Pago servicios</option><option>Seguidores</option></select></div><div><label>Buscar</label><input id=fBuscar oninput=renderCatalogo()></div></div><div id=lista></div></div>
-<div class=card><h3 id=formTitle>Agregar registro</h3><input id=editId type=hidden><div class=grid><div><label>Categoría</label><select id=cCat><option>Streaming</option><option>Trámites</option><option>Pago servicios</option><option>Seguidores</option></select></div><div><label>Producto</label><input id=cProd></div><div><label>Modalidad</label><input id=cMod></div><div><label>Duración</label><input id=cDur></div><div><label>Proveedor</label><input id=cProv></div><div><label>Costo</label><input id=cCosto type=number></div><div><label>Precio público</label><input id=cPrecio type=number></div><div><label>Activo</label><select id=cAct><option value=true>Activo</option><option value=false>Inactivo</option></select></div></div><div class=actions><button onclick=guardar()>Guardar</button><button class=ghost onclick=limpiar()>Limpiar</button><button class=ghost onclick=importar()>Importar base</button></div></div></section>
-<section id=venta class=section><div class=card><h2>Nueva venta</h2><div class=grid><div><label>Cliente</label><input id=vCliente></div><div><label>WhatsApp</label><input id=vWhats></div><div><label>Producto</label><select id=vItem onchange=cargarVenta()></select></div><div><label>Folio</label><input id=vFolio readonly></div><div><label>Proveedor</label><input id=vProv readonly></div><div><label>Costo</label><input id=vCosto readonly></div><div><label>Precio público</label><input id=vPrecio readonly></div><div><label>Ganancia</label><input id=vGan readonly></div></div></div><div class=card><h2>Ficha</h2><div id=ficha class=ficha></div><button onclick=guardarVenta()>Guardar venta</button></div></section>
-<section id=pedidos class=section><div class=card><h2>Pedidos</h2><div id=pedidosList></div></div></section>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Royal CRM V10</title>
+
+<style>
+body{
+  margin:0;
+  background:#060914;
+  color:white;
+  font-family:system-ui
+}
+
+.card{
+  background:#10192b;
+  border:1px solid #ffffff18;
+  border-radius:22px;
+  padding:16px;
+  margin:12px
+}
+
+button{
+  border:0;
+  border-radius:14px;
+  padding:11px 13px;
+  background:linear-gradient(135deg,#d8c276,#74b9ff);
+  font-weight:900;
+  color:#071022;
+  cursor:pointer
+}
+
+button.ghost{
+  background:#17233b;
+  color:white;
+  border:1px solid #ffffff18
+}
+
+button.red{
+  background:#7b2430;
+  color:white
+}
+
+input,select{
+  width:100%;
+  box-sizing:border-box;
+  background:#071022;
+  color:white;
+  border:1px solid #ffffff18;
+  border-radius:14px;
+  padding:12px;
+  font-size:16px
+}
+
+label{
+  display:block;
+  color:#9daabe;
+  font-size:12px;
+  font-weight:800;
+  margin:9px 0 5px
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px
+}
+
+.row{
+  background:#10182a;
+  border:1px solid #ffffff18;
+  border-radius:16px;
+  padding:12px;
+  margin:8px 0
+}
+
+.row small{
+  color:#9daabe
+}
+
+.hidden{
+  display:none
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  overflow:auto;
+  padding:12px;
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#060914
+}
+
+.tabs button{
+  white-space:nowrap
+}
+
+.section{
+  display:none
+}
+
+.section.active{
+  display:block
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#20304d;
+  font-size:12px
+}
+
+.warn{
+  background:#49381f;
+  color:#ffd27a
+}
+
+.actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px
+}
+
+.ficha{
+  white-space:pre-wrap;
+  background:#060b17;
+  border:1px solid #ffffff18;
+  border-radius:16px;
+  padding:13px;
+  font-family:monospace;
+  font-size:12px
+}
+
+/* INBOX */
+
+.inbox-toolbar{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  align-items:end
+}
+
+.inbox-message{
+  background:#0b1323;
+  border:1px solid #ffffff18;
+  border-radius:18px;
+  padding:14px;
+  margin:10px 0
+}
+
+.inbox-message h3{
+  margin:5px 0
+}
+
+.inbox-from{
+  color:#9daabe;
+  font-size:13px;
+  word-break:break-all
+}
+
+.inbox-preview{
+  margin-top:10px;
+  white-space:pre-wrap;
+  word-break:break-word;
+  color:#dbe4f0
+}
+
+.code-box{
+  display:inline-block;
+  margin-top:10px;
+  padding:8px 12px;
+  border-radius:12px;
+  background:#162b22;
+  border:1px solid #52d88755;
+  color:#8cffb1;
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:2px
+}
+
+.inbox-date{
+  color:#74839a;
+  font-size:11px;
+  margin-top:8px
+}
+
+.status{
+  color:#9daabe;
+  margin-top:10px
+}
+
+@media(max-width:650px){
+  .grid{
+    grid-template-columns:1fr
+  }
+
+  .inbox-toolbar{
+    grid-template-columns:1fr
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="auth" class="card">
+
+<h1>Catálogo Maestro V10</h1>
+
+<label>Contraseña</label>
+<input id="pass" type="password">
+
+<button onclick="login()" style="margin-top:10px">
+Entrar
+</button>
+
 </div>
+
+
+<div id="app" class="hidden">
+
+<div class="tabs">
+
+<button onclick="show('dash')">
+Dashboard
+</button>
+
+<button onclick="show('catalogo')">
+Catálogo
+</button>
+
+<button onclick="show('venta')">
+Nueva venta
+</button>
+
+<button onclick="show('pedidos')">
+Pedidos
+</button>
+
+<button onclick="show('inbox')">
+📨 Inbox
+</button>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<section id="dash" class="section active">
+
+<div class="card">
+
+<h2>Resumen</h2>
+
+<div id="resumen"></div>
+
+</div>
+
+</section>
+
+
+<!-- CATALOGO -->
+
+<section id="catalogo" class="section">
+
+<div class="card">
+
+<h2>Catálogo Maestro</h2>
+
+<div class="grid">
+
+<div>
+
+<label>Categoría</label>
+
+<select id="fCat" onchange="renderCatalogo()">
+
+<option value="">Todas</option>
+<option>Streaming</option>
+<option>Trámites</option>
+<option>Pago servicios</option>
+<option>Seguidores</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Buscar</label>
+
+<input
+id="fBuscar"
+oninput="renderCatalogo()"
+>
+
+</div>
+
+</div>
+
+<div id="lista"></div>
+
+</div>
+
+
+<div class="card">
+
+<h3 id="formTitle">
+Agregar registro
+</h3>
+
+<input id="editId" type="hidden">
+
+<div class="grid">
+
+<div>
+<label>Categoría</label>
+
+<select id="cCat">
+
+<option>Streaming</option>
+<option>Trámites</option>
+<option>Pago servicios</option>
+<option>Seguidores</option>
+
+</select>
+</div>
+
+
+<div>
+<label>Producto</label>
+<input id="cProd">
+</div>
+
+
+<div>
+<label>Modalidad</label>
+<input id="cMod">
+</div>
+
+
+<div>
+<label>Duración</label>
+<input id="cDur">
+</div>
+
+
+<div>
+<label>Proveedor</label>
+<input id="cProv">
+</div>
+
+
+<div>
+<label>Costo</label>
+<input id="cCosto" type="number">
+</div>
+
+
+<div>
+<label>Precio público</label>
+<input id="cPrecio" type="number">
+</div>
+
+
+<div>
+
+<label>Activo</label>
+
+<select id="cAct">
+
+<option value="true">
+Activo
+</option>
+
+<option value="false">
+Inactivo
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button onclick="guardar()">
+Guardar
+</button>
+
+<button
+class="ghost"
+onclick="limpiar()">
+Limpiar
+</button>
+
+<button
+class="ghost"
+onclick="importar()">
+Importar base
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- NUEVA VENTA -->
+
+<section id="venta" class="section">
+
+<div class="card">
+
+<h2>Nueva venta</h2>
+
+<div class="grid">
+
+<div>
+<label>Cliente</label>
+<input id="vCliente">
+</div>
+
+<div>
+<label>WhatsApp</label>
+<input id="vWhats">
+</div>
+
+<div>
+
+<label>Producto</label>
+
+<select
+id="vItem"
+onchange="cargarVenta()">
+</select>
+
+</div>
+
+<div>
+<label>Folio</label>
+<input id="vFolio" readonly>
+</div>
+
+<div>
+<label>Proveedor</label>
+<input id="vProv" readonly>
+</div>
+
+<div>
+<label>Costo</label>
+<input id="vCosto" readonly>
+</div>
+
+<div>
+<label>Precio público</label>
+<input id="vPrecio" readonly>
+</div>
+
+<div>
+<label>Ganancia</label>
+<input id="vGan" readonly>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>Ficha</h2>
+
+<div id="ficha" class="ficha"></div>
+
+<button onclick="guardarVenta()">
+Guardar venta
+</button>
+
+</div>
+
+</section>
+
+
+<!-- PEDIDOS -->
+
+<section id="pedidos" class="section">
+
+<div class="card">
+
+<h2>Pedidos</h2>
+
+<div id="pedidosList"></div>
+
+</div>
+
+</section>
+
+
+<!-- INBOX -->
+
+<section id="inbox" class="section">
+
+<div class="card">
+
+<h2>📨 Bandeja de correos</h2>
+
+<div class="inbox-toolbar">
+
+<div>
+
+<label>
+Dirección de correo
+</label>
+
+<input
+id="inboxEmail"
+value="cliente001@royxxlex.com"
+placeholder="cliente001@royxxlex.com"
+>
+
+</div>
+
+<button onclick="loadInbox()">
+Actualizar bandeja
+</button>
+
+</div>
+
+<div
+id="inboxStatus"
+class="status">
+Ingresa un correo y pulsa Actualizar bandeja.
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div id="inboxList">
+
+Sin mensajes cargados.
+
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+
 <script>
-const DB='https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/api';let catalogo={},pedidos={};
-function login(){if(pass.value!=='royal2026')return alert('Contraseña incorrecta');auth.classList.add('hidden');app.classList.remove('hidden');init()}
-function show(id){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');render()}
-async function api(path,method='GET',body=null){let o={method,headers:{'Content-Type':'application/json'}};if(body!==null)o.body=JSON.stringify(body);let r=await fetch(DB+'/'+path+'.json',o);return r.json()}
-function meses(d){return Number(String(d||'').replace(/\D/g,''))||0}function garantia(d){return meses(d)*25}
-function makeId(x){return [x.categoria,x.producto,x.modalidad,x.duracion,x.proveedor].join('|').replace(/[^a-zA-Z0-9]+/g,'_').toLowerCase()}
-async function load(){catalogo=await api('catalogo')||{};pedidos=await api('pedidos')||{}}
-async function importar(){let s=await fetch('catalogo-seed.json').then(r=>r.json());let o={};s.items.forEach(x=>{x.id=makeId(x);x.garantiaDias=garantia(x.duracion)||x.garantiaDias;o[x.id]=x});await api('catalogo','PATCH',o);await load();render();alert('Base importada')}
-function render(){let vals=Object.values(catalogo);resumen.innerHTML=`Registros: ${vals.length}<br>Sin precio público: ${vals.filter(x=>!Number(x.precioPublico)).length}<br>Proveedores: ${new Set(vals.map(x=>x.proveedor)).size}<br>Pedidos: ${Object.keys(pedidos).length}`;renderCatalogo();vItem.innerHTML=vals.filter(x=>x.activo!==false).map(x=>`<option value="${x.id}">${x.producto} · ${x.modalidad} · ${x.duracion} · ${x.proveedor}</option>`).join('');pedidosList.innerHTML=Object.values(pedidos).map(x=>`<div class=row><b>${x.folio}</b><br><small>${x.cliente} · ${x.producto} · $${x.precioPublico}</small></div>`).join('')||'Sin pedidos';cargarVenta()}
-function renderCatalogo(){let q=(fBuscar.value||'').toLowerCase(),cat=fCat.value;lista.innerHTML=Object.values(catalogo).filter(x=>(!cat||x.categoria===cat)&&(!q||(`${x.producto} ${x.proveedor} ${x.modalidad}`).toLowerCase().includes(q))).map(x=>`<div class=row><b>${x.producto}</b> <span class=badge>${x.duracion}</span>${!Number(x.precioPublico)?' <span class="badge warn">Sin precio</span>':''}<br><small>${x.modalidad} · ${x.proveedor} · Costo $${x.costo} · Público $${x.precioPublico||0} · Garantía ${x.garantiaDias||0} días</small><div class=actions><button class=ghost onclick="editar('${x.id}')">Editar</button><button class=red onclick="eliminar('${x.id}')">Eliminar</button></div></div>`).join('')||'Sin resultados'}
-function limpiar(){editId.value='';formTitle.textContent='Agregar registro';cProd.value=cMod.value=cDur.value=cProv.value=cCosto.value=cPrecio.value=''}
-function editar(id){let x=catalogo[id];editId.value=id;formTitle.textContent='Editar registro';cCat.value=x.categoria;cProd.value=x.producto;cMod.value=x.modalidad;cDur.value=x.duracion;cProv.value=x.proveedor;cCosto.value=x.costo;cPrecio.value=x.precioPublico;cAct.value=String(x.activo!==false)}
-async function guardar(){let x={categoria:cCat.value,producto:cProd.value.trim(),modalidad:cMod.value.trim(),duracion:cDur.value.trim(),proveedor:cProv.value.trim(),costo:Number(cCosto.value||0),precioPublico:Number(cPrecio.value||0),activo:cAct.value==='true'};if(!x.producto||!x.modalidad||!x.proveedor)return alert('Faltan datos');x.garantiaDias=garantia(x.duracion);let id=editId.value||makeId(x);x.id=id;await api('catalogo/'+id,'PUT',x);await load();limpiar();render();alert('Guardado')}
-async function eliminar(id){if(!confirm('¿Eliminar?'))return;await api('catalogo/'+id,'DELETE');await load();render()}
-function cargarVenta(){let x=catalogo[vItem.value];if(!x)return;vFolio.value='RY-'+Date.now();vProv.value=x.proveedor;vCosto.value='$'+x.costo;vPrecio.value=x.precioPublico?('$'+x.precioPublico):'Sin precio';vGan.value=x.precioPublico?('$'+(x.precioPublico-x.costo)):'Sin datos';ficha.textContent=`Servicio: ${x.producto} ${x.modalidad} ${x.duracion}\nGarantía: ${x.garantiaDias||garantia(x.duracion)} días`}
-async function guardarVenta(){let x=catalogo[vItem.value];if(!x||!Number(x.precioPublico))return alert('Configura precio público');let p={folio:vFolio.value,cliente:vCliente.value,whatsapp:vWhats.value,...x,ganancia:x.precioPublico-x.costo};await api('pedidos/'+p.folio,'PUT',p);await load();render();alert('Venta guardada')}
-async function init(){await load();render()}
-</script></body></html>
+
+/* ===============================
+   CONFIGURACIÓN
+================================ */
+
+const DB =
+'https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/api';
+
+const ROYAL_API =
+'https://royal-legacy.onrender.com/api';
+
+let catalogo = {};
+let pedidos = {};
+
+
+/* ===============================
+   LOGIN
+================================ */
+
+function login(){
+
+  if(pass.value !== 'royal2026'){
+    return alert('Contraseña incorrecta');
+  }
+
+  auth.classList.add('hidden');
+  app.classList.remove('hidden');
+
+  init();
+}
+
+
+/* ===============================
+   NAVEGACIÓN
+================================ */
+
+function show(id){
+
+  document
+  .querySelectorAll('.section')
+  .forEach(x =>
+    x.classList.remove('active')
+  );
+
+  document
+  .getElementById(id)
+  .classList.add('active');
+
+  if(id === 'inbox'){
+    loadInbox();
+  }else{
+    render();
+  }
+
+}
+
+
+/* ===============================
+   FIREBASE API
+================================ */
+
+async function api(
+  path,
+  method='GET',
+  body=null
+){
+
+  let options = {
+
+    method,
+
+    headers:{
+      'Content-Type':'application/json'
+    }
+
+  };
+
+  if(body !== null){
+
+    options.body =
+    JSON.stringify(body);
+
+  }
+
+  const response =
+  await fetch(
+    DB + '/' + path + '.json',
+    options
+  );
+
+  return response.json();
+
+}
+
+
+/* ===============================
+   UTILIDADES
+================================ */
+
+function meses(d){
+
+  return Number(
+    String(d || '')
+    .replace(/\D/g,'')
+  ) || 0;
+
+}
+
+
+function garantia(d){
+
+  return meses(d) * 25;
+
+}
+
+
+function makeId(x){
+
+  return [
+
+    x.categoria,
+    x.producto,
+    x.modalidad,
+    x.duracion,
+    x.proveedor
+
+  ]
+  .join('|')
+  .replace(
+    /[^a-zA-Z0-9]+/g,
+    '_'
+  )
+  .toLowerCase();
+
+}
+
+
+/* ===============================
+   CARGAR DATOS
+================================ */
+
+async function load(){
+
+  catalogo =
+  await api('catalogo') || {};
+
+  pedidos =
+  await api('pedidos') || {};
+
+}
+
+
+/* ===============================
+   IMPORTAR CATALOGO
+================================ */
+
+async function importar(){
+
+  const seed =
+  await fetch(
+    'catalogo-seed.json'
+  )
+  .then(r => r.json());
+
+  let output = {};
+
+  seed.items.forEach(x => {
+
+    x.id = makeId(x);
+
+    x.garantiaDias =
+    garantia(x.duracion)
+    || x.garantiaDias;
+
+    output[x.id] = x;
+
+  });
+
+  await api(
+    'catalogo',
+    'PATCH',
+    output
+  );
+
+  await load();
+
+  render();
+
+  alert('Base importada');
+
+}
+
+
+/* ===============================
+   RENDER GENERAL
+================================ */
+
+function render(){
+
+  const vals =
+  Object.values(catalogo);
+
+  resumen.innerHTML = `
+
+    Registros:
+    ${vals.length}
+
+    <br>
+
+    Sin precio público:
+    ${
+      vals.filter(
+        x => !Number(x.precioPublico)
+      ).length
+    }
+
+    <br>
+
+    Proveedores:
+    ${
+      new Set(
+        vals.map(
+          x => x.proveedor
+        )
+      ).size
+    }
+
+    <br>
+
+    Pedidos:
+    ${
+      Object.keys(pedidos).length
+    }
+
+  `;
+
+
+  renderCatalogo();
+
+
+  vItem.innerHTML =
+
+  vals
+
+  .filter(
+    x => x.activo !== false
+  )
+
+  .map(x => `
+
+    <option value="${x.id}">
+
+      ${x.producto}
+      ·
+      ${x.modalidad}
+      ·
+      ${x.duracion}
+      ·
+      ${x.proveedor}
+
+    </option>
+
+  `)
+
+  .join('');
+
+
+  pedidosList.innerHTML =
+
+  Object.values(pedidos)
+
+  .map(x => `
+
+    <div class="row">
+
+      <b>
+        ${escapeHtml(x.folio)}
+      </b>
+
+      <br>
+
+      <small>
+
+        ${escapeHtml(x.cliente)}
+        ·
+        ${escapeHtml(x.producto)}
+        ·
+        $${Number(x.precioPublico || 0)}
+
+      </small>
+
+    </div>
+
+  `)
+
+  .join('')
+
+  || 'Sin pedidos';
+
+
+  cargarVenta();
+
+}
+
+
+/* ===============================
+   CATALOGO
+================================ */
+
+function renderCatalogo(){
+
+  const q =
+  (fBuscar.value || '')
+  .toLowerCase();
+
+  const cat =
+  fCat.value;
+
+
+  lista.innerHTML =
+
+  Object.values(catalogo)
+
+  .filter(x =>
+
+    (!cat || x.categoria === cat)
+
+    &&
+
+    (
+      !q ||
+
+      (
+        `${x.producto}
+         ${x.proveedor}
+         ${x.modalidad}`
+      )
+      .toLowerCase()
+      .includes(q)
+    )
+
+  )
+
+  .map(x => `
+
+    <div class="row">
+
+      <b>
+        ${escapeHtml(x.producto)}
+      </b>
+
+      <span class="badge">
+        ${escapeHtml(x.duracion)}
+      </span>
+
+      ${
+        !Number(x.precioPublico)
+        ?
+        '<span class="badge warn">Sin precio</span>'
+        :
+        ''
+      }
+
+      <br>
+
+      <small>
+
+        ${escapeHtml(x.modalidad)}
+        ·
+        ${escapeHtml(x.proveedor)}
+        ·
+        Costo $${Number(x.costo || 0)}
+        ·
+        Público $${Number(x.precioPublico || 0)}
+        ·
+        Garantía ${Number(x.garantiaDias || 0)} días
+
+      </small>
+
+
+      <div class="actions">
+
+        <button
+        class="ghost"
+        onclick="editar('${x.id}')">
+
+        Editar
+
+        </button>
+
+
+        <button
+        class="red"
+        onclick="eliminar('${x.id}')">
+
+        Eliminar
+
+        </button>
+
+      </div>
+
+    </div>
+
+  `)
+
+  .join('')
+
+  || 'Sin resultados';
+
+}
+
+
+/* ===============================
+   FORMULARIO CATALOGO
+================================ */
+
+function limpiar(){
+
+  editId.value = '';
+
+  formTitle.textContent =
+  'Agregar registro';
+
+  cProd.value = '';
+  cMod.value = '';
+  cDur.value = '';
+  cProv.value = '';
+  cCosto.value = '';
+  cPrecio.value = '';
+
+}
+
+
+function editar(id){
+
+  const x =
+  catalogo[id];
+
+  editId.value = id;
+
+  formTitle.textContent =
+  'Editar registro';
+
+  cCat.value =
+  x.categoria;
+
+  cProd.value =
+  x.producto;
+
+  cMod.value =
+  x.modalidad;
+
+  cDur.value =
+  x.duracion;
+
+  cProv.value =
+  x.proveedor;
+
+  cCosto.value =
+  x.costo;
+
+  cPrecio.value =
+  x.precioPublico;
+
+  cAct.value =
+  String(
+    x.activo !== false
+  );
+
+}
+
+
+async function guardar(){
+
+  const x = {
+
+    categoria:
+    cCat.value,
+
+    producto:
+    cProd.value.trim(),
+
+    modalidad:
+    cMod.value.trim(),
+
+    duracion:
+    cDur.value.trim(),
+
+    proveedor:
+    cProv.value.trim(),
+
+    costo:
+    Number(cCosto.value || 0),
+
+    precioPublico:
+    Number(cPrecio.value || 0),
+
+    activo:
+    cAct.value === 'true'
+
+  };
+
+
+  if(
+    !x.producto ||
+    !x.modalidad ||
+    !x.proveedor
+  ){
+
+    return alert(
+      'Faltan datos'
+    );
+
+  }
+
+
+  x.garantiaDias =
+  garantia(x.duracion);
+
+
+  const id =
+  editId.value
+  || makeId(x);
+
+
+  x.id = id;
+
+
+  await api(
+    'catalogo/' + id,
+    'PUT',
+    x
+  );
+
+
+  await load();
+
+  limpiar();
+
+  render();
+
+  alert('Guardado');
+
+}
+
+
+async function eliminar(id){
+
+  if(
+    !confirm('¿Eliminar?')
+  ){
+    return;
+  }
+
+
+  await api(
+    'catalogo/' + id,
+    'DELETE'
+  );
+
+
+  await load();
+
+  render();
+
+}
+
+
+/* ===============================
+   VENTAS
+================================ */
+
+function cargarVenta(){
+
+  const x =
+  catalogo[
+    vItem.value
+  ];
+
+  if(!x){
+    return;
+  }
+
+
+  vFolio.value =
+  'RY-' + Date.now();
+
+
+  vProv.value =
+  x.proveedor;
+
+
+  vCosto.value =
+  '$' + x.costo;
+
+
+  vPrecio.value =
+  x.precioPublico
+  ?
+  '$' + x.precioPublico
+  :
+  'Sin precio';
+
+
+  vGan.value =
+  x.precioPublico
+  ?
+  '$' +
+  (
+    x.precioPublico -
+    x.costo
+  )
+  :
+  'Sin datos';
+
+
+  ficha.textContent =
+
+  `Servicio: ${x.producto} ${x.modalidad} ${x.duracion}
+
+Garantía: ${
+  x.garantiaDias ||
+  garantia(x.duracion)
+} días`;
+
+}
+
+
+async function guardarVenta(){
+
+  const x =
+  catalogo[
+    vItem.value
+  ];
+
+
+  if(
+    !x ||
+    !Number(x.precioPublico)
+  ){
+
+    return alert(
+      'Configura precio público'
+    );
+
+  }
+
+
+  const p = {
+
+    folio:
+    vFolio.value,
+
+    cliente:
+    vCliente.value,
+
+    whatsapp:
+    vWhats.value,
+
+    ...x,
+
+    ganancia:
+    x.precioPublico -
+    x.costo
+
+  };
+
+
+  await api(
+    'pedidos/' + p.folio,
+    'PUT',
+    p
+  );
+
+
+  await load();
+
+  render();
+
+  alert('Venta guardada');
+
+}
+
+
+/* ===============================
+   INBOX ROYAL LEGACY
+================================ */
+
+async function loadInbox(){
+
+  const email =
+  String(
+    inboxEmail.value || ''
+  )
+  .trim()
+  .toLowerCase();
+
+
+  if(!email){
+
+    inboxStatus.textContent =
+    'Escribe una dirección de correo.';
+
+    return;
+
+  }
+
+
+  inboxStatus.textContent =
+  'Cargando correos...';
+
+
+  inboxList.innerHTML =
+  'Cargando...';
+
+
+  try{
+
+    const url =
+    ROYAL_API +
+    '/inbox?email=' +
+    encodeURIComponent(email);
+
+
+    const response =
+    await fetch(url);
+
+
+    const result =
+    await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        result.message ||
+        'Error consultando inbox'
+      );
+
+    }
+
+
+    const messages =
+    Array.isArray(result.data)
+    ?
+    result.data
+    :
+    [];
+
+
+    inboxStatus.textContent =
+    `${messages.length} mensaje(s) encontrados para ${email}`;
+
+
+    if(!messages.length){
+
+      inboxList.innerHTML =
+      'No hay mensajes para este correo.';
+
+      return;
+
+    }
+
+
+    inboxList.innerHTML =
+
+    messages.map(message => {
+
+      const sender =
+      message.sender ||
+      'Remitente desconocido';
+
+
+      const subject =
+      message.subject ||
+      '(Sin asunto)';
+
+
+      const preview =
+      message.bodyPreview ||
+      'Sin contenido';
+
+
+      const code =
+      message.verificationCodeEncrypted ||
+      '';
+
+
+      const date =
+      message.receivedAt
+      ?
+      new Date(
+        message.receivedAt
+      ).toLocaleString('es-MX')
+      :
+      '';
+
+
+      return `
+
+        <div class="inbox-message">
+
+          <div class="inbox-from">
+
+            De:
+            ${escapeHtml(sender)}
+
+          </div>
+
+          <h3>
+
+            ${escapeHtml(subject)}
+
+          </h3>
+
+          ${
+            code
+            ?
+            `
+            <div class="code-box">
+              ${escapeHtml(code)}
+            </div>
+
+            <div class="actions">
+
+              <button
+              class="ghost"
+              onclick="copiarTexto('${escapeJs(code)}')">
+
+              Copiar código
+
+              </button>
+
+            </div>
+            `
+            :
+            ''
+          }
+
+          <div class="inbox-preview">
+
+            ${escapeHtml(preview)}
+
+          </div>
+
+          <div class="inbox-date">
+
+            ${escapeHtml(date)}
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join('');
+
+
+  }catch(error){
+
+    console.error(
+      'Error inbox:',
+      error
+    );
+
+
+    inboxStatus.textContent =
+    'Error cargando la bandeja.';
+
+
+    inboxList.innerHTML =
+    `
+    <div class="row">
+      ${escapeHtml(error.message)}
+    </div>
+    `;
+
+  }
+
+}
+
+
+/* ===============================
+   SEGURIDAD HTML
+================================ */
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ''
+  )
+
+  .replaceAll(
+    '&',
+    '&amp;'
+  )
+
+  .replaceAll(
+    '<',
+    '&lt;'
+  )
+
+  .replaceAll(
+    '>',
+    '&gt;'
+  )
+
+  .replaceAll(
+    '"',
+    '&quot;'
+  )
+
+  .replaceAll(
+    "'",
+    '&#039;'
+  );
+
+}
+
+
+function escapeJs(value){
+
+  return String(
+    value ?? ''
+  )
+
+  .replaceAll(
+    '\\',
+    '\\\\'
+  )
+
+  .replaceAll(
+    "'",
+    "\\'"
+  )
+
+  .replaceAll(
+    '\n',
+    ' '
+  )
+
+  .replaceAll(
+    '\r',
+    ' '
+  );
+
+}
+
+
+async function copiarTexto(texto){
+
+  try{
+
+    await navigator
+    .clipboard
+    .writeText(texto);
+
+    alert(
+      'Código copiado'
+    );
+
+  }catch{
+
+    alert(
+      'No se pudo copiar'
+    );
+
+  }
+
+}
+
+
+/* ===============================
+   INICIO
+================================ */
+
+async function init(){
+
+  await load();
+
+  render();
+
+}
+
+</script>
+
+</body>
+</html>
