@@ -77,13 +77,8 @@ async function receiveEmail(req, res, next) {
         recipient,
         subject: subject || null,
         bodyPreview: preview || null,
-
-        // Temporalmente se guarda así.
-        // Después conectaremos cifrado real.
         bodyEncrypted: content || null,
-
         verificationCodeEncrypted: code || null,
-
         processed: Boolean(code || link),
         receivedAt: new Date()
       }
@@ -100,6 +95,7 @@ async function receiveEmail(req, res, next) {
         link
       }
     });
+
   } catch (error) {
     next(error);
   }
