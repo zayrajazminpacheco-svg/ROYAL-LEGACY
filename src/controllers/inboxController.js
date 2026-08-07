@@ -8,9 +8,7 @@ function extractCode(text = '') {
 
   for (const pattern of patterns) {
     const match = text.match(pattern);
-    if (match) {
-      return match[0];
-    }
+    if (match) return match[0];
   }
 
   return null;
@@ -21,6 +19,7 @@ function extractLink(text = '') {
   return match ? match[0] : null;
 }
 
+// RECIBIR CORREO DESDE CLOUDFLARE
 async function receiveEmail(req, res, next) {
   try {
     const {
@@ -39,9 +38,7 @@ async function receiveEmail(req, res, next) {
       });
     }
 
-    const recipient = String(to)
-      .trim()
-      .toLowerCase();
+    const recipient = String(to).trim().toLowerCase();
 
     const alias = await prisma.emailAlias.findUnique({
       where: {
@@ -65,9 +62,7 @@ async function receiveEmail(req, res, next) {
     const code = extractCode(content);
     const link = extractLink(content);
 
-    const preview = String(
-      text || subject || ''
-    ).slice(0, 500);
+    const preview = String(text || subject || '').slice(0, 500);
 
     const message = await prisma.inboxMessage.create({
       data: {
@@ -95,12 +90,60 @@ async function receiveEmail(req, res, next) {
         link
       }
     });
+  } catch (error) {
+    next(error);
+  }
+}
 
+// LISTAR CORREOS DE UN ALIAS
+async function getInbox(req, res, next) {
+  try {
+    const email = String(req.query.email || '')
+      .trim()
+      .toLowerCase();
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
+
+    const alias = await prisma.emailAlias.findUnique({
+      where: {
+        fullAddress: email
+      }
+    });
+
+    if (!alias) {
+      return res.status(404).json({
+        success: false,
+        message: 'Email alias not found'
+      });
+    }
+
+    const messages = await prisma.inboxMessage.findMany({
+      where: {
+        emailAliasId: alias.id
+      },
+      orderBy: {
+        receivedAt: 'desc'
+      },
+      take: 100
+    });
+
+    return res.json({
+      success: true,
+      email,
+      count: messages.length,
+      data: messages
+    });
   } catch (error) {
     next(error);
   }
 }
 
 module.exports = {
-  receiveEmail
+  receiveEmail,
+  getInbox
 };

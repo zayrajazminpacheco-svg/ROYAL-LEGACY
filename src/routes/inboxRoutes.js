@@ -24,10 +24,17 @@ function verifyInboxSecret(req, res, next) {
   next();
 }
 
+// Recibir correo desde Cloudflare
 router.post(
   '/',
   verifyInboxSecret,
   inboxController.receiveEmail
+);
+
+// Consultar bandeja por dirección
+router.get(
+  '/',
+  inboxController.getInbox
 );
 
 module.exports = router;
