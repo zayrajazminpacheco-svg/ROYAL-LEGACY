@@ -7,6 +7,7 @@ const adminRoutes = require('./adminRoutes');
 const catalogRoutes = require('./catalogRoutes');
 const mailRoutes = require('./mailRoutes');
 const codeRoutes = require('./codeRoutes');
+const inboxRoutes = require('./inboxRoutes');
 
 const router = express.Router();
 
@@ -27,5 +28,8 @@ router.use('/mail', mailRoutes);
 
 // Panel de códigos
 router.use('/codes', codeRoutes);
+
+// Recepción de correos desde Cloudflare
+router.use('/inbox', inboxRoutes);
 
 module.exports = router;
