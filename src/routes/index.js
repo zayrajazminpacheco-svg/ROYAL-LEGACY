@@ -8,28 +8,32 @@ const catalogRoutes = require('./catalogRoutes');
 const mailRoutes = require('./mailRoutes');
 const codeRoutes = require('./codeRoutes');
 const inboxRoutes = require('./inboxRoutes');
+const salesRoutes = require('./salesRoutes');
 
 const router = express.Router();
 
-// Health check
+// Health
 router.get('/health', getHealth);
 
 // Autenticación
 router.use('/auth', authRoutes);
 
-// Catálogo público
+// Catálogo
 router.use('/', catalogRoutes);
 
-// Panel administrativo
+// Administración
 router.use('/admin', adminRoutes);
 
-// Generador de correos
+// Correos
 router.use('/mail', mailRoutes);
 
-// Panel de códigos
+// Códigos
 router.use('/codes', codeRoutes);
 
-// Recepción de correos desde Cloudflare
+// Inbox
 router.use('/inbox', inboxRoutes);
+
+// Ventas
+router.use('/sales', salesRoutes);
 
 module.exports = router;
