@@ -1,1549 +1,2256 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Royal CRM V10</title>
+  <title>Royal Legacy | Administración</title>
 
-<style>
-body{
-  margin:0;
-  background:#060914;
-  color:white;
-  font-family:system-ui
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-.card{
-  background:#10192b;
-  border:1px solid #ffffff18;
-  border-radius:22px;
-  padding:16px;
-  margin:12px
-}
+    :root {
+      --bg: #050812;
+      --panel: #0d1526;
+      --panel2: #111d33;
+      --border: rgba(255,255,255,.10);
+      --text: #ffffff;
+      --muted: #9eabc2;
+      --gold: #f5d66f;
+      --blue: #75c9ff;
+      --green: #74eca5;
+      --red: #ff7080;
+      --orange: #ffbd69;
+    }
 
-button{
-  border:0;
-  border-radius:14px;
-  padding:11px 13px;
-  background:linear-gradient(135deg,#d8c276,#74b9ff);
-  font-weight:900;
-  color:#071022;
-  cursor:pointer
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, #17284c 0%, transparent 35%),
+        radial-gradient(circle at top right, #301a48 0%, transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-button.ghost{
-  background:#17233b;
-  color:white;
-  border:1px solid #ffffff18
-}
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
 
-button.red{
-  background:#7b2430;
-  color:white
-}
+    button {
+      cursor: pointer;
+    }
 
-input,select{
-  width:100%;
-  box-sizing:border-box;
-  background:#071022;
-  color:white;
-  border:1px solid #ffffff18;
-  border-radius:14px;
-  padding:12px;
-  font-size:16px
-}
+    .hidden {
+      display: none !important;
+    }
 
-label{
-  display:block;
-  color:#9daabe;
-  font-size:12px;
-  font-weight:800;
-  margin:9px 0 5px
-}
+    .login-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px
-}
+    .login-card {
+      width: min(440px, 100%);
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: rgba(13, 21, 38, .96);
+    }
 
-.row{
-  background:#10182a;
-  border:1px solid #ffffff18;
-  border-radius:16px;
-  padding:12px;
-  margin:8px 0
-}
+    .brand {
+      font-size: 30px;
+      font-weight: 900;
+      margin-bottom: 5px;
+      color: var(--gold);
+    }
 
-.row small{
-  color:#9daabe
-}
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
 
-.hidden{
-  display:none
-}
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
 
-.tabs{
-  display:flex;
-  gap:8px;
-  overflow:auto;
-  padding:12px;
-  position:sticky;
-  top:0;
-  z-index:10;
-  background:#060914
-}
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      outline: none;
+      background: #070d19;
+      color: white;
+    }
 
-.tabs button{
-  white-space:nowrap
-}
+    .primary {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 15px;
+      margin-top: 16px;
+      font-weight: 900;
+      color: #07101d;
+      background: linear-gradient(135deg, var(--gold), var(--blue));
+    }
 
-.section{
-  display:none
-}
+    .ghost {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      background: #17233c;
+      color: white;
+      font-weight: 800;
+    }
 
-.section.active{
-  display:block
-}
+    .danger {
+      border: 0;
+      border-radius: 10px;
+      padding: 9px 12px;
+      background: #722b3b;
+      color: white;
+      font-weight: 800;
+    }
 
-.badge{
-  display:inline-block;
-  padding:4px 8px;
-  border-radius:999px;
-  background:#20304d;
-  font-size:12px
-}
+    .success-btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 9px 12px;
+      background: #176441;
+      color: white;
+      font-weight: 800;
+    }
 
-.warn{
-  background:#49381f;
-  color:#ffd27a
-}
+    .app {
+      width: min(1500px, 100%);
+      margin: 0 auto;
+      padding: 18px;
+    }
 
-.actions{
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
-  margin-top:8px
-}
+    .topbar {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(13,21,38,.9);
+    }
 
-.ficha{
-  white-space:pre-wrap;
-  background:#060b17;
-  border:1px solid #ffffff18;
-  border-radius:16px;
-  padding:13px;
-  font-family:monospace;
-  font-size:12px
-}
+    .topbar-left strong {
+      display: block;
+      color: var(--gold);
+      font-size: 22px;
+    }
 
-/* INBOX */
+    .topbar-left span {
+      font-size: 12px;
+      color: var(--muted);
+    }
 
-.inbox-toolbar{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:8px;
-  align-items:end
-}
+    .top-actions,
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-.inbox-message{
-  background:#0b1323;
-  border:1px solid #ffffff18;
-  border-radius:18px;
-  padding:14px;
-  margin:10px 0
-}
+    .tabs {
+      display: flex;
+      gap: 9px;
+      margin-bottom: 18px;
+      overflow-x: auto;
+    }
 
-.inbox-message h3{
-  margin:5px 0
-}
+    .tab {
+      white-space: nowrap;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 15px;
+      background: #111b30;
+      color: var(--muted);
+      font-weight: 900;
+    }
 
-.inbox-from{
-  color:#9daabe;
-  font-size:13px;
-  word-break:break-all
-}
+    .tab.active {
+      color: #07101d;
+      background: linear-gradient(135deg, var(--gold), var(--blue));
+    }
 
-.inbox-preview{
-  margin-top:10px;
-  white-space:pre-wrap;
-  word-break:break-word;
-  color:#dbe4f0
-}
+    .section {
+      display: none;
+    }
 
-.code-box{
-  display:inline-block;
-  margin-top:10px;
-  padding:8px 12px;
-  border-radius:12px;
-  background:#162b22;
-  border:1px solid #52d88755;
-  color:#8cffb1;
-  font-size:18px;
-  font-weight:900;
-  letter-spacing:2px
-}
+    .section.active {
+      display: block;
+    }
 
-.inbox-date{
-  color:#74839a;
-  font-size:11px;
-  margin-top:8px
-}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 16px;
+    }
 
-.status{
-  color:#9daabe;
-  margin-top:10px
-}
+    .card {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(13,21,38,.94);
+    }
 
-@media(max-width:650px){
-  .grid{
-    grid-template-columns:1fr
-  }
+    .card h2 {
+      margin-top: 0;
+      color: var(--blue);
+    }
 
-  .inbox-toolbar{
-    grid-template-columns:1fr
-  }
-}
-</style>
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .row {
+      padding: 13px;
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #0a1120;
+    }
+
+    .row-title {
+      font-weight: 900;
+      word-break: break-word;
+    }
+
+    .row-meta {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      margin-left: 6px;
+      border-radius: 999px;
+      background: #1c2a45;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .code-value {
+      margin-top: 8px;
+      font-family: monospace;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--gold);
+    }
+
+    .notice {
+      min-height: 45px;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #070d19;
+      color: var(--muted);
+      white-space: pre-wrap;
+    }
+
+    .error {
+      color: var(--red);
+    }
+
+    .ok {
+      color: var(--green);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4,minmax(0,1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      padding: 17px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--panel);
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 26px;
+      color: var(--gold);
+    }
+
+    @media(max-width:850px) {
+      .grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div id="auth" class="card">
+<section id="loginScreen" class="login-screen">
+  <div class="login-card">
 
-<h1>Catálogo Maestro V10</h1>
+    <div class="brand">
+      Royal Legacy
+    </div>
 
-<label>Contraseña</label>
-<input id="pass" type="password">
+    <div class="subtitle">
+      Panel administrativo
+    </div>
 
-<button onclick="login()" style="margin-top:10px">
-Entrar
-</button>
+    <label>Correo de administrador</label>
 
-</div>
+    <input
+      id="adminEmail"
+      type="email"
+      placeholder="admin@royallegacy.com"
+    >
 
+    <label>Contraseña</label>
 
-<div id="app" class="hidden">
+    <input
+      id="adminPassword"
+      type="password"
+      placeholder="Contraseña"
+    >
 
-<div class="tabs">
+    <button
+      class="primary"
+      onclick="adminLogin()"
+    >
+      Entrar al panel
+    </button>
 
-<button onclick="show('dash')">
-Dashboard
-</button>
+    <div
+      id="loginMessage"
+      class="notice"
+    >
+      Inicia sesión con una cuenta ADMIN o SUPER_ADMIN.
+    </div>
 
-<button onclick="show('catalogo')">
-Catálogo
-</button>
-
-<button onclick="show('venta')">
-Nueva venta
-</button>
-
-<button onclick="show('pedidos')">
-Pedidos
-</button>
-
-<button onclick="show('inbox')">
-📨 Inbox
-</button>
-
-</div>
-
-
-<!-- DASHBOARD -->
-
-<section id="dash" class="section active">
-
-<div class="card">
-
-<h2>Resumen</h2>
-
-<div id="resumen"></div>
-
-</div>
-
+  </div>
 </section>
 
 
-<!-- CATALOGO -->
+<main id="app" class="app hidden">
 
-<section id="catalogo" class="section">
+  <header class="topbar">
 
-<div class="card">
+    <div class="topbar-left">
 
-<h2>Catálogo Maestro</h2>
+      <strong>
+        Royal Legacy
+      </strong>
 
-<div class="grid">
-
-<div>
-
-<label>Categoría</label>
-
-<select id="fCat" onchange="renderCatalogo()">
-
-<option value="">Todas</option>
-<option>Streaming</option>
-<option>Trámites</option>
-<option>Pago servicios</option>
-<option>Seguidores</option>
-
-</select>
-
-</div>
-
-<div>
-
-<label>Buscar</label>
-
-<input
-id="fBuscar"
-oninput="renderCatalogo()"
->
-
-</div>
-
-</div>
-
-<div id="lista"></div>
-
-</div>
-
-
-<div class="card">
-
-<h3 id="formTitle">
-Agregar registro
-</h3>
-
-<input id="editId" type="hidden">
-
-<div class="grid">
-
-<div>
-<label>Categoría</label>
-
-<select id="cCat">
-
-<option>Streaming</option>
-<option>Trámites</option>
-<option>Pago servicios</option>
-<option>Seguidores</option>
-
-</select>
-</div>
-
-
-<div>
-<label>Producto</label>
-<input id="cProd">
-</div>
-
-
-<div>
-<label>Modalidad</label>
-<input id="cMod">
-</div>
-
-
-<div>
-<label>Duración</label>
-<input id="cDur">
-</div>
-
-
-<div>
-<label>Proveedor</label>
-<input id="cProv">
-</div>
-
-
-<div>
-<label>Costo</label>
-<input id="cCosto" type="number">
-</div>
-
-
-<div>
-<label>Precio público</label>
-<input id="cPrecio" type="number">
-</div>
-
-
-<div>
-
-<label>Activo</label>
-
-<select id="cAct">
-
-<option value="true">
-Activo
-</option>
-
-<option value="false">
-Inactivo
-</option>
-
-</select>
-
-</div>
-
-</div>
-
-
-<div class="actions">
-
-<button onclick="guardar()">
-Guardar
-</button>
-
-<button
-class="ghost"
-onclick="limpiar()">
-Limpiar
-</button>
-
-<button
-class="ghost"
-onclick="importar()">
-Importar base
-</button>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- NUEVA VENTA -->
-
-<section id="venta" class="section">
-
-<div class="card">
-
-<h2>Nueva venta</h2>
-
-<div class="grid">
-
-<div>
-<label>Cliente</label>
-<input id="vCliente">
-</div>
-
-<div>
-<label>WhatsApp</label>
-<input id="vWhats">
-</div>
-
-<div>
-
-<label>Producto</label>
-
-<select
-id="vItem"
-onchange="cargarVenta()">
-</select>
-
-</div>
-
-<div>
-<label>Folio</label>
-<input id="vFolio" readonly>
-</div>
-
-<div>
-<label>Proveedor</label>
-<input id="vProv" readonly>
-</div>
-
-<div>
-<label>Costo</label>
-<input id="vCosto" readonly>
-</div>
-
-<div>
-<label>Precio público</label>
-<input id="vPrecio" readonly>
-</div>
-
-<div>
-<label>Ganancia</label>
-<input id="vGan" readonly>
-</div>
-
-</div>
-
-</div>
-
-
-<div class="card">
-
-<h2>Ficha</h2>
-
-<div id="ficha" class="ficha"></div>
-
-<button onclick="guardarVenta()">
-Guardar venta
-</button>
-
-</div>
-
-</section>
-
-
-<!-- PEDIDOS -->
-
-<section id="pedidos" class="section">
-
-<div class="card">
-
-<h2>Pedidos</h2>
-
-<div id="pedidosList"></div>
-
-</div>
-
-</section>
-
-
-<!-- INBOX -->
-
-<section id="inbox" class="section">
-
-<div class="card">
-
-<h2>📨 Bandeja de correos</h2>
-
-<div class="inbox-toolbar">
-
-<div>
-
-<label>
-Dirección de correo
-</label>
-
-<input
-id="inboxEmail"
-value="cliente001@royxxlex.com"
-placeholder="cliente001@royxxlex.com"
->
-
-</div>
-
-<button onclick="loadInbox()">
-Actualizar bandeja
-</button>
-
-</div>
-
-<div
-id="inboxStatus"
-class="status">
-Ingresa un correo y pulsa Actualizar bandeja.
-</div>
-
-</div>
-
-
-<div class="card">
-
-<div id="inboxList">
-
-Sin mensajes cargados.
-
-</div>
-
-</div>
-
-</section>
-
-</div>
-
-
-<script>
-
-/* ===============================
-   CONFIGURACIÓN
-================================ */
-
-const DB =
-'https://legacy-royal-stream-d2d38-default-rtdb.firebaseio.com/api';
-
-const ROYAL_API =
-'https://royal-legacy.onrender.com/api';
-
-let catalogo = {};
-let pedidos = {};
-
-
-/* ===============================
-   LOGIN
-================================ */
-
-function login(){
-
-  if(pass.value !== 'royal2026'){
-    return alert('Contraseña incorrecta');
-  }
-
-  auth.classList.add('hidden');
-  app.classList.remove('hidden');
-
-  init();
-}
-
-
-/* ===============================
-   NAVEGACIÓN
-================================ */
-
-function show(id){
-
-  document
-  .querySelectorAll('.section')
-  .forEach(x =>
-    x.classList.remove('active')
-  );
-
-  document
-  .getElementById(id)
-  .classList.add('active');
-
-  if(id === 'inbox'){
-    loadInbox();
-  }else{
-    render();
-  }
-
-}
-
-
-/* ===============================
-   FIREBASE API
-================================ */
-
-async function api(
-  path,
-  method='GET',
-  body=null
-){
-
-  let options = {
-
-    method,
-
-    headers:{
-      'Content-Type':'application/json'
-    }
-
-  };
-
-  if(body !== null){
-
-    options.body =
-    JSON.stringify(body);
-
-  }
-
-  const response =
-  await fetch(
-    DB + '/' + path + '.json',
-    options
-  );
-
-  return response.json();
-
-}
-
-
-/* ===============================
-   UTILIDADES
-================================ */
-
-function meses(d){
-
-  return Number(
-    String(d || '')
-    .replace(/\D/g,'')
-  ) || 0;
-
-}
-
-
-function garantia(d){
-
-  return meses(d) * 25;
-
-}
-
-
-function makeId(x){
-
-  return [
-
-    x.categoria,
-    x.producto,
-    x.modalidad,
-    x.duracion,
-    x.proveedor
-
-  ]
-  .join('|')
-  .replace(
-    /[^a-zA-Z0-9]+/g,
-    '_'
-  )
-  .toLowerCase();
-
-}
-
-
-/* ===============================
-   CARGAR DATOS
-================================ */
-
-async function load(){
-
-  catalogo =
-  await api('catalogo') || {};
-
-  pedidos =
-  await api('pedidos') || {};
-
-}
-
-
-/* ===============================
-   IMPORTAR CATALOGO
-================================ */
-
-async function importar(){
-
-  const seed =
-  await fetch(
-    'catalogo-seed.json'
-  )
-  .then(r => r.json());
-
-  let output = {};
-
-  seed.items.forEach(x => {
-
-    x.id = makeId(x);
-
-    x.garantiaDias =
-    garantia(x.duracion)
-    || x.garantiaDias;
-
-    output[x.id] = x;
-
-  });
-
-  await api(
-    'catalogo',
-    'PATCH',
-    output
-  );
-
-  await load();
-
-  render();
-
-  alert('Base importada');
-
-}
-
-
-/* ===============================
-   RENDER GENERAL
-================================ */
-
-function render(){
-
-  const vals =
-  Object.values(catalogo);
-
-  resumen.innerHTML = `
-
-    Registros:
-    ${vals.length}
-
-    <br>
-
-    Sin precio público:
-    ${
-      vals.filter(
-        x => !Number(x.precioPublico)
-      ).length
-    }
-
-    <br>
-
-    Proveedores:
-    ${
-      new Set(
-        vals.map(
-          x => x.proveedor
-        )
-      ).size
-    }
-
-    <br>
-
-    Pedidos:
-    ${
-      Object.keys(pedidos).length
-    }
-
-  `;
-
-
-  renderCatalogo();
-
-
-  vItem.innerHTML =
-
-  vals
-
-  .filter(
-    x => x.activo !== false
-  )
-
-  .map(x => `
-
-    <option value="${x.id}">
-
-      ${x.producto}
-      ·
-      ${x.modalidad}
-      ·
-      ${x.duracion}
-      ·
-      ${x.proveedor}
-
-    </option>
-
-  `)
-
-  .join('');
-
-
-  pedidosList.innerHTML =
-
-  Object.values(pedidos)
-
-  .map(x => `
-
-    <div class="row">
-
-      <b>
-        ${escapeHtml(x.folio)}
-      </b>
-
-      <br>
-
-      <small>
-
-        ${escapeHtml(x.cliente)}
-        ·
-        ${escapeHtml(x.producto)}
-        ·
-        $${Number(x.precioPublico || 0)}
-
-      </small>
+      <span id="adminIdentity">
+        Panel administrativo
+      </span>
 
     </div>
 
-  `)
+    <div class="top-actions">
 
-  .join('')
-
-  || 'Sin pedidos';
-
-
-  cargarVenta();
-
-}
-
-
-/* ===============================
-   CATALOGO
-================================ */
-
-function renderCatalogo(){
-
-  const q =
-  (fBuscar.value || '')
-  .toLowerCase();
-
-  const cat =
-  fCat.value;
-
-
-  lista.innerHTML =
-
-  Object.values(catalogo)
-
-  .filter(x =>
-
-    (!cat || x.categoria === cat)
-
-    &&
-
-    (
-      !q ||
-
-      (
-        `${x.producto}
-         ${x.proveedor}
-         ${x.modalidad}`
-      )
-      .toLowerCase()
-      .includes(q)
-    )
-
-  )
-
-  .map(x => `
-
-    <div class="row">
-
-      <b>
-        ${escapeHtml(x.producto)}
-      </b>
-
-      <span class="badge">
-        ${escapeHtml(x.duracion)}
-      </span>
-
-      ${
-        !Number(x.precioPublico)
-        ?
-        '<span class="badge warn">Sin precio</span>'
-        :
-        ''
-      }
-
-      <br>
-
-      <small>
-
-        ${escapeHtml(x.modalidad)}
-        ·
-        ${escapeHtml(x.proveedor)}
-        ·
-        Costo $${Number(x.costo || 0)}
-        ·
-        Público $${Number(x.precioPublico || 0)}
-        ·
-        Garantía ${Number(x.garantiaDias || 0)} días
-
-      </small>
-
-
-      <div class="actions">
-
-        <button
+      <button
         class="ghost"
-        onclick="editar('${x.id}')">
+        onclick="refreshAll()"
+      >
+        Actualizar
+      </button>
 
-        Editar
+      <button
+        class="danger"
+        onclick="logout()"
+      >
+        Cerrar sesión
+      </button>
 
-        </button>
+    </div>
+
+  </header>
 
 
-        <button
-        class="red"
-        onclick="eliminar('${x.id}')">
+  <nav class="tabs">
 
-        Eliminar
+    <button
+      class="tab active"
+      data-tab="emails"
+      onclick="showTab('emails')"
+    >
+      📧 Generador de Correos
+    </button>
 
-        </button>
+    <button
+      class="tab"
+      data-tab="codes"
+      onclick="showTab('codes')"
+    >
+      🔐 Panel de Códigos
+    </button>
 
+    <button
+      class="tab"
+      data-tab="sales"
+      onclick="showTab('sales')"
+    >
+      💰 Ventas
+    </button>
+
+  </nav>
+
+
+  <!-- ========================= -->
+  <!-- CORREOS -->
+  <!-- ========================= -->
+
+  <section
+    id="emails"
+    class="section active"
+  >
+
+    <div class="stats">
+
+      <div class="stat">
+        <span>Dominios</span>
+        <strong id="domainCount">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Correos totales</span>
+        <strong id="aliasCount">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Disponibles</span>
+        <strong id="availableCount">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Asignados</span>
+        <strong id="assignedCount">0</strong>
       </div>
 
     </div>
 
-  `)
 
-  .join('')
+    <div class="grid">
 
-  || 'Sin resultados';
+      <article class="card">
 
-}
+        <h2>Agregar dominio</h2>
 
+        <label>Dominio</label>
+        <input id="domainName">
 
-/* ===============================
-   FORMULARIO CATALOGO
-================================ */
+        <label>Proveedor</label>
+        <input id="providerName">
 
-function limpiar(){
+        <label>Grupo / Plataforma</label>
+        <input id="domainPlatform">
 
-  editId.value = '';
+        <label>Prioridad</label>
+        <input
+          id="rotationPriority"
+          type="number"
+          value="0"
+        >
 
-  formTitle.textContent =
-  'Agregar registro';
+        <button
+          class="primary"
+          onclick="createDomain()"
+        >
+          Crear dominio
+        </button>
 
-  cProd.value = '';
-  cMod.value = '';
-  cDur.value = '';
-  cProv.value = '';
-  cCosto.value = '';
-  cPrecio.value = '';
+        <div
+          id="domainMessage"
+          class="notice"
+        ></div>
 
-}
-
-
-function editar(id){
-
-  const x =
-  catalogo[id];
-
-  editId.value = id;
-
-  formTitle.textContent =
-  'Editar registro';
-
-  cCat.value =
-  x.categoria;
-
-  cProd.value =
-  x.producto;
-
-  cMod.value =
-  x.modalidad;
-
-  cDur.value =
-  x.duracion;
-
-  cProv.value =
-  x.proveedor;
-
-  cCosto.value =
-  x.costo;
-
-  cPrecio.value =
-  x.precioPublico;
-
-  cAct.value =
-  String(
-    x.activo !== false
-  );
-
-}
+      </article>
 
 
-async function guardar(){
+      <article class="card">
 
-  const x = {
+        <h2>Generar correos</h2>
 
-    categoria:
-    cCat.value,
+        <label>Dominio</label>
+        <select id="generateDomain"></select>
 
-    producto:
-    cProd.value.trim(),
+        <label>Cantidad</label>
+        <input
+          id="generateQuantity"
+          type="number"
+          value="1"
+        >
 
-    modalidad:
-    cMod.value.trim(),
+        <label>Longitud del alias</label>
+        <input
+          id="aliasLength"
+          type="number"
+          value="10"
+        >
 
-    duracion:
-    cDur.value.trim(),
+        <label>Alias personalizado</label>
+        <input
+          id="customAlias"
+          placeholder="cliente001"
+        >
 
-    proveedor:
-    cProv.value.trim(),
+        <button
+          class="primary"
+          onclick="generateEmail()"
+        >
+          Generar correo
+        </button>
 
-    costo:
-    Number(cCosto.value || 0),
+        <div
+          id="generateMessage"
+          class="notice"
+        ></div>
 
-    precioPublico:
-    Number(cPrecio.value || 0),
-
-    activo:
-    cAct.value === 'true'
-
-  };
+      </article>
 
 
-  if(
-    !x.producto ||
-    !x.modalidad ||
-    !x.proveedor
-  ){
+      <article class="card">
 
-    return alert(
-      'Faltan datos'
-    );
+        <h2>Dominios</h2>
 
+        <div id="domainList">
+          Cargando...
+        </div>
+
+      </article>
+
+
+      <article class="card">
+
+        <h2>Correos generados</h2>
+
+        <label>Filtrar</label>
+
+        <select
+          id="aliasFilter"
+          onchange="renderAliases()"
+        >
+          <option value="">Todos</option>
+          <option value="AVAILABLE">Disponibles</option>
+          <option value="ASSIGNED">Asignados</option>
+          <option value="PAUSED">Pausados</option>
+          <option value="BLOCKED">Bloqueados</option>
+        </select>
+
+        <div id="aliasList">
+          Cargando...
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================= -->
+  <!-- CÓDIGOS -->
+  <!-- ========================= -->
+
+  <section
+    id="codes"
+    class="section"
+  >
+
+    <div class="stats">
+
+      <div class="stat">
+        <span>Pendientes</span>
+        <strong id="pendingCodes">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Recibidos</span>
+        <strong id="receivedCodes">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Entregados</span>
+        <strong id="deliveredCodes">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Fallidos / Expirados</span>
+        <strong id="failedCodes">0</strong>
+      </div>
+
+    </div>
+
+
+    <div class="grid">
+
+      <article class="card">
+
+        <h2>Nueva solicitud</h2>
+
+        <label>ID del artículo de inventario</label>
+
+        <input
+          id="codeInventoryId"
+          placeholder="inventoryItemId"
+        >
+
+        <label>Notas</label>
+
+        <textarea
+          id="codeNotes"
+          rows="4"
+        ></textarea>
+
+        <button
+          class="primary"
+          onclick="createCodeRequest()"
+        >
+          Solicitar código
+        </button>
+
+        <div
+          id="codeCreateMessage"
+          class="notice"
+        ></div>
+
+      </article>
+
+
+      <article class="card">
+
+        <h2>Filtrar solicitudes</h2>
+
+        <label>Estado</label>
+
+        <select
+          id="codeFilter"
+          onchange="renderCodes()"
+        >
+          <option value="">Todos</option>
+          <option value="PENDING">Pendientes</option>
+          <option value="RECEIVED">Recibidos</option>
+          <option value="DELIVERED">Entregados</option>
+          <option value="EXPIRED">Expirados</option>
+          <option value="FAILED">Fallidos</option>
+        </select>
+
+        <button
+          class="primary"
+          onclick="loadCodes()"
+        >
+          Actualizar solicitudes
+        </button>
+
+      </article>
+
+
+      <article class="card full">
+
+        <h2>Solicitudes de códigos</h2>
+
+        <div id="codeList">
+          Cargando...
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================= -->
+  <!-- VENTAS -->
+  <!-- ========================= -->
+
+  <section
+    id="sales"
+    class="section"
+  >
+
+    <div class="stats">
+
+      <div class="stat">
+        <span>Ventas</span>
+        <strong id="saleCount">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Total vendido</span>
+        <strong id="saleTotal">$0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Costo interno</span>
+        <strong id="saleCost">$0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Ganancia</span>
+        <strong id="saleProfit">$0</strong>
+      </div>
+
+    </div>
+
+
+    <div class="grid">
+
+      <article class="card">
+
+        <h2>Nueva venta</h2>
+
+        <label>ID del cliente</label>
+
+        <input
+          id="saleClientId"
+          placeholder="clientId"
+        >
+
+
+        <label>ID de variante del producto</label>
+
+        <input
+          id="saleVariantId"
+          placeholder="productVariantId"
+        >
+
+
+        <label>Cantidad</label>
+
+        <input
+          id="saleQuantity"
+          type="number"
+          min="1"
+          value="1"
+        >
+
+
+        <label>Precio de venta por unidad</label>
+
+        <input
+          id="saleUnitPrice"
+          type="number"
+          min="0"
+          step="0.01"
+          placeholder="100"
+        >
+
+
+        <label>Costo interno por unidad</label>
+
+        <input
+          id="saleInternalCost"
+          type="number"
+          min="0"
+          step="0.01"
+          value="0"
+        >
+
+
+        <label>Referencia de pago</label>
+
+        <input
+          id="salePaymentReference"
+          placeholder="Opcional"
+        >
+
+
+        <button
+          class="primary"
+          onclick="createSale()"
+        >
+          Crear venta
+        </button>
+
+
+        <div
+          id="saleCreateMessage"
+          class="notice"
+        ></div>
+
+      </article>
+
+
+      <article class="card">
+
+        <h2>Actualizar ventas</h2>
+
+        <p class="row-meta">
+          Las ventas ahora usan Prisma y el inventario disponible.
+          Al crear una venta, el artículo correspondiente debe pasar
+          de AVAILABLE a SOLD.
+        </p>
+
+        <button
+          class="primary"
+          onclick="loadSales()"
+        >
+          Actualizar ventas
+        </button>
+
+      </article>
+
+
+      <article class="card full">
+
+        <h2>Ventas registradas</h2>
+
+        <div id="salesList">
+          Cargando...
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+  const API = '/api';
+
+  let token =
+    localStorage.getItem(
+      'royalAdminToken'
+    ) || '';
+
+  let currentAdmin = null;
+
+  let domains = [];
+  let aliases = [];
+  let codeRequests = [];
+  let sales = [];
+
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'",'&#039;');
   }
 
 
-  x.garantiaDias =
-  garantia(x.duracion);
+  function extractData(json) {
 
+    if (
+      json &&
+      typeof json === 'object' &&
+      json.data !== undefined
+    ) {
+      return json.data;
+    }
 
-  const id =
-  editId.value
-  || makeId(x);
-
-
-  x.id = id;
-
-
-  await api(
-    'catalogo/' + id,
-    'PUT',
-    x
-  );
-
-
-  await load();
-
-  limpiar();
-
-  render();
-
-  alert('Guardado');
-
-}
-
-
-async function eliminar(id){
-
-  if(
-    !confirm('¿Eliminar?')
-  ){
-    return;
+    return json;
   }
 
 
-  await api(
-    'catalogo/' + id,
-    'DELETE'
-  );
+  async function request(
+    url,
+    options = {},
+    authenticated = true
+  ) {
 
+    const headers = {
+      ...(options.headers || {})
+    };
 
-  await load();
+    if (
+      options.body &&
+      !(options.body instanceof FormData)
+    ) {
+      headers['Content-Type'] =
+        headers['Content-Type'] ||
+        'application/json';
+    }
 
-  render();
-
-}
-
-
-/* ===============================
-   VENTAS
-================================ */
-
-function cargarVenta(){
-
-  const x =
-  catalogo[
-    vItem.value
-  ];
-
-  if(!x){
-    return;
-  }
-
-
-  vFolio.value =
-  'RY-' + Date.now();
-
-
-  vProv.value =
-  x.proveedor;
-
-
-  vCosto.value =
-  '$' + x.costo;
-
-
-  vPrecio.value =
-  x.precioPublico
-  ?
-  '$' + x.precioPublico
-  :
-  'Sin precio';
-
-
-  vGan.value =
-  x.precioPublico
-  ?
-  '$' +
-  (
-    x.precioPublico -
-    x.costo
-  )
-  :
-  'Sin datos';
-
-
-  ficha.textContent =
-
-  `Servicio: ${x.producto} ${x.modalidad} ${x.duracion}
-
-Garantía: ${
-  x.garantiaDias ||
-  garantia(x.duracion)
-} días`;
-
-}
-
-
-async function guardarVenta(){
-
-  const x =
-  catalogo[
-    vItem.value
-  ];
-
-
-  if(
-    !x ||
-    !Number(x.precioPublico)
-  ){
-
-    return alert(
-      'Configura precio público'
-    );
-
-  }
-
-
-  const p = {
-
-    folio:
-    vFolio.value,
-
-    cliente:
-    vCliente.value,
-
-    whatsapp:
-    vWhats.value,
-
-    ...x,
-
-    ganancia:
-    x.precioPublico -
-    x.costo
-
-  };
-
-
-  await api(
-    'pedidos/' + p.folio,
-    'PUT',
-    p
-  );
-
-
-  await load();
-
-  render();
-
-  alert('Venta guardada');
-
-}
-
-
-/* ===============================
-   INBOX ROYAL LEGACY
-================================ */
-
-async function loadInbox(){
-
-  const email =
-  String(
-    inboxEmail.value || ''
-  )
-  .trim()
-  .toLowerCase();
-
-
-  if(!email){
-
-    inboxStatus.textContent =
-    'Escribe una dirección de correo.';
-
-    return;
-
-  }
-
-
-  inboxStatus.textContent =
-  'Cargando correos...';
-
-
-  inboxList.innerHTML =
-  'Cargando...';
-
-
-  try{
-
-    const url =
-    ROYAL_API +
-    '/inbox?email=' +
-    encodeURIComponent(email);
-
+    if (
+      authenticated &&
+      token
+    ) {
+      headers.Authorization =
+        `Bearer ${token}`;
+    }
 
     const response =
-    await fetch(url);
-
-
-    const result =
-    await response.json();
-
-
-    if(!response.ok){
-
-      throw new Error(
-        result.message ||
-        'Error consultando inbox'
+      await fetch(
+        url,
+        {
+          ...options,
+          headers
+        }
       );
 
+    let json;
+
+    try {
+      json = await response.json();
+    } catch {
+      json = {
+        success: false,
+        message:
+          'Respuesta inválida del servidor'
+      };
     }
 
+    if (!response.ok) {
 
-    const messages =
-    Array.isArray(result.data)
-    ?
-    result.data
-    :
-    [];
+      const error =
+        new Error(
+          json.message ||
+          `HTTP ${response.status}`
+        );
+
+      error.status =
+        response.status;
+
+      throw error;
+    }
+
+    return json;
+  }
 
 
-    inboxStatus.textContent =
-    `${messages.length} mensaje(s) encontrados para ${email}`;
+  // =========================
+  // LOGIN
+  // =========================
+
+  async function adminLogin() {
+
+    const message =
+      document.getElementById(
+        'loginMessage'
+      );
+
+    message.className =
+      'notice';
+
+    message.textContent =
+      'Iniciando sesión...';
+
+    try {
+
+      const json =
+        await request(
+          `${API}/auth/admin/login`,
+          {
+            method: 'POST',
+
+            body:
+              JSON.stringify({
+                email:
+                  document
+                    .getElementById(
+                      'adminEmail'
+                    )
+                    .value
+                    .trim(),
+
+                password:
+                  document
+                    .getElementById(
+                      'adminPassword'
+                    )
+                    .value
+              })
+          },
+          false
+        );
+
+      const payload =
+        extractData(json);
+
+      const newToken =
+        payload?.token ||
+        json?.token;
+
+      const user =
+        payload?.user ||
+        json?.user;
+
+      if (!newToken) {
+        throw new Error(
+          'El servidor no devolvió un token'
+        );
+      }
+
+      token = newToken;
+
+      currentAdmin =
+        user || null;
+
+      localStorage.setItem(
+        'royalAdminToken',
+        token
+      );
+
+      showApp();
+
+      await refreshAll();
+
+    } catch (error) {
+
+      message.className =
+        'notice error';
+
+      message.textContent =
+        error.message;
+    }
+  }
 
 
-    if(!messages.length){
+  function logout() {
 
-      inboxList.innerHTML =
-      'No hay mensajes para este correo.';
+    token = '';
+    currentAdmin = null;
+
+    localStorage.removeItem(
+      'royalAdminToken'
+    );
+
+    document
+      .getElementById('app')
+      .classList
+      .add('hidden');
+
+    document
+      .getElementById(
+        'loginScreen'
+      )
+      .classList
+      .remove('hidden');
+  }
+
+
+  function showApp() {
+
+    document
+      .getElementById(
+        'loginScreen'
+      )
+      .classList
+      .add('hidden');
+
+    document
+      .getElementById('app')
+      .classList
+      .remove('hidden');
+
+    if (currentAdmin) {
+
+      document
+        .getElementById(
+          'adminIdentity'
+        )
+        .textContent =
+          `${currentAdmin.name || ''} · ${currentAdmin.role || 'ADMIN'}`;
+    }
+  }
+
+
+  function showTab(tabId) {
+
+    document
+      .querySelectorAll(
+        '.section'
+      )
+      .forEach(section => {
+        section.classList.remove(
+          'active'
+        );
+      });
+
+    document
+      .querySelectorAll(
+        '.tab'
+      )
+      .forEach(tab => {
+        tab.classList.remove(
+          'active'
+        );
+      });
+
+    document
+      .getElementById(tabId)
+      .classList
+      .add('active');
+
+    document
+      .querySelector(
+        `[data-tab="${tabId}"]`
+      )
+      .classList
+      .add('active');
+
+    if (tabId === 'sales') {
+      loadSales();
+    }
+  }
+
+
+  async function validateSavedToken() {
+
+    if (!token) {
+      return;
+    }
+
+    try {
+
+      const json =
+        await request(
+          `${API}/auth/admin/me`
+        );
+
+      const payload =
+        extractData(json);
+
+      currentAdmin =
+        payload?.user ||
+        json?.user ||
+        payload;
+
+      showApp();
+
+      await refreshAll();
+
+    } catch {
+      logout();
+    }
+  }
+
+
+  async function refreshAll() {
+
+    await Promise.allSettled([
+      loadDomains(),
+      loadAliases(),
+      loadCodes(),
+      loadSales()
+    ]);
+  }
+
+
+  // =========================
+  // DOMINIOS
+  // =========================
+
+  async function loadDomains() {
+
+    try {
+
+      const json =
+        await request(
+          `${API}/mail/domains`
+        );
+
+      const data =
+        extractData(json);
+
+      domains =
+        Array.isArray(data)
+          ? data
+          : [];
+
+      document
+        .getElementById(
+          'domainCount'
+        )
+        .textContent =
+          domains.length;
+
+      renderDomains();
+      fillDomainSelect();
+
+    } catch (error) {
+
+      document
+        .getElementById(
+          'domainList'
+        )
+        .innerHTML =
+          `<div class="error">${escapeHtml(error.message)}</div>`;
+    }
+  }
+
+
+  function renderDomains() {
+
+    const container =
+      document.getElementById(
+        'domainList'
+      );
+
+    if (!domains.length) {
+
+      container.innerHTML =
+        '<div class="row-meta">No hay dominios.</div>';
 
       return;
-
     }
 
+    container.innerHTML =
+      domains.map(domain => `
+        <div class="row">
 
-    inboxList.innerHTML =
-
-    messages.map(message => {
-
-      const sender =
-      message.sender ||
-      'Remitente desconocido';
-
-
-      const subject =
-      message.subject ||
-      '(Sin asunto)';
-
-
-      const preview =
-      message.bodyPreview ||
-      'Sin contenido';
-
-
-      const code =
-      message.verificationCodeEncrypted ||
-      '';
-
-
-      const date =
-      message.receivedAt
-      ?
-      new Date(
-        message.receivedAt
-      ).toLocaleString('es-MX')
-      :
-      '';
-
-
-      return `
-
-        <div class="inbox-message">
-
-          <div class="inbox-from">
-
-            De:
-            ${escapeHtml(sender)}
-
+          <div class="row-title">
+            @${escapeHtml(domain.domain)}
           </div>
 
-          <h3>
+          <div class="row-meta">
+            Estado:
+            ${escapeHtml(domain.status)}
+            <br>
 
-            ${escapeHtml(subject)}
+            Proveedor:
+            ${escapeHtml(domain.providerName || 'Sin proveedor')}
+          </div>
 
-          </h3>
+        </div>
+      `).join('');
+  }
 
-          ${
-            code
-            ?
-            `
-            <div class="code-box">
-              ${escapeHtml(code)}
-            </div>
 
-            <div class="actions">
+  function fillDomainSelect() {
 
-              <button
+    const select =
+      document.getElementById(
+        'generateDomain'
+      );
+
+    const active =
+      domains.filter(
+        item =>
+          item.status === 'ACTIVE'
+      );
+
+    select.innerHTML =
+      active.length
+        ? active.map(domain => `
+            <option value="${escapeHtml(domain.id)}">
+              @${escapeHtml(domain.domain)}
+            </option>
+          `).join('')
+        : '<option value="">No hay dominios activos</option>';
+  }
+
+
+  async function createDomain() {
+
+    const message =
+      document.getElementById(
+        'domainMessage'
+      );
+
+    try {
+
+      const domain =
+        document
+          .getElementById(
+            'domainName'
+          )
+          .value
+          .trim();
+
+      if (!domain) {
+        throw new Error(
+          'Escribe un dominio'
+        );
+      }
+
+      await request(
+        `${API}/mail/domains`,
+        {
+          method: 'POST',
+
+          body:
+            JSON.stringify({
+              domain,
+
+              providerName:
+                document
+                  .getElementById(
+                    'providerName'
+                  )
+                  .value
+                  .trim(),
+
+              platformGroup:
+                document
+                  .getElementById(
+                    'domainPlatform'
+                  )
+                  .value
+                  .trim(),
+
+              rotationPriority:
+                Number(
+                  document
+                    .getElementById(
+                      'rotationPriority'
+                    )
+                    .value || 0
+                )
+            })
+        }
+      );
+
+      message.className =
+        'notice ok';
+
+      message.textContent =
+        'Dominio creado correctamente';
+
+      await loadDomains();
+
+    } catch (error) {
+
+      message.className =
+        'notice error';
+
+      message.textContent =
+        error.message;
+    }
+  }
+
+
+  // =========================
+  // ALIASES
+  // =========================
+
+  async function loadAliases() {
+
+    try {
+
+      const json =
+        await request(
+          `${API}/mail/aliases`
+        );
+
+      const data =
+        extractData(json);
+
+      aliases =
+        Array.isArray(data)
+          ? data
+          : [];
+
+      document
+        .getElementById(
+          'aliasCount'
+        )
+        .textContent =
+          aliases.length;
+
+      document
+        .getElementById(
+          'availableCount'
+        )
+        .textContent =
+          aliases.filter(
+            x =>
+              x.status ===
+              'AVAILABLE'
+          ).length;
+
+      document
+        .getElementById(
+          'assignedCount'
+        )
+        .textContent =
+          aliases.filter(
+            x =>
+              x.status ===
+              'ASSIGNED'
+          ).length;
+
+      renderAliases();
+
+    } catch (error) {
+
+      document
+        .getElementById(
+          'aliasList'
+        )
+        .innerHTML =
+          `<div class="error">${escapeHtml(error.message)}</div>`;
+    }
+  }
+
+
+  function renderAliases() {
+
+    const container =
+      document.getElementById(
+        'aliasList'
+      );
+
+    const filter =
+      document
+        .getElementById(
+          'aliasFilter'
+        )
+        .value;
+
+    const list =
+      filter
+        ? aliases.filter(
+            x =>
+              x.status === filter
+          )
+        : aliases;
+
+    if (!list.length) {
+
+      container.innerHTML =
+        '<div class="row-meta">No hay correos.</div>';
+
+      return;
+    }
+
+    container.innerHTML =
+      list.map(alias => `
+
+        <div class="row">
+
+          <div class="row-title">
+            ${escapeHtml(alias.fullAddress)}
+          </div>
+
+          <div class="row-meta">
+            Estado:
+            ${escapeHtml(alias.status)}
+          </div>
+
+          <div class="actions">
+
+            <button
               class="ghost"
-              onclick="copiarTexto('${escapeJs(code)}')">
+              onclick="copyText('${escapeHtml(alias.fullAddress)}')"
+            >
+              Copiar
+            </button>
 
-              Copiar código
+            ${
+              alias.status === 'AVAILABLE'
+                ? `
+                    <button
+                      class="ghost"
+                      onclick="assignAlias('${alias.id}')"
+                    >
+                      Asignar
+                    </button>
+                  `
+                : ''
+            }
 
-              </button>
-
-            </div>
-            `
-            :
-            ''
-          }
-
-          <div class="inbox-preview">
-
-            ${escapeHtml(preview)}
-
-          </div>
-
-          <div class="inbox-date">
-
-            ${escapeHtml(date)}
+            ${
+              alias.status === 'ASSIGNED'
+                ? `
+                    <button
+                      class="ghost"
+                      onclick="releaseAlias('${alias.id}')"
+                    >
+                      Liberar
+                    </button>
+                  `
+                : ''
+            }
 
           </div>
 
         </div>
-
-      `;
-
-    }).join('');
-
-
-  }catch(error){
-
-    console.error(
-      'Error inbox:',
-      error
-    );
-
-
-    inboxStatus.textContent =
-    'Error cargando la bandeja.';
-
-
-    inboxList.innerHTML =
-    `
-    <div class="row">
-      ${escapeHtml(error.message)}
-    </div>
-    `;
-
+      `).join('');
   }
 
-}
 
+  async function generateEmail() {
 
-/* ===============================
-   SEGURIDAD HTML
-================================ */
+    const message =
+      document.getElementById(
+        'generateMessage'
+      );
 
-function escapeHtml(value){
+    try {
 
-  return String(
-    value ?? ''
-  )
+      const domainId =
+        document
+          .getElementById(
+            'generateDomain'
+          )
+          .value;
 
-  .replaceAll(
-    '&',
-    '&amp;'
-  )
+      if (!domainId) {
+        throw new Error(
+          'Primero agrega un dominio'
+        );
+      }
 
-  .replaceAll(
-    '<',
-    '&lt;'
-  )
+      const custom =
+        document
+          .getElementById(
+            'customAlias'
+          )
+          .value
+          .trim();
 
-  .replaceAll(
-    '>',
-    '&gt;'
-  )
+      if (custom) {
 
-  .replaceAll(
-    '"',
-    '&quot;'
-  )
+        await request(
+          `${API}/mail/aliases`,
+          {
+            method: 'POST',
+            body:
+              JSON.stringify({
+                domainId,
+                localPart: custom
+              })
+          }
+        );
 
-  .replaceAll(
-    "'",
-    '&#039;'
-  );
+      } else {
 
-}
+        await request(
+          `${API}/mail/aliases/generate`,
+          {
+            method: 'POST',
 
+            body:
+              JSON.stringify({
+                domainId,
 
-function escapeJs(value){
+                quantity:
+                  Number(
+                    document
+                      .getElementById(
+                        'generateQuantity'
+                      )
+                      .value || 1
+                  ),
 
-  return String(
-    value ?? ''
-  )
+                length:
+                  Number(
+                    document
+                      .getElementById(
+                        'aliasLength'
+                      )
+                      .value || 10
+                  )
+              })
+          }
+        );
+      }
 
-  .replaceAll(
-    '\\',
-    '\\\\'
-  )
+      message.className =
+        'notice ok';
 
-  .replaceAll(
-    "'",
-    "\\'"
-  )
+      message.textContent =
+        'Correo generado correctamente';
 
-  .replaceAll(
-    '\n',
-    ' '
-  )
+      await loadAliases();
 
-  .replaceAll(
-    '\r',
-    ' '
-  );
+    } catch (error) {
 
-}
+      message.className =
+        'notice error';
 
-
-async function copiarTexto(texto){
-
-  try{
-
-    await navigator
-    .clipboard
-    .writeText(texto);
-
-    alert(
-      'Código copiado'
-    );
-
-  }catch{
-
-    alert(
-      'No se pudo copiar'
-    );
-
+      message.textContent =
+        error.message;
+    }
   }
 
-}
+
+  async function assignAlias(aliasId) {
+
+    const inventoryItemId =
+      prompt(
+        'ID del artículo de inventario:'
+      );
+
+    if (!inventoryItemId) {
+      return;
+    }
+
+    try {
+
+      await request(
+        `${API}/mail/aliases/${aliasId}/assign`,
+        {
+          method: 'POST',
+
+          body:
+            JSON.stringify({
+              inventoryItemId:
+                inventoryItemId.trim()
+            })
+        }
+      );
+
+      await loadAliases();
+
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 
 
-/* ===============================
-   INICIO
-================================ */
+  async function releaseAlias(aliasId) {
 
-async function init(){
+    try {
 
-  await load();
+      await request(
+        `${API}/mail/aliases/${aliasId}/release`,
+        {
+          method: 'POST'
+        }
+      );
 
-  render();
+      await loadAliases();
 
-}
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+
+  // =========================
+  // CÓDIGOS
+  // =========================
+
+  async function loadCodes() {
+
+    try {
+
+      const json =
+        await request(
+          `${API}/codes`
+        );
+
+      const data =
+        extractData(json);
+
+      codeRequests =
+        Array.isArray(data)
+          ? data
+          : [];
+
+      updateCodeStats();
+      renderCodes();
+
+    } catch (error) {
+
+      document
+        .getElementById(
+          'codeList'
+        )
+        .innerHTML =
+          `<div class="error">${escapeHtml(error.message)}</div>`;
+    }
+  }
+
+
+  function updateCodeStats() {
+
+    pendingCodes.textContent =
+      codeRequests.filter(
+        x => x.status === 'PENDING'
+      ).length;
+
+    receivedCodes.textContent =
+      codeRequests.filter(
+        x => x.status === 'RECEIVED'
+      ).length;
+
+    deliveredCodes.textContent =
+      codeRequests.filter(
+        x => x.status === 'DELIVERED'
+      ).length;
+
+    failedCodes.textContent =
+      codeRequests.filter(
+        x =>
+          x.status === 'FAILED' ||
+          x.status === 'EXPIRED'
+      ).length;
+  }
+
+
+  function renderCodes() {
+
+    const filter =
+      codeFilter.value;
+
+    const list =
+      filter
+        ? codeRequests.filter(
+            x => x.status === filter
+          )
+        : codeRequests;
+
+    codeList.innerHTML =
+      list.length
+        ? list.map(item => {
+
+            const inventory =
+              item.inventoryItem || {};
+
+            const product =
+              inventory
+                .productVariant
+                ?.product
+                ?.name ||
+              'Producto';
+
+            const alias =
+              inventory
+                .aliases?.[0]
+                ?.emailAlias
+                ?.fullAddress ||
+              'Sin correo';
+
+            return `
+
+              <div class="row">
+
+                <div class="row-title">
+
+                  ${escapeHtml(product)}
+
+                  <span class="badge">
+                    ${escapeHtml(item.status)}
+                  </span>
+
+                </div>
+
+                <div class="row-meta">
+
+                  Correo:
+                  ${escapeHtml(alias)}
+                  <br>
+
+                  Inventario:
+                  ${escapeHtml(item.inventoryItemId)}
+
+                </div>
+
+                ${
+                  item.codeEncrypted
+                    ? `
+                        <div class="code-value">
+                          ${escapeHtml(item.codeEncrypted)}
+                        </div>
+                      `
+                    : ''
+                }
+
+                <div class="actions">
+
+                  ${
+                    item.status === 'RECEIVED'
+                      ? `
+                          <button
+                            class="success-btn"
+                            onclick="deliverCode('${item.id}')"
+                          >
+                            Marcar entregado
+                          </button>
+                        `
+                      : ''
+                  }
+
+                  ${
+                    item.status === 'PENDING' ||
+                    item.status === 'RECEIVED'
+                      ? `
+                          <button
+                            class="ghost"
+                            onclick="expireCode('${item.id}')"
+                          >
+                            Expirar
+                          </button>
+                        `
+                      : ''
+                  }
+
+                </div>
+
+              </div>
+            `;
+
+          }).join('')
+        : '<div class="row-meta">No hay solicitudes de códigos.</div>';
+  }
+
+
+  async function createCodeRequest() {
+
+    const message =
+      codeCreateMessage;
+
+    try {
+
+      const inventoryItemId =
+        codeInventoryId
+          .value
+          .trim();
+
+      if (!inventoryItemId) {
+
+        throw new Error(
+          'Escribe el inventoryItemId'
+        );
+      }
+
+      await request(
+        `${API}/codes`,
+        {
+          method: 'POST',
+
+          body:
+            JSON.stringify({
+              inventoryItemId,
+
+              notes:
+                codeNotes
+                  .value
+                  .trim()
+            })
+        }
+      );
+
+      message.className =
+        'notice ok';
+
+      message.textContent =
+        'Solicitud creada correctamente';
+
+      codeInventoryId.value = '';
+      codeNotes.value = '';
+
+      await loadCodes();
+
+    } catch (error) {
+
+      message.className =
+        'notice error';
+
+      message.textContent =
+        error.message;
+    }
+  }
+
+
+  async function deliverCode(id) {
+
+    try {
+
+      await request(
+        `${API}/codes/${id}/delivered`,
+        {
+          method: 'PATCH'
+        }
+      );
+
+      await loadCodes();
+
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+
+  async function expireCode(id) {
+
+    try {
+
+      await request(
+        `${API}/codes/${id}/expire`,
+        {
+          method: 'PATCH'
+        }
+      );
+
+      await loadCodes();
+
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+
+  // =========================
+  // VENTAS
+  // =========================
+
+  async function loadSales() {
+
+    const container =
+      document.getElementById(
+        'salesList'
+      );
+
+    try {
+
+      const json =
+        await request(
+          `${API}/sales?page=1&pageSize=100`
+        );
+
+      const data =
+        extractData(json);
+
+      sales =
+        Array.isArray(data)
+          ? data
+          : Array.isArray(data?.items)
+          ? data.items
+          : [];
+
+      updateSaleStats();
+      renderSales();
+
+    } catch (error) {
+
+      container.innerHTML =
+        `<div class="error">${escapeHtml(error.message)}</div>`;
+    }
+  }
+
+
+  function updateSaleStats() {
+
+    const total =
+      sales.reduce(
+        (sum, sale) =>
+          sum +
+          Number(
+            sale.total || 0
+          ),
+        0
+      );
+
+    const cost =
+      sales.reduce(
+        (sum, sale) =>
+          sum +
+          Number(
+            sale.internalCost || 0
+          ),
+        0
+      );
+
+    const profit =
+      sales.reduce(
+        (sum, sale) =>
+          sum +
+          Number(
+            sale.profit || 0
+          ),
+        0
+      );
+
+    saleCount.textContent =
+      sales.length;
+
+    saleTotal.textContent =
+      '$' + total.toFixed(2);
+
+    saleCost.textContent =
+      '$' + cost.toFixed(2);
+
+    saleProfit.textContent =
+      '$' + profit.toFixed(2);
+  }
+
+
+  function renderSales() {
+
+    const container =
+      document.getElementById(
+        'salesList'
+      );
+
+    if (!sales.length) {
+
+      container.innerHTML =
+        '<div class="row-meta">No hay ventas registradas.</div>';
+
+      return;
+    }
+
+    container.innerHTML =
+      sales.map(sale => {
+
+        const client =
+          sale.client || {};
+
+        const items =
+          Array.isArray(sale.items)
+            ? sale.items
+            : [];
+
+        const productText =
+          items.map(item => {
+
+            const product =
+              item
+                .productVariant
+                ?.product
+                ?.name ||
+              'Producto';
+
+            const variant =
+              item
+                .productVariant
+                ?.publicName ||
+              '';
+
+            return `${product} ${variant}`;
+
+          }).join(', ');
+
+        return `
+
+          <div class="row">
+
+            <div class="row-title">
+
+              Venta
+              ${escapeHtml(sale.id)}
+
+              <span class="badge">
+                ${escapeHtml(sale.status)}
+              </span>
+
+            </div>
+
+            <div class="row-meta">
+
+              Cliente:
+              ${escapeHtml(
+                client.name ||
+                client.email ||
+                sale.clientId
+              )}
+
+              <br>
+
+              Producto:
+              ${escapeHtml(productText)}
+
+              <br>
+
+              Total:
+              $${Number(sale.total || 0).toFixed(2)}
+
+              <br>
+
+              Costo:
+              $${Number(sale.internalCost || 0).toFixed(2)}
+
+              <br>
+
+              Ganancia:
+              $${Number(sale.profit || 0).toFixed(2)}
+
+            </div>
+
+          </div>
+        `;
+
+      }).join('');
+  }
+
+
+  async function createSale() {
+
+    const message =
+      document.getElementById(
+        'saleCreateMessage'
+      );
+
+    try {
+
+      const clientId =
+        saleClientId
+          .value
+          .trim();
+
+      const productVariantId =
+        saleVariantId
+          .value
+          .trim();
+
+      if (!clientId) {
+
+        throw new Error(
+          'Escribe el ID del cliente'
+        );
+      }
+
+      if (!productVariantId) {
+
+        throw new Error(
+          'Escribe el productVariantId'
+        );
+      }
+
+      message.className =
+        'notice';
+
+      message.textContent =
+        'Creando venta...';
+
+
+      const payload = {
+
+        clientId,
+
+        status:
+          'PAID',
+
+        paymentReference:
+          salePaymentReference
+            .value
+            .trim() ||
+          null,
+
+        items: [
+          {
+            productVariantId,
+
+            quantity:
+              Math.max(
+                Number(
+                  saleQuantity.value || 1
+                ),
+                1
+              ),
+
+            unitPrice:
+              Number(
+                saleUnitPrice.value || 0
+              ),
+
+            internalCost:
+              Number(
+                saleInternalCost.value || 0
+              )
+          }
+        ]
+      };
+
+
+      const json =
+        await request(
+          `${API}/sales`,
+          {
+            method: 'POST',
+
+            body:
+              JSON.stringify(
+                payload
+              )
+          }
+        );
+
+
+      const created =
+        extractData(json);
+
+
+      message.className =
+        'notice ok';
+
+      message.textContent =
+        `Venta creada correctamente.\nID: ${created?.id || ''}`;
+
+
+      await loadSales();
+
+    } catch (error) {
+
+      message.className =
+        'notice error';
+
+      message.textContent =
+        error.message;
+    }
+  }
+
+
+  async function copyText(value) {
+
+    try {
+
+      await navigator
+        .clipboard
+        .writeText(value);
+
+      alert('Copiado');
+
+    } catch {
+
+      alert(
+        'No se pudo copiar'
+      );
+    }
+  }
+
+
+  validateSavedToken();
 
 </script>
 
