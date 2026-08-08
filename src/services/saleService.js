@@ -92,6 +92,14 @@ async function listSales(query = {}) {
                   include: {
                     emailAlias: true
                   }
+                },
+
+                codeRequests: {
+                  orderBy: {
+                    requestedAt: 'desc'
+                  },
+
+                  take: 10
                 }
               }
             }
@@ -190,6 +198,7 @@ async function getSale(id) {
 
 // ==========================================
 // CREAR VENTA + ASIGNAR INVENTARIO
+// + CREAR SOLICITUD DE CÓDIGO
 // ==========================================
 
 async function createSale(payload = {}) {
@@ -330,10 +339,11 @@ async function createSale(payload = {}) {
         rawItem.cost;
 
 
-      // Creamos un SaleItem individual
-      // por cada unidad para poder conectar
-      // un InventoryItem concreto.
-      for (let index = 0; index < quantity; index++) {
+      for (
+        let index = 0;
+        index < quantity;
+        index++
+      ) {
 
         const inventoryItem =
           inventory[index];
@@ -352,6 +362,7 @@ async function createSale(payload = {}) {
 
         preparedItems.push({
           productVariantId,
+
           providerId:
             inventoryItem.providerId ||
             rawItem.providerId ||
@@ -443,6 +454,7 @@ async function createSale(payload = {}) {
 
     // ======================================
     // CONECTAR INVENTARIO A SALEITEM
+    // Y CREAR CODEREQUEST AUTOMÁTICO
     // ======================================
 
     for (
@@ -457,6 +469,10 @@ async function createSale(payload = {}) {
       const prepared =
         preparedItems[index];
 
+
+      // ------------------------------------
+      // 1. Marcar inventario como vendido
+      // ------------------------------------
 
       await tx.inventoryItem.update({
         where: {
@@ -475,6 +491,67 @@ async function createSale(payload = {}) {
             new Date()
         }
       });
+
+
+      // ------------------------------------
+      // 2. Buscar correo activo asignado
+      // ------------------------------------
+
+      const activeAlias =
+        await tx.inventoryAlias.findFirst({
+          where: {
+            inventoryItemId:
+              prepared.inventoryItemId,
+
+            active: true
+          },
+
+          orderBy: {
+            assignedAt: 'desc'
+          }
+        });
+
+
+      // ------------------------------------
+      // 3. Crear solicitud PENDING
+      // automáticamente si tiene correo
+      // ------------------------------------
+
+      if (activeAlias) {
+
+        const existingPending =
+          await tx.codeRequest.findFirst({
+            where: {
+              inventoryItemId:
+                prepared.inventoryItemId,
+
+              status:
+                'PENDING'
+            }
+          });
+
+
+        if (!existingPending) {
+
+          await tx.codeRequest.create({
+            data: {
+              inventoryItemId:
+                prepared.inventoryItemId,
+
+              requestedById:
+                payload.employeeId ||
+                null,
+
+              status:
+                'PENDING',
+
+              notes:
+                `Solicitud automática por venta ${sale.id}`
+            }
+          });
+
+        }
+      }
     }
 
 
@@ -511,6 +588,12 @@ async function createSale(payload = {}) {
 
                   include: {
                     emailAlias: true
+                  }
+                },
+
+                codeRequests: {
+                  orderBy: {
+                    requestedAt: 'desc'
                   }
                 }
               }
@@ -549,8 +632,6 @@ async function updateSale(
   }
 
 
-  // El inventario no debe modificarse
-  // silenciosamente desde un update.
   if (payload.items) {
     throw createError(
       400,
@@ -581,7 +662,11 @@ async function updateSale(
   }
 
 
-  if (payload.employeeId !== undefined) {
+  if (
+    payload.employeeId !==
+    undefined
+  ) {
+
     data.employeeId =
       payload.employeeId ||
       null;
@@ -619,6 +704,12 @@ async function updateSale(
 
                 include: {
                   emailAlias: true
+                }
+              },
+
+              codeRequests: {
+                orderBy: {
+                  requestedAt: 'desc'
                 }
               }
             }
@@ -663,11 +754,39 @@ async function deleteSale(id) {
       }
 
 
-      // Liberar inventario conectado
       for (const item of existing.items) {
 
         if (item.inventoryItem) {
 
+          // Cancelar solicitudes pendientes
+          // relacionadas con ese inventario.
+          await tx.codeRequest.updateMany({
+            where: {
+              inventoryItemId:
+                item.inventoryItem.id,
+
+              status: {
+                in: [
+                  'PENDING',
+                  'RECEIVED'
+                ]
+              }
+            },
+
+            data: {
+              status:
+                'EXPIRED',
+
+              expiresAt:
+                new Date(),
+
+              notes:
+                `Venta ${id} eliminada`
+            }
+          });
+
+
+          // Liberar inventario
           await tx.inventoryItem.update({
             where: {
               id:
