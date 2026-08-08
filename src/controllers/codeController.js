@@ -54,6 +54,7 @@ async function listCodeRequests(req, res, next) {
       success: true,
       data: requests
     });
+
   } catch (error) {
     next(error);
   }
@@ -91,13 +92,17 @@ async function getCodeRequest(req, res, next) {
     });
 
     if (!request) {
-      throw createError(404, 'Code request not found');
+      throw createError(
+        404,
+        'Code request not found'
+      );
     }
 
     return res.status(200).json({
       success: true,
       data: request
     });
+
   } catch (error) {
     next(error);
   }
@@ -167,6 +172,7 @@ async function createCodeRequest(req, res, next) {
       message: 'Code request created successfully',
       data: request
     });
+
   } catch (error) {
     next(error);
   }
@@ -227,6 +233,7 @@ async function markCodeReceived(req, res, next) {
       message: 'Code marked as received',
       data: updated
     });
+
   } catch (error) {
     next(error);
   }
@@ -253,19 +260,36 @@ async function markCodeDelivered(req, res, next) {
       );
     }
 
-    if (existing.status !== 'RECEIVED') {
+    // Si ya fue entregado, respondemos OK
+    // para evitar errores por llamadas repetidas.
+    if (existing.status === 'DELIVERED') {
+      return res.status(200).json({
+        success: true,
+        message: 'Code was already delivered',
+        data: existing
+      });
+    }
+
+    // No permitimos entregar una solicitud
+    // que todavía no tenga código asociado.
+    if (!existing.codeEncrypted) {
       throw createError(
         409,
-        'The code must be received before it can be delivered'
+        'No code has been received yet'
       );
     }
 
+    // Si el código ya fue almacenado, permitimos
+    // completar la entrega aunque el estado todavía
+    // no haya cambiado correctamente a RECEIVED.
     const updated = await prisma.codeRequest.update({
       where: {
         id
       },
       data: {
         status: 'DELIVERED',
+        receivedAt:
+          existing.receivedAt || new Date(),
         deliveredAt: new Date()
       }
     });
@@ -275,6 +299,7 @@ async function markCodeDelivered(req, res, next) {
       message: 'Code marked as delivered',
       data: updated
     });
+
   } catch (error) {
     next(error);
   }
@@ -316,6 +341,7 @@ async function expireCodeRequest(req, res, next) {
       message: 'Code request expired',
       data: updated
     });
+
   } catch (error) {
     next(error);
   }
@@ -359,6 +385,7 @@ async function failCodeRequest(req, res, next) {
       message: 'Code request marked as failed',
       data: updated
     });
+
   } catch (error) {
     next(error);
   }
