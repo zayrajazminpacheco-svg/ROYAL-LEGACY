@@ -1,20 +1,15 @@
 const prisma = require('../lib/prisma');
 
-async function ensureDatabaseConnection() {
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-  } catch (error) {
-    error.status = 503;
-    error.message =
-      'No se pudo conectar con la base de datos';
-    throw error;
-  }
-}
+
+// ============================================================
+// ERROR
+// ============================================================
 
 function createError(
   status,
   message
 ) {
+
   const error =
     new Error(message);
 
@@ -24,8 +19,40 @@ function createError(
   return error;
 }
 
+
+// ============================================================
+// CONEXIÓN
+// ============================================================
+
+async function ensureDatabaseConnection() {
+
+  try {
+
+    await prisma.$queryRaw`SELECT 1`;
+
+  } catch (error) {
+
+    error.status =
+      503;
+
+    error.message =
+      'No se pudo conectar con la base de datos';
+
+    throw error;
+
+  }
+}
+
+
+// ============================================================
+// NORMALIZAR SLUG
+// ============================================================
+
 function normalizeSlug(value) {
-  return String(value || '')
+
+  return String(
+    value || ''
+  )
     .trim()
     .toLowerCase()
     .normalize('NFD')
@@ -41,6 +68,7 @@ function normalizeSlug(value) {
       /^-+|-+$/g,
       ''
     );
+
 }
 
 
@@ -49,9 +77,11 @@ function normalizeSlug(value) {
 // ============================================================
 
 async function listCategories() {
+
   await ensureDatabaseConnection();
 
   return prisma.category.findMany({
+
     where: {
       active: true
     },
@@ -64,7 +94,9 @@ async function listCategories() {
         name: 'asc'
       }
     ]
+
   });
+
 }
 
 
@@ -73,29 +105,36 @@ async function listCategories() {
 // ============================================================
 
 async function listProducts() {
+
   await ensureDatabaseConnection();
 
   return prisma.product.findMany({
+
     where: {
       active: true
     },
 
     include: {
+
       Category: {
+
         select: {
           id: true,
           name: true,
           slug: true
         }
+
       },
 
       variants: {
+
         where: {
           active: true
         },
 
         select: {
           id: true,
+          productId: true,
           publicName: true,
           publicPrice: true,
           accessType: true,
@@ -106,13 +145,17 @@ async function listProducts() {
         orderBy: {
           publicPrice: 'asc'
         }
+
       }
+
     },
 
     orderBy: {
       name: 'asc'
     }
+
   });
+
 }
 
 
@@ -121,37 +164,51 @@ async function listProducts() {
 // ============================================================
 
 async function getProductBySlug(slug) {
+
   await ensureDatabaseConnection();
 
-  if (!slug) {
+  const cleanSlug =
+    String(
+      slug || ''
+    ).trim();
+
+  if (!cleanSlug) {
+
     throw createError(
       400,
-      'El slug del producto es obligatorio'
+      'El producto es obligatorio'
     );
+
   }
 
   const product =
     await prisma.product.findUnique({
+
       where: {
-        slug
+        slug: cleanSlug
       },
 
       include: {
+
         Category: {
+
           select: {
             id: true,
             name: true,
             slug: true
           }
+
         },
 
         variants: {
+
           where: {
             active: true
           },
 
           select: {
             id: true,
+            productId: true,
             publicName: true,
             publicPrice: true,
             accessType: true,
@@ -162,21 +219,27 @@ async function getProductBySlug(slug) {
           orderBy: {
             publicPrice: 'asc'
           }
+
         }
+
       }
+
     });
 
   if (
     !product ||
     !product.active
   ) {
+
     throw createError(
       404,
       'Producto no encontrado'
     );
+
   }
 
   return product;
+
 }
 
 
@@ -184,7 +247,10 @@ async function getProductBySlug(slug) {
 // CREAR PRODUCTO
 // ============================================================
 
-async function createProduct(data = {}) {
+async function createProduct(
+  data = {}
+) {
+
   await ensureDatabaseConnection();
 
   const categoryId =
@@ -212,36 +278,49 @@ async function createProduct(data = {}) {
       data.slug || ''
     ).trim();
 
+
   if (!categoryId) {
+
     throw createError(
       400,
       'Selecciona una categoría'
     );
+
   }
 
+
   if (!name) {
+
     throw createError(
       400,
-      'El nombre del producto es obligatorio'
+      'Escribe el nombre del producto'
     );
+
   }
+
 
   const category =
     await prisma.category.findUnique({
+
       where: {
         id: categoryId
       }
+
     });
+
 
   if (
     !category ||
     !category.active
   ) {
+
     throw createError(
       400,
       'La categoría seleccionada no es válida'
     );
+
   }
+
 
   let slug =
     normalizeSlug(
@@ -249,123 +328,190 @@ async function createProduct(data = {}) {
       name
     );
 
+
   if (!slug) {
+
     throw createError(
       400,
-      'No se pudo generar el slug'
+      'No se pudo generar el identificador del producto'
     );
+
   }
 
-  const existing =
+
+  const existingProduct =
     await prisma.product.findUnique({
+
       where: {
         slug
       }
+
     });
 
-  if (existing) {
+
+  if (existingProduct) {
+
     slug =
       `${slug}-${Date.now()}`;
+
   }
 
-  return prisma.product.create({
-    data: {
-      categoryId,
-      name,
-      slug,
 
-      description:
-        description ||
-        null,
+  const product =
+    await prisma.product.create({
 
-      imageUrl:
-        imageUrl ||
-        null,
+      data: {
 
-      active:
-        data.active !== false
-    },
+        categoryId,
 
-    include: {
-      Category: true,
-      variants: true
-    }
-  });
+        name,
+
+        slug,
+
+        description:
+          description ||
+          null,
+
+        imageUrl:
+          imageUrl ||
+          null,
+
+        active:
+          data.active !== false
+
+      },
+
+      include: {
+
+        Category: {
+
+          select: {
+            id: true,
+            name: true,
+            slug: true
+          }
+
+        },
+
+        variants: true
+
+      }
+
+    });
+
+
+  return product;
+
 }
 
 
 // ============================================================
-// CREAR VARIANTE
+// CREAR VARIANTE / PLAN
 // ============================================================
 
 async function createProductVariant(
   productId,
   data = {}
 ) {
+
   await ensureDatabaseConnection();
 
-  const id =
+
+  const cleanProductId =
     String(
       productId || ''
     ).trim();
 
-  if (!id) {
+
+  if (!cleanProductId) {
+
     throw createError(
       400,
-      'El producto es obligatorio'
+      'Selecciona un producto'
     );
+
   }
+
 
   const product =
     await prisma.product.findUnique({
+
       where: {
-        id
+        id: cleanProductId
       }
+
     });
+
 
   if (
     !product ||
     !product.active
   ) {
+
     throw createError(
       404,
       'Producto no encontrado'
     );
+
   }
+
 
   const publicName =
     String(
       data.publicName || ''
     ).trim();
 
+
   const accessType =
     String(
       data.accessType || ''
     ).trim();
+
 
   const durationDays =
     Number(
       data.durationDays
     );
 
+
   const publicPrice =
     Number(
       data.publicPrice
     );
 
+
   if (!publicName) {
+
     throw createError(
       400,
-      'El nombre de la variante es obligatorio'
+      'Escribe el nombre del plan'
     );
+
   }
 
-  if (!accessType) {
+
+  const validAccessTypes = [
+    'PROFILE',
+    'FULL_ACCOUNT',
+    'INVITATION',
+    'NEW_EMAIL',
+    'FAMILY'
+  ];
+
+
+  if (
+    !validAccessTypes.includes(
+      accessType
+    )
+  ) {
+
     throw createError(
       400,
-      'Selecciona el tipo de acceso'
+      'Selecciona un tipo de acceso válido'
     );
+
   }
+
 
   if (
     !Number.isInteger(
@@ -373,11 +519,14 @@ async function createProductVariant(
     ) ||
     durationDays <= 0
   ) {
+
     throw createError(
       400,
       'La duración debe ser mayor a 0 días'
     );
+
   }
+
 
   if (
     !Number.isFinite(
@@ -385,23 +534,41 @@ async function createProductVariant(
     ) ||
     publicPrice < 0
   ) {
+
     throw createError(
       400,
-      'El precio público no es válido'
+      'El precio no es válido'
     );
+
   }
 
-  return prisma.productVariant.create({
-    data: {
-      productId: id,
-      accessType,
-      durationDays,
-      publicName,
-      publicPrice,
-      active:
-        data.active !== false
-    }
-  });
+
+  const variant =
+    await prisma.productVariant.create({
+
+      data: {
+
+        productId:
+          cleanProductId,
+
+        publicName,
+
+        accessType,
+
+        durationDays,
+
+        publicPrice,
+
+        active:
+          data.active !== false
+
+      }
+
+    });
+
+
+  return variant;
+
 }
 
 
