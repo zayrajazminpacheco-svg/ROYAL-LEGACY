@@ -1,4 +1,5 @@
 const express = require('express');
+
 const catalogController = require('../controllers/catalogController');
 
 const {
@@ -10,7 +11,7 @@ const router = express.Router();
 
 
 // ============================================================
-// CATÁLOGO - LECTURA
+// CATÁLOGO PÚBLICO / CONSULTA
 // ============================================================
 
 router.get(
@@ -30,7 +31,7 @@ router.get(
 
 
 // ============================================================
-// CATÁLOGO - ADMINISTRACIÓN
+// ADMINISTRACIÓN DEL CATÁLOGO
 // ============================================================
 
 router.post(
@@ -43,6 +44,7 @@ router.post(
   catalogController.createProduct
 );
 
+
 router.post(
   '/products/:productId/variants',
   authenticateToken,
@@ -53,9 +55,5 @@ router.post(
   catalogController.createProductVariant
 );
 
-
-// ============================================================
-// EXPORTAR
-// ============================================================
 
 module.exports = router;

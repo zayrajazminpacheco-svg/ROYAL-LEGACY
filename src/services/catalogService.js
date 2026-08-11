@@ -2,14 +2,13 @@ const prisma = require('../lib/prisma');
 
 
 // ============================================================
-// ERROR
+// ERROR HTTP
 // ============================================================
 
 function createError(
   status,
   message
 ) {
-
   const error =
     new Error(message);
 
@@ -21,25 +20,27 @@ function createError(
 
 
 // ============================================================
-// CONEXIÓN
+// COMPROBAR BASE DE DATOS
 // ============================================================
 
 async function ensureDatabaseConnection() {
-
   try {
 
-    await prisma.$queryRaw`SELECT 1`;
+    await prisma.$queryRaw`
+      SELECT 1
+    `;
 
   } catch (error) {
 
-    error.status =
+    const connectionError =
+      new Error(
+        'No se pudo conectar con la base de datos'
+      );
+
+    connectionError.status =
       503;
 
-    error.message =
-      'No se pudo conectar con la base de datos';
-
-    throw error;
-
+    throw connectionError;
   }
 }
 
@@ -48,18 +49,19 @@ async function ensureDatabaseConnection() {
 // NORMALIZAR SLUG
 // ============================================================
 
-function normalizeSlug(value) {
-
+function normalizeSlug(
+  value
+) {
   return String(
     value || ''
   )
-    .trim()
-    .toLowerCase()
     .normalize('NFD')
     .replace(
       /[\u0300-\u036f]/g,
       ''
     )
+    .toLowerCase()
+    .trim()
     .replace(
       /[^a-z0-9]+/g,
       '-'
@@ -68,7 +70,104 @@ function normalizeSlug(value) {
       /^-+|-+$/g,
       ''
     );
+}
 
+
+// ============================================================
+// OBTENER SLUG ÚNICO
+// ============================================================
+
+async function generateUniqueSlug(
+  name
+) {
+  const base =
+    normalizeSlug(name) ||
+    `producto-${Date.now()}`;
+
+  let slug =
+    base;
+
+  let counter =
+    2;
+
+  while (
+    await prisma.product.findUnique({
+      where: {
+        slug
+      },
+      select: {
+        id: true
+      }
+    })
+  ) {
+
+    slug =
+      `${base}-${counter}`;
+
+    counter +=
+      1;
+  }
+
+  return slug;
+}
+
+
+// ============================================================
+// CATEGORÍA STREAMING AUTOMÁTICA
+// ============================================================
+
+async function ensureStreamingCategory() {
+
+  let category =
+    await prisma.category.findFirst({
+      where: {
+        active: true,
+        OR: [
+          {
+            slug: 'streaming'
+          },
+          {
+            name: {
+              equals:
+                'Streaming',
+              mode:
+                'insensitive'
+            }
+          }
+        ]
+      }
+    });
+
+
+  if (
+    category
+  ) {
+    return category;
+  }
+
+
+  category =
+    await prisma.category.create({
+      data: {
+        name:
+          'Streaming',
+
+        slug:
+          'streaming',
+
+        description:
+          'Plataformas de streaming',
+
+        active:
+          true,
+
+        sortOrder:
+          0
+      }
+    });
+
+
+  return category;
 }
 
 
@@ -80,8 +179,8 @@ async function listCategories() {
 
   await ensureDatabaseConnection();
 
-  return prisma.category.findMany({
 
+  return prisma.category.findMany({
     where: {
       active: true
     },
@@ -94,157 +193,106 @@ async function listCategories() {
         name: 'asc'
       }
     ]
-
   });
-
 }
 
 
 // ============================================================
-// LISTAR PRODUCTOS
+// LISTAR PRODUCTOS / PLATAFORMAS
 // ============================================================
 
 async function listProducts() {
 
   await ensureDatabaseConnection();
 
-  return prisma.product.findMany({
 
+  return prisma.product.findMany({
     where: {
       active: true
     },
 
     include: {
 
-      Category: {
-
-        select: {
-          id: true,
-          name: true,
-          slug: true
-        }
-
-      },
+      Category:
+        true,
 
       variants: {
-
         where: {
           active: true
         },
 
-        select: {
-          id: true,
-          productId: true,
-          publicName: true,
-          publicPrice: true,
-          accessType: true,
-          durationDays: true,
-          active: true
-        },
-
         orderBy: {
-          publicPrice: 'asc'
+          publicPrice:
+            'asc'
         }
-
       }
-
     },
 
     orderBy: {
-      name: 'asc'
+      createdAt:
+        'desc'
     }
-
   });
-
 }
 
 
 // ============================================================
-// OBTENER PRODUCTO POR SLUG
+// BUSCAR PRODUCTO POR SLUG
 // ============================================================
 
-async function getProductBySlug(slug) {
+async function getProductBySlug(
+  slug
+) {
 
   await ensureDatabaseConnection();
 
-  const cleanSlug =
-    String(
-      slug || ''
-    ).trim();
 
-  if (!cleanSlug) {
+  const normalized =
+    normalizeSlug(slug);
 
-    throw createError(
-      400,
-      'El producto es obligatorio'
-    );
-
-  }
 
   const product =
     await prisma.product.findUnique({
-
       where: {
-        slug: cleanSlug
+        slug:
+          normalized
       },
 
       include: {
 
-        Category: {
-
-          select: {
-            id: true,
-            name: true,
-            slug: true
-          }
-
-        },
+        Category:
+          true,
 
         variants: {
-
           where: {
             active: true
           },
 
-          select: {
-            id: true,
-            productId: true,
-            publicName: true,
-            publicPrice: true,
-            accessType: true,
-            durationDays: true,
-            active: true
-          },
-
           orderBy: {
-            publicPrice: 'asc'
+            publicPrice:
+              'asc'
           }
-
         }
-
       }
-
     });
 
-  if (
-    !product ||
-    !product.active
-  ) {
 
+  if (
+    !product
+  ) {
     throw createError(
       404,
-      'Producto no encontrado'
+      'Plataforma no encontrada'
     );
-
   }
 
-  return product;
 
+  return product;
 }
 
 
 // ============================================================
-// CREAR PRODUCTO
+// CREAR PRODUCTO / PLATAFORMA
 // ============================================================
 
 async function createProduct(
@@ -253,160 +301,167 @@ async function createProduct(
 
   await ensureDatabaseConnection();
 
-  const categoryId =
-    String(
-      data.categoryId || ''
-    ).trim();
 
   const name =
     String(
-      data.name || ''
+      data.name ||
+      ''
     ).trim();
+
 
   const description =
     String(
-      data.description || ''
+      data.description ||
+      ''
     ).trim();
+
 
   const imageUrl =
     String(
-      data.imageUrl || ''
+      data.imageUrl ||
+      ''
     ).trim();
 
-  const requestedSlug =
+
+  let categoryId =
     String(
-      data.slug || ''
+      data.categoryId ||
+      ''
     ).trim();
 
 
-  if (!categoryId) {
-
+  if (
+    !name
+  ) {
     throw createError(
       400,
-      'Selecciona una categoría'
+      'Escribe el nombre de la plataforma'
     );
-
   }
 
 
-  if (!name) {
+  // ----------------------------------------------------------
+  // EVITAR PLATAFORMA REPETIDA
+  // ----------------------------------------------------------
 
-    throw createError(
-      400,
-      'Escribe el nombre del producto'
-    );
-
-  }
-
-
-  const category =
-    await prisma.category.findUnique({
-
+  const existing =
+    await prisma.product.findFirst({
       where: {
-        id: categoryId
+        name: {
+          equals:
+            name,
+          mode:
+            'insensitive'
+        }
       }
-
     });
 
 
   if (
-    !category ||
-    !category.active
+    existing
   ) {
-
     throw createError(
-      400,
-      'La categoría seleccionada no es válida'
+      409,
+      'Esta plataforma ya existe en el catálogo'
     );
-
   }
 
 
-  let slug =
-    normalizeSlug(
-      requestedSlug ||
+  // ----------------------------------------------------------
+  // CATEGORÍA
+  // ----------------------------------------------------------
+
+  if (
+    categoryId
+  ) {
+
+    const category =
+      await prisma.category.findUnique({
+        where: {
+          id:
+            categoryId
+        }
+      });
+
+
+    if (
+      !category
+    ) {
+      throw createError(
+        404,
+        'La categoría seleccionada no existe'
+      );
+    }
+
+
+    if (
+      category.active === false
+    ) {
+      throw createError(
+        400,
+        'La categoría seleccionada está inactiva'
+      );
+    }
+
+  } else {
+
+    const category =
+      await ensureStreamingCategory();
+
+    categoryId =
+      category.id;
+  }
+
+
+  // ----------------------------------------------------------
+  // SLUG
+  // ----------------------------------------------------------
+
+  const slug =
+    await generateUniqueSlug(
       name
     );
 
 
-  if (!slug) {
+  // ----------------------------------------------------------
+  // CREAR
+  // ----------------------------------------------------------
 
-    throw createError(
-      400,
-      'No se pudo generar el identificador del producto'
-    );
+  return prisma.product.create({
+    data: {
 
-  }
+      categoryId,
 
+      name,
 
-  const existingProduct =
-    await prisma.product.findUnique({
+      slug,
 
-      where: {
-        slug
-      }
+      description:
+        description ||
+        null,
 
-    });
+      imageUrl:
+        imageUrl ||
+        null,
 
+      active:
+        true
+    },
 
-  if (existingProduct) {
+    include: {
 
-    slug =
-      `${slug}-${Date.now()}`;
+      Category:
+        true,
 
-  }
-
-
-  const product =
-    await prisma.product.create({
-
-      data: {
-
-        categoryId,
-
-        name,
-
-        slug,
-
-        description:
-          description ||
-          null,
-
-        imageUrl:
-          imageUrl ||
-          null,
-
-        active:
-          data.active !== false
-
-      },
-
-      include: {
-
-        Category: {
-
-          select: {
-            id: true,
-            name: true,
-            slug: true
-          }
-
-        },
-
-        variants: true
-
-      }
-
-    });
-
-
-  return product;
-
+      variants:
+        true
+    }
+  });
 }
 
 
 // ============================================================
-// CREAR VARIANTE / PLAN
+// CREAR PLAN / VARIANTE
 // ============================================================
 
 async function createProductVariant(
@@ -419,53 +474,25 @@ async function createProductVariant(
 
   const cleanProductId =
     String(
-      productId || ''
+      productId ||
+      ''
     ).trim();
-
-
-  if (!cleanProductId) {
-
-    throw createError(
-      400,
-      'Selecciona un producto'
-    );
-
-  }
-
-
-  const product =
-    await prisma.product.findUnique({
-
-      where: {
-        id: cleanProductId
-      }
-
-    });
-
-
-  if (
-    !product ||
-    !product.active
-  ) {
-
-    throw createError(
-      404,
-      'Producto no encontrado'
-    );
-
-  }
 
 
   const publicName =
     String(
-      data.publicName || ''
+      data.publicName ||
+      ''
     ).trim();
 
 
   const accessType =
     String(
-      data.accessType || ''
-    ).trim();
+      data.accessType ||
+      'PROFILE'
+    )
+      .trim()
+      .toUpperCase();
 
 
   const durationDays =
@@ -480,23 +507,34 @@ async function createProductVariant(
     );
 
 
-  if (!publicName) {
+  if (
+    !cleanProductId
+  ) {
+    throw createError(
+      400,
+      'Selecciona una plataforma'
+    );
+  }
 
+
+  if (
+    !publicName
+  ) {
     throw createError(
       400,
       'Escribe el nombre del plan'
     );
-
   }
 
 
-  const validAccessTypes = [
-    'PROFILE',
-    'FULL_ACCOUNT',
-    'INVITATION',
-    'NEW_EMAIL',
-    'FAMILY'
-  ];
+  const validAccessTypes =
+    [
+      'PROFILE',
+      'FULL_ACCOUNT',
+      'INVITATION',
+      'NEW_EMAIL',
+      'FAMILY'
+    ];
 
 
   if (
@@ -507,9 +545,8 @@ async function createProductVariant(
 
     throw createError(
       400,
-      'Selecciona un tipo de acceso válido'
+      'Tipo de acceso inválido'
     );
-
   }
 
 
@@ -524,7 +561,6 @@ async function createProductVariant(
       400,
       'La duración debe ser mayor a 0 días'
     );
-
   }
 
 
@@ -537,38 +573,107 @@ async function createProductVariant(
 
     throw createError(
       400,
-      'El precio no es válido'
+      'El precio es inválido'
     );
-
   }
 
 
-  const variant =
-    await prisma.productVariant.create({
+  // ----------------------------------------------------------
+  // PRODUCTO
+  // ----------------------------------------------------------
 
-      data: {
+  const product =
+    await prisma.product.findUnique({
+      where: {
+        id:
+          cleanProductId
+      }
+    });
+
+
+  if (
+    !product
+  ) {
+
+    throw createError(
+      404,
+      'La plataforma no existe'
+    );
+  }
+
+
+  if (
+    product.active === false
+  ) {
+
+    throw createError(
+      400,
+      'La plataforma está inactiva'
+    );
+  }
+
+
+  // ----------------------------------------------------------
+  // EVITAR PLAN DUPLICADO
+  // ----------------------------------------------------------
+
+  const existing =
+    await prisma.productVariant.findFirst({
+      where: {
 
         productId:
           cleanProductId,
 
-        publicName,
+        publicName: {
+          equals:
+            publicName,
+          mode:
+            'insensitive'
+        },
 
-        accessType,
-
-        durationDays,
-
-        publicPrice,
-
-        active:
-          data.active !== false
-
+        durationDays
       }
-
     });
 
 
-  return variant;
+  if (
+    existing
+  ) {
 
+    throw createError(
+      409,
+      'Ese plan ya existe para esta plataforma'
+    );
+  }
+
+
+  // ----------------------------------------------------------
+  // CREAR PLAN
+  // ----------------------------------------------------------
+
+  return prisma.productVariant.create({
+    data: {
+
+      productId:
+        cleanProductId,
+
+      accessType,
+
+      durationDays,
+
+      publicName,
+
+      publicPrice,
+
+      active:
+        true
+    },
+
+    include: {
+      product:
+        true
+    }
+  });
 }
 
 

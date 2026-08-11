@@ -1,78 +1,145 @@
 ﻿const catalogService = require('../services/catalogService');
 
-async function listCategories(req, res, next) {
+
+// ============================================================
+// LISTAR CATEGORÍAS
+// ============================================================
+
+async function listCategories(
+  req,
+  res,
+  next
+) {
   try {
-    const categories = await catalogService.listCategories();
+
+    const categories =
+      await catalogService.listCategories();
 
     return res.status(200).json({
       success: true,
       data: categories
     });
+
   } catch (error) {
     next(error);
   }
 }
 
-async function listProducts(req, res, next) {
+
+// ============================================================
+// LISTAR PRODUCTOS
+// ============================================================
+
+async function listProducts(
+  req,
+  res,
+  next
+) {
   try {
-    const products = await catalogService.listProducts();
+
+    const products =
+      await catalogService.listProducts();
 
     return res.status(200).json({
       success: true,
       data: products
     });
+
   } catch (error) {
     next(error);
   }
 }
 
-async function getProductBySlug(req, res, next) {
+
+// ============================================================
+// OBTENER PRODUCTO POR SLUG
+// ============================================================
+
+async function getProductBySlug(
+  req,
+  res,
+  next
+) {
   try {
-    const product = await catalogService.getProductBySlug(
-      req.params.slug
-    );
+
+    const product =
+      await catalogService.getProductBySlug(
+        req.params.slug
+      );
 
     return res.status(200).json({
       success: true,
       data: product
     });
+
   } catch (error) {
     next(error);
   }
 }
 
-async function createProduct(req, res, next) {
+
+// ============================================================
+// CREAR PLATAFORMA / PRODUCTO
+// ============================================================
+
+async function createProduct(
+  req,
+  res,
+  next
+) {
   try {
-    const product = await catalogService.createProduct(
-      req.body || {}
-    );
+
+    const product =
+      await catalogService.createProduct(
+        req.body || {}
+      );
 
     return res.status(201).json({
       success: true,
-      message: 'Producto creado correctamente',
+      message:
+        'Plataforma agregada correctamente',
       data: product
     });
+
   } catch (error) {
     next(error);
   }
 }
 
-async function createProductVariant(req, res, next) {
+
+// ============================================================
+// CREAR PLAN / VARIANTE
+// ============================================================
+
+async function createProductVariant(
+  req,
+  res,
+  next
+) {
   try {
-    const variant = await catalogService.createProductVariant(
-      req.params.productId,
-      req.body || {}
-    );
+
+    const variant =
+      await catalogService.createProductVariant(
+        req.params.productId,
+        req.body || {}
+      );
 
     return res.status(201).json({
       success: true,
-      message: 'Plan agregado correctamente',
+      message:
+        'Plan agregado correctamente',
       data: variant
     });
+
   } catch (error) {
     next(error);
   }
 }
+
+
+// ============================================================
+// EXPORTAR
+// ============================================================
 
 module.exports = {
   listCategories,
