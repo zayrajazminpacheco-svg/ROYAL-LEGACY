@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
   <title>Royal Legacy | Administración</title>
 
@@ -14,7 +14,6 @@
     :root {
       --bg: #050812;
       --panel: #0d1526;
-      --panel2: #111d33;
       --border: rgba(255,255,255,.10);
       --text: #ffffff;
       --muted: #9eabc2;
@@ -22,18 +21,37 @@
       --blue: #75c9ff;
       --green: #74eca5;
       --red: #ff7080;
-      --orange: #ffbd69;
     }
 
+    html,
     body {
       margin: 0;
-      min-height: 100vh;
+      width: 100%;
+      max-width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+
       background:
-        radial-gradient(circle at top left, #17284c 0%, transparent 35%),
-        radial-gradient(circle at top right, #301a48 0%, transparent 30%),
+        radial-gradient(
+          circle at top left,
+          #17284c 0%,
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at top right,
+          #301a48 0%,
+          transparent 30%
+        ),
         var(--bg);
+
       color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      -webkit-text-size-adjust: 100%;
     }
 
     button,
@@ -41,6 +59,7 @@
     select,
     textarea {
       font: inherit;
+      max-width: 100%;
     }
 
     button {
@@ -53,35 +72,58 @@
 
     .login-screen {
       min-height: 100vh;
+
       display: grid;
       place-items: center;
+
       padding: 20px;
     }
 
     .login-card {
       width: min(440px, 100%);
+
       padding: 28px;
-      border: 1px solid var(--border);
+
+      border:
+        1px solid
+        var(--border);
+
       border-radius: 24px;
-      background: rgba(13, 21, 38, .96);
+
+      background:
+        rgba(
+          13,
+          21,
+          38,
+          .96
+        );
     }
 
     .brand {
       font-size: 30px;
       font-weight: 900;
-      margin-bottom: 5px;
-      color: var(--gold);
+
+      color:
+        var(--gold);
     }
 
     .subtitle {
-      color: var(--muted);
-      margin-bottom: 24px;
+      color:
+        var(--muted);
+
+      margin:
+        5px 0 24px;
     }
 
     label {
       display: block;
-      margin: 12px 0 6px;
-      color: var(--muted);
+
+      margin:
+        12px 0 6px;
+
+      color:
+        var(--muted);
+
       font-size: 13px;
       font-weight: 800;
     }
@@ -90,242 +132,731 @@
     select,
     textarea {
       width: 100%;
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      outline: none;
-      background: #070d19;
-      color: white;
+
+      padding:
+        12px 14px;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        12px;
+
+      outline:
+        none;
+
+      background:
+        #070d19;
+
+      color:
+        white;
+
+      font-size:
+        16px;
+    }
+
+    .primary,
+    .link-btn {
+      width: 100%;
+
+      border: 0;
+
+      border-radius:
+        12px;
+
+      padding:
+        12px 15px;
+
+      font-weight:
+        900;
+
+      color:
+        #07101d;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--gold),
+          var(--blue)
+        );
     }
 
     .primary {
-      width: 100%;
-      border: 0;
-      border-radius: 12px;
-      padding: 12px 15px;
-      margin-top: 16px;
-      font-weight: 900;
-      color: #07101d;
-      background: linear-gradient(135deg, var(--gold), var(--blue));
+      margin-top:
+        16px;
     }
 
     .ghost {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 9px 12px;
-      background: #17233c;
-      color: white;
-      font-weight: 800;
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        10px;
+
+      padding:
+        9px 12px;
+
+      background:
+        #17233c;
+
+      color:
+        white;
+
+      font-weight:
+        800;
     }
 
     .danger {
       border: 0;
-      border-radius: 10px;
-      padding: 9px 12px;
-      background: #722b3b;
-      color: white;
-      font-weight: 800;
+
+      border-radius:
+        10px;
+
+      padding:
+        9px 12px;
+
+      background:
+        #722b3b;
+
+      color:
+        white;
+
+      font-weight:
+        800;
     }
 
     .success-btn {
       border: 0;
-      border-radius: 10px;
-      padding: 9px 12px;
-      background: #176441;
-      color: white;
-      font-weight: 800;
+
+      border-radius:
+        10px;
+
+      padding:
+        9px 12px;
+
+      background:
+        #176441;
+
+      color:
+        white;
+
+      font-weight:
+        800;
     }
 
     .app {
-      width: min(1500px, 100%);
-      margin: 0 auto;
-      padding: 18px;
+      width:
+        min(
+          1500px,
+          100%
+        );
+
+      margin:
+        auto;
+
+      padding:
+        18px;
     }
 
     .topbar {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
-      margin-bottom: 18px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: rgba(13,21,38,.9);
+      display:
+        flex;
+
+      gap:
+        15px;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      padding:
+        14px 18px;
+
+      margin-bottom:
+        18px;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        18px;
+
+      background:
+        rgba(
+          13,
+          21,
+          38,
+          .9
+        );
     }
 
     .topbar-left strong {
-      display: block;
-      color: var(--gold);
-      font-size: 22px;
+      display:
+        block;
+
+      color:
+        var(--gold);
+
+      font-size:
+        22px;
     }
 
     .topbar-left span {
-      font-size: 12px;
-      color: var(--muted);
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
     }
 
     .top-actions,
     .actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      display:
+        flex;
+
+      gap:
+        8px;
+
+      flex-wrap:
+        wrap;
     }
 
     .tabs {
-      display: flex;
-      gap: 9px;
-      margin-bottom: 18px;
-      overflow-x: auto;
+      display:
+        flex;
+
+      flex-wrap:
+        nowrap;
+
+      gap:
+        9px;
+
+      margin-bottom:
+        18px;
+
+      overflow-x:
+        auto;
+
+      overflow-y:
+        hidden;
+
+      -webkit-overflow-scrolling:
+        touch;
+
+      scrollbar-width:
+        none;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display:
+        none;
     }
 
     .tab {
-      white-space: nowrap;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 11px 15px;
-      background: #111b30;
-      color: var(--muted);
-      font-weight: 900;
+      flex:
+        0 0 auto;
+
+      min-height:
+        44px;
+
+      white-space:
+        nowrap;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        12px;
+
+      padding:
+        11px 15px;
+
+      background:
+        #111b30;
+
+      color:
+        var(--muted);
+
+      font-weight:
+        900;
     }
 
     .tab.active {
-      color: #07101d;
-      background: linear-gradient(135deg, var(--gold), var(--blue));
+      color:
+        #07101d;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--gold),
+          var(--blue)
+        );
     }
 
     .section {
-      display: none;
+      display:
+        none;
     }
 
     .section.active {
-      display: block;
+      display:
+        block;
     }
 
     .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 16px;
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(
+            0,
+            1fr
+          )
+        );
+
+      gap:
+        16px;
     }
 
     .card {
-      padding: 18px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: rgba(13,21,38,.94);
+      min-width:
+        0;
+
+      padding:
+        18px;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        18px;
+
+      background:
+        rgba(
+          13,
+          21,
+          38,
+          .94
+        );
     }
 
     .card h2 {
-      margin-top: 0;
-      color: var(--blue);
+      margin-top:
+        0;
+
+      color:
+        var(--blue);
     }
 
     .full {
-      grid-column: 1 / -1;
-    }
-
-    .row {
-      padding: 13px;
-      margin-top: 10px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: #0a1120;
-    }
-
-    .row-title {
-      font-weight: 900;
-      word-break: break-word;
-    }
-
-    .row-meta {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .actions {
-      margin-top: 10px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 8px;
-      margin-left: 6px;
-      border-radius: 999px;
-      background: #1c2a45;
-      color: var(--blue);
-      font-size: 11px;
-      font-weight: 900;
-    }
-
-    .code-value {
-      margin-top: 8px;
-      font-family: monospace;
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      color: var(--gold);
-    }
-
-    .notice {
-      min-height: 45px;
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #070d19;
-      color: var(--muted);
-      white-space: pre-wrap;
-    }
-
-    .error {
-      color: var(--red);
-    }
-
-    .ok {
-      color: var(--green);
+      grid-column:
+        1 / -1;
     }
 
     .stats {
-      display: grid;
-      grid-template-columns: repeat(4,minmax(0,1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          4,
+          minmax(
+            0,
+            1fr
+          )
+        );
+
+      gap:
+        12px;
+
+      margin-bottom:
+        16px;
     }
 
     .stat {
-      padding: 17px;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      background: var(--panel);
+      min-width:
+        0;
+
+      padding:
+        17px;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        16px;
+
+      background:
+        var(--panel);
     }
 
     .stat span {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 800;
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
+
+      font-weight:
+        800;
     }
 
     .stat strong {
-      display: block;
-      margin-top: 6px;
-      font-size: 26px;
-      color: var(--gold);
+      display:
+        block;
+
+      margin-top:
+        6px;
+
+      font-size:
+        26px;
+
+      color:
+        var(--gold);
+
+      overflow-wrap:
+        anywhere;
+    }
+
+    .row {
+      min-width:
+        0;
+
+      padding:
+        13px;
+
+      margin-top:
+        10px;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        14px;
+
+      background:
+        #0a1120;
+    }
+
+    .row-title {
+      font-weight:
+        900;
+
+      overflow-wrap:
+        anywhere;
+    }
+
+    .row-meta {
+      margin-top:
+        5px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.5;
+
+      overflow-wrap:
+        anywhere;
+    }
+
+    .actions {
+      margin-top:
+        10px;
+
+      width:
+        100%;
+    }
+
+    .badge {
+      display:
+        inline-block;
+
+      margin:
+        4px;
+
+      padding:
+        4px 8px;
+
+      border-radius:
+        999px;
+
+      background:
+        #1c2a45;
+
+      color:
+        var(--blue);
+
+      font-size:
+        11px;
+
+      font-weight:
+        900;
+    }
+
+    .code-value {
+      margin-top:
+        10px;
+
+      font-family:
+        monospace;
+
+      font-size:
+        25px;
+
+      font-weight:
+        900;
+
+      letter-spacing:
+        3px;
+
+      color:
+        var(--gold);
+    }
+
+    .notice {
+      min-height:
+        45px;
+
+      margin-top:
+        12px;
+
+      padding:
+        12px;
+
+      border-radius:
+        12px;
+
+      background:
+        #070d19;
+
+      color:
+        var(--muted);
+
+      white-space:
+        pre-wrap;
+
+      overflow-wrap:
+        anywhere;
+    }
+
+    .ok {
+      color:
+        var(--green);
+    }
+
+    .error {
+      color:
+        var(--red);
+    }
+
+    .email-body {
+      max-height:
+        340px;
+
+      overflow:
+        auto;
+
+      white-space:
+        pre-wrap;
+
+      word-break:
+        break-word;
+    }
+
+    .email-action {
+      margin-top:
+        12px;
+
+      padding:
+        12px;
+
+      border:
+        1px solid
+        rgba(
+          117,
+          201,
+          255,
+          .25
+        );
+
+      border-radius:
+        14px;
+
+      background:
+        rgba(
+          117,
+          201,
+          255,
+          .05
+        );
+    }
+
+    .email-action-title {
+      margin-bottom:
+        9px;
+
+      color:
+        var(--blue);
+
+      font-size:
+        13px;
+
+      font-weight:
+        900;
     }
 
     @media(max-width:850px) {
-      .grid,
+
+      .app {
+        padding:
+          10px;
+      }
+
+      .grid {
+        grid-template-columns:
+          1fr;
+      }
+
       .stats {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+          repeat(
+            2,
+            minmax(
+              0,
+              1fr
+            )
+          );
       }
 
       .full {
-        grid-column: auto;
+        grid-column:
+          auto;
       }
 
       .topbar {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction:
+          column;
+
+        align-items:
+          stretch;
+      }
+
+      .top-actions {
+        width:
+          100%;
+      }
+
+      .top-actions button {
+        flex:
+          1;
+      }
+    }
+
+    @media(max-width:600px) {
+
+      body {
+        font-size:
+          15px;
+      }
+
+      .app {
+        padding:
+          8px;
+      }
+
+      .card {
+        padding:
+          13px;
+
+        border-radius:
+          14px;
+      }
+
+      .card h2 {
+        font-size:
+          19px;
+      }
+
+      .stats {
+        grid-template-columns:
+          1fr 1fr;
+
+        gap:
+          8px;
+      }
+
+      .stat {
+        padding:
+          12px;
+      }
+
+      .stat strong {
+        font-size:
+          20px;
+      }
+
+      .tabs {
+        gap:
+          7px;
+      }
+
+      .tab {
+        font-size:
+          13px;
+
+        padding:
+          10px 12px;
+      }
+
+      input,
+      select,
+      textarea {
+        min-height:
+          46px;
+      }
+
+      .actions {
+        display:
+          grid;
+
+        grid-template-columns:
+          1fr;
+      }
+
+      .actions button,
+      .link-btn {
+        width:
+          100%;
+
+        min-height:
+          44px;
+      }
+
+      #inboxCurrentEmail {
+        font-size:
+          12px !important;
+      }
+    }
+
+    @media(max-width:390px) {
+      .stats {
+        grid-template-columns:
+          1fr;
       }
     }
   </style>
@@ -333,7 +864,11 @@
 
 <body>
 
-<section id="loginScreen" class="login-screen">
+<section
+  id="loginScreen"
+  class="login-screen"
+>
+
   <div class="login-card">
 
     <div class="brand">
@@ -344,20 +879,22 @@
       Panel administrativo
     </div>
 
-    <label>Correo de administrador</label>
+    <label>
+      Correo de administrador
+    </label>
 
     <input
       id="adminEmail"
       type="email"
-      placeholder="admin@royallegacy.com"
     >
 
-    <label>Contraseña</label>
+    <label>
+      Contraseña
+    </label>
 
     <input
       id="adminPassword"
       type="password"
-      placeholder="Contraseña"
     >
 
     <button
@@ -375,1882 +912,2964 @@
     </div>
 
   </div>
+
 </section>
 
 
-<main id="app" class="app hidden">
+<main
+  id="app"
+  class="app hidden"
+>
 
-  <header class="topbar">
+<header class="topbar">
 
-    <div class="topbar-left">
+  <div class="topbar-left">
 
-      <strong>
-        Royal Legacy
-      </strong>
+    <strong>
+      Royal Legacy
+    </strong>
 
-      <span id="adminIdentity">
-        Panel administrativo
+    <span id="adminIdentity">
+      Panel administrativo
+    </span>
+
+  </div>
+
+  <div class="top-actions">
+
+    <button
+      class="ghost"
+      onclick="refreshAll()"
+    >
+      Actualizar
+    </button>
+
+    <button
+      class="danger"
+      onclick="logout()"
+    >
+      Cerrar sesión
+    </button>
+
+  </div>
+
+</header>
+
+
+<nav class="tabs">
+
+  <button
+    class="tab active"
+    data-tab="emails"
+    onclick="showTab('emails')"
+  >
+    📧 Generador de Correos
+  </button>
+
+  <button
+    class="tab"
+    data-tab="codes"
+    onclick="showTab('codes')"
+  >
+    🔐 Panel de Códigos
+  </button>
+
+  <button
+    class="tab"
+    data-tab="inbox"
+    onclick="showTab('inbox')"
+  >
+    📥 Bandeja de entrada
+  </button>
+
+  <button
+    class="tab"
+    data-tab="sales"
+    onclick="showTab('sales')"
+  >
+    💰 Ventas
+  </button>
+
+</nav>
+
+
+<section
+  id="emails"
+  class="section active"
+>
+
+  <div class="stats">
+
+    <div class="stat">
+      <span>Dominios</span>
+      <strong id="domainCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Correos totales</span>
+      <strong id="aliasCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Disponibles</span>
+      <strong id="availableCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Asignados</span>
+      <strong id="assignedCount">0</strong>
+    </div>
+
+  </div>
+
+
+  <div class="grid">
+
+    <article class="card">
+
+      <h2>
+        Agregar dominio
+      </h2>
+
+      <label>
+        Dominio
+      </label>
+
+      <input id="domainName">
+
+      <label>
+        Proveedor
+      </label>
+
+      <input id="providerName">
+
+      <label>
+        Grupo / Plataforma
+      </label>
+
+      <input id="domainPlatform">
+
+      <label>
+        Prioridad
+      </label>
+
+      <input
+        id="rotationPriority"
+        type="number"
+        value="0"
+      >
+
+      <button
+        class="primary"
+        onclick="createDomain()"
+      >
+        Crear dominio
+      </button>
+
+      <div
+        id="domainMessage"
+        class="notice"
+      ></div>
+
+    </article>
+
+
+    <article class="card">
+
+      <h2>
+        Generar correos
+      </h2>
+
+      <label>
+        Dominio
+      </label>
+
+      <select id="generateDomain"></select>
+
+      <label>
+        Cantidad
+      </label>
+
+      <input
+        id="generateQuantity"
+        type="number"
+        value="1"
+      >
+
+      <label>
+        Longitud del alias
+      </label>
+
+      <input
+        id="aliasLength"
+        type="number"
+        value="10"
+      >
+
+      <label>
+        Alias personalizado
+      </label>
+
+      <input id="customAlias">
+
+      <button
+        class="primary"
+        onclick="generateEmail()"
+      >
+        Generar correo
+      </button>
+
+      <div
+        id="generateMessage"
+        class="notice"
+      ></div>
+
+    </article>
+
+
+    <article class="card">
+
+      <h2>
+        Asignación automática
+      </h2>
+
+      <label>
+        ID de variante del producto
+      </label>
+
+      <input
+        id="autoAssignVariantId"
+        placeholder="productVariantId"
+      >
+
+      <button
+        class="primary"
+        onclick="assignAliasAutomatically()"
+      >
+        Asignar correo automáticamente
+      </button>
+
+      <div
+        id="autoAssignMessage"
+        class="notice"
+      ></div>
+
+    </article>
+
+
+    <article class="card">
+
+      <h2>
+        Dominios
+      </h2>
+
+      <div id="domainList">
+        Cargando...
+      </div>
+
+    </article>
+
+
+    <article class="card full">
+
+      <h2>
+        Correos generados
+      </h2>
+
+      <label>
+        Filtrar
+      </label>
+
+      <select
+        id="aliasFilter"
+        onchange="renderAliases()"
+      >
+
+        <option value="">
+          Todos
+        </option>
+
+        <option value="AVAILABLE">
+          Disponibles
+        </option>
+
+        <option value="ASSIGNED">
+          Asignados
+        </option>
+
+        <option value="PAUSED">
+          Pausados
+        </option>
+
+        <option value="BLOCKED">
+          Bloqueados
+        </option>
+
+      </select>
+
+      <div id="aliasList">
+        Cargando...
+      </div>
+
+    </article>
+
+  </div>
+
+</section>
+
+
+<section
+  id="codes"
+  class="section"
+>
+
+  <div class="stats">
+
+    <div class="stat">
+      <span>Pendientes</span>
+      <strong id="pendingCodes">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Recibidos</span>
+      <strong id="receivedCodes">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Entregados</span>
+      <strong id="deliveredCodes">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Fallidos / Expirados</span>
+      <strong id="failedCodes">0</strong>
+    </div>
+
+  </div>
+
+
+  <div class="grid">
+
+    <article class="card">
+
+      <h2>
+        Nueva solicitud
+      </h2>
+
+      <label>
+        ID del artículo de inventario
+      </label>
+
+      <input
+        id="codeInventoryId"
+        placeholder="inventoryItemId"
+      >
+
+      <label>
+        Notas
+      </label>
+
+      <textarea
+        id="codeNotes"
+        rows="4"
+      ></textarea>
+
+      <button
+        class="primary"
+        onclick="createCodeRequest()"
+      >
+        Solicitar código
+      </button>
+
+      <div
+        id="codeCreateMessage"
+        class="notice"
+      ></div>
+
+    </article>
+
+
+    <article class="card">
+
+      <h2>
+        Filtrar solicitudes
+      </h2>
+
+      <select
+        id="codeFilter"
+        onchange="renderCodes()"
+      >
+
+        <option value="">
+          Todos
+        </option>
+
+        <option value="PENDING">
+          Pendientes
+        </option>
+
+        <option value="RECEIVED">
+          Recibidos
+        </option>
+
+        <option value="DELIVERED">
+          Entregados
+        </option>
+
+        <option value="EXPIRED">
+          Expirados
+        </option>
+
+        <option value="FAILED">
+          Fallidos
+        </option>
+
+      </select>
+
+      <button
+        class="primary"
+        onclick="loadCodes()"
+      >
+        Actualizar solicitudes
+      </button>
+
+    </article>
+
+
+    <article class="card full">
+
+      <h2>
+        Solicitudes de códigos
+      </h2>
+
+      <div id="codeList">
+        Cargando...
+      </div>
+
+    </article>
+
+  </div>
+
+</section>
+
+
+<section
+  id="inbox"
+  class="section"
+>
+
+  <div class="stats">
+
+    <div class="stat">
+
+      <span>
+        Correos recibidos
       </span>
 
+      <strong id="inboxCount">
+        0
+      </strong>
+
     </div>
 
-    <div class="top-actions">
+
+    <div class="stat">
+
+      <span>
+        Correo consultado
+      </span>
+
+      <strong
+        id="inboxCurrentEmail"
+        style="font-size:14px"
+      >
+        inbox@royxxlex.com
+      </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+      <span>
+        Con código
+      </span>
+
+      <strong id="inboxCodeCount">
+        0
+      </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+      <span>
+        Actualizado
+      </span>
+
+      <strong
+        id="inboxUpdatedAt"
+        style="font-size:15px"
+      >
+        --
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <div class="grid">
+
+    <article class="card full">
+
+      <h2>
+        📥 Bandeja de entrada
+      </h2>
+
+      <p class="row-meta">
+        Consulta verificaciones, invitaciones,
+        enlaces y códigos recibidos.
+      </p>
+
+      <label>
+        Dirección de correo
+      </label>
+
+      <input
+        id="inboxEmail"
+        type="email"
+        value="inbox@royxxlex.com"
+      >
 
       <button
-        class="ghost"
-        onclick="refreshAll()"
+        class="primary"
+        onclick="loadInbox()"
       >
-        Actualizar
+        Actualizar bandeja
       </button>
+
+      <div
+        id="inboxMessage"
+        class="notice"
+      >
+        Los correos recibidos aparecerán aquí.
+      </div>
+
+    </article>
+
+
+    <article class="card full">
+
+      <h2>
+        Mensajes recibidos
+      </h2>
+
+      <div id="inboxList">
+        Cargando...
+      </div>
+
+    </article>
+
+  </div>
+
+</section>
+
+
+<section
+  id="sales"
+  class="section"
+>
+
+  <div class="stats">
+
+    <div class="stat">
+      <span>Ventas</span>
+      <strong id="saleCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Total vendido</span>
+      <strong id="saleTotal">$0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Costo interno</span>
+      <strong id="saleCost">$0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Ganancia</span>
+      <strong id="saleProfit">$0</strong>
+    </div>
+
+  </div>
+
+
+  <div class="grid">
+
+    <article class="card">
+
+      <h2>
+        Nueva venta
+      </h2>
+
+      <label>
+        ID del cliente
+      </label>
+
+      <input id="saleClientId">
+
+      <label>
+        ID de variante del producto
+      </label>
+
+      <input id="saleVariantId">
+
+      <label>
+        Cantidad
+      </label>
+
+      <input
+        id="saleQuantity"
+        type="number"
+        value="1"
+      >
+
+      <label>
+        Precio
+      </label>
+
+      <input
+        id="saleUnitPrice"
+        type="number"
+      >
+
+      <label>
+        Costo interno
+      </label>
+
+      <input
+        id="saleInternalCost"
+        type="number"
+        value="0"
+      >
+
+      <label>
+        Referencia de pago
+      </label>
+
+      <input id="salePaymentReference">
 
       <button
-        class="danger"
-        onclick="logout()"
+        class="primary"
+        onclick="createSale()"
       >
-        Cerrar sesión
+        Crear venta
       </button>
 
-    </div>
+      <div
+        id="saleCreateMessage"
+        class="notice"
+      ></div>
 
-  </header>
-
-
-  <nav class="tabs">
-
-    <button
-      class="tab active"
-      data-tab="emails"
-      onclick="showTab('emails')"
-    >
-      📧 Generador de Correos
-    </button>
-
-    <button
-      class="tab"
-      data-tab="codes"
-      onclick="showTab('codes')"
-    >
-      🔐 Panel de Códigos
-    </button>
-
-    <button
-      class="tab"
-      data-tab="sales"
-      onclick="showTab('sales')"
-    >
-      💰 Ventas
-    </button>
-
-  </nav>
+    </article>
 
 
-  <!-- ========================= -->
-  <!-- CORREOS -->
-  <!-- ========================= -->
+    <article class="card">
 
-  <section
-    id="emails"
-    class="section active"
-  >
+      <h2>
+        Actualizar ventas
+      </h2>
 
-    <div class="stats">
+      <button
+        class="primary"
+        onclick="loadSales()"
+      >
+        Actualizar ventas
+      </button>
 
-      <div class="stat">
-        <span>Dominios</span>
-        <strong id="domainCount">0</strong>
+    </article>
+
+
+    <article class="card full">
+
+      <h2>
+        Ventas registradas
+      </h2>
+
+      <div id="salesList">
+        Cargando...
       </div>
 
-      <div class="stat">
-        <span>Correos totales</span>
-        <strong id="aliasCount">0</strong>
-      </div>
+    </article>
 
-      <div class="stat">
-        <span>Disponibles</span>
-        <strong id="availableCount">0</strong>
-      </div>
+  </div>
 
-      <div class="stat">
-        <span>Asignados</span>
-        <strong id="assignedCount">0</strong>
-      </div>
-
-    </div>
-
-
-    <div class="grid">
-
-      <article class="card">
-
-        <h2>Agregar dominio</h2>
-
-        <label>Dominio</label>
-        <input id="domainName">
-
-        <label>Proveedor</label>
-        <input id="providerName">
-
-        <label>Grupo / Plataforma</label>
-        <input id="domainPlatform">
-
-        <label>Prioridad</label>
-        <input
-          id="rotationPriority"
-          type="number"
-          value="0"
-        >
-
-        <button
-          class="primary"
-          onclick="createDomain()"
-        >
-          Crear dominio
-        </button>
-
-        <div
-          id="domainMessage"
-          class="notice"
-        ></div>
-
-      </article>
-
-
-      <article class="card">
-
-        <h2>Generar correos</h2>
-
-        <label>Dominio</label>
-        <select id="generateDomain"></select>
-
-        <label>Cantidad</label>
-        <input
-          id="generateQuantity"
-          type="number"
-          value="1"
-        >
-
-        <label>Longitud del alias</label>
-        <input
-          id="aliasLength"
-          type="number"
-          value="10"
-        >
-
-        <label>Alias personalizado</label>
-        <input
-          id="customAlias"
-          placeholder="cliente001"
-        >
-
-        <button
-          class="primary"
-          onclick="generateEmail()"
-        >
-          Generar correo
-        </button>
-
-        <div
-          id="generateMessage"
-          class="notice"
-        ></div>
-
-      </article>
-
-
-      <article class="card">
-
-        <h2>Dominios</h2>
-
-        <div id="domainList">
-          Cargando...
-        </div>
-
-      </article>
-
-
-      <article class="card">
-
-        <h2>Correos generados</h2>
-
-        <label>Filtrar</label>
-
-        <select
-          id="aliasFilter"
-          onchange="renderAliases()"
-        >
-          <option value="">Todos</option>
-          <option value="AVAILABLE">Disponibles</option>
-          <option value="ASSIGNED">Asignados</option>
-          <option value="PAUSED">Pausados</option>
-          <option value="BLOCKED">Bloqueados</option>
-        </select>
-
-        <div id="aliasList">
-          Cargando...
-        </div>
-
-      </article>
-
-    </div>
-
-  </section>
-
-
-  <!-- ========================= -->
-  <!-- CÓDIGOS -->
-  <!-- ========================= -->
-
-  <section
-    id="codes"
-    class="section"
-  >
-
-    <div class="stats">
-
-      <div class="stat">
-        <span>Pendientes</span>
-        <strong id="pendingCodes">0</strong>
-      </div>
-
-      <div class="stat">
-        <span>Recibidos</span>
-        <strong id="receivedCodes">0</strong>
-      </div>
-
-      <div class="stat">
-        <span>Entregados</span>
-        <strong id="deliveredCodes">0</strong>
-      </div>
-
-      <div class="stat">
-        <span>Fallidos / Expirados</span>
-        <strong id="failedCodes">0</strong>
-      </div>
-
-    </div>
-
-
-    <div class="grid">
-
-      <article class="card">
-
-        <h2>Nueva solicitud</h2>
-
-        <label>ID del artículo de inventario</label>
-
-        <input
-          id="codeInventoryId"
-          placeholder="inventoryItemId"
-        >
-
-        <label>Notas</label>
-
-        <textarea
-          id="codeNotes"
-          rows="4"
-        ></textarea>
-
-        <button
-          class="primary"
-          onclick="createCodeRequest()"
-        >
-          Solicitar código
-        </button>
-
-        <div
-          id="codeCreateMessage"
-          class="notice"
-        ></div>
-
-      </article>
-
-
-      <article class="card">
-
-        <h2>Filtrar solicitudes</h2>
-
-        <label>Estado</label>
-
-        <select
-          id="codeFilter"
-          onchange="renderCodes()"
-        >
-          <option value="">Todos</option>
-          <option value="PENDING">Pendientes</option>
-          <option value="RECEIVED">Recibidos</option>
-          <option value="DELIVERED">Entregados</option>
-          <option value="EXPIRED">Expirados</option>
-          <option value="FAILED">Fallidos</option>
-        </select>
-
-        <button
-          class="primary"
-          onclick="loadCodes()"
-        >
-          Actualizar solicitudes
-        </button>
-
-      </article>
-
-
-      <article class="card full">
-
-        <h2>Solicitudes de códigos</h2>
-
-        <div id="codeList">
-          Cargando...
-        </div>
-
-      </article>
-
-    </div>
-
-  </section>
-
-
-  <!-- ========================= -->
-  <!-- VENTAS -->
-  <!-- ========================= -->
-
-  <section
-    id="sales"
-    class="section"
-  >
-
-    <div class="stats">
-
-      <div class="stat">
-        <span>Ventas</span>
-        <strong id="saleCount">0</strong>
-      </div>
-
-      <div class="stat">
-        <span>Total vendido</span>
-        <strong id="saleTotal">$0</strong>
-      </div>
-
-      <div class="stat">
-        <span>Costo interno</span>
-        <strong id="saleCost">$0</strong>
-      </div>
-
-      <div class="stat">
-        <span>Ganancia</span>
-        <strong id="saleProfit">$0</strong>
-      </div>
-
-    </div>
-
-
-    <div class="grid">
-
-      <article class="card">
-
-        <h2>Nueva venta</h2>
-
-        <label>ID del cliente</label>
-
-        <input
-          id="saleClientId"
-          placeholder="clientId"
-        >
-
-
-        <label>ID de variante del producto</label>
-
-        <input
-          id="saleVariantId"
-          placeholder="productVariantId"
-        >
-
-
-        <label>Cantidad</label>
-
-        <input
-          id="saleQuantity"
-          type="number"
-          min="1"
-          value="1"
-        >
-
-
-        <label>Precio de venta por unidad</label>
-
-        <input
-          id="saleUnitPrice"
-          type="number"
-          min="0"
-          step="0.01"
-          placeholder="100"
-        >
-
-
-        <label>Costo interno por unidad</label>
-
-        <input
-          id="saleInternalCost"
-          type="number"
-          min="0"
-          step="0.01"
-          value="0"
-        >
-
-
-        <label>Referencia de pago</label>
-
-        <input
-          id="salePaymentReference"
-          placeholder="Opcional"
-        >
-
-
-        <button
-          class="primary"
-          onclick="createSale()"
-        >
-          Crear venta
-        </button>
-
-
-        <div
-          id="saleCreateMessage"
-          class="notice"
-        ></div>
-
-      </article>
-
-
-      <article class="card">
-
-        <h2>Actualizar ventas</h2>
-
-        <p class="row-meta">
-          Las ventas ahora usan Prisma y el inventario disponible.
-          Al crear una venta, el artículo correspondiente debe pasar
-          de AVAILABLE a SOLD.
-        </p>
-
-        <button
-          class="primary"
-          onclick="loadSales()"
-        >
-          Actualizar ventas
-        </button>
-
-      </article>
-
-
-      <article class="card full">
-
-        <h2>Ventas registradas</h2>
-
-        <div id="salesList">
-          Cargando...
-        </div>
-
-      </article>
-
-    </div>
-
-  </section>
+</section>
 
 </main>
 
 
 <script>
 
-  const API = '/api';
-
-  let token =
-    localStorage.getItem(
-      'royalAdminToken'
-    ) || '';
-
-  let currentAdmin = null;
-
-  let domains = [];
-  let aliases = [];
-  let codeRequests = [];
-  let sales = [];
+const API =
+  '/api';
 
 
-  function escapeHtml(value) {
-    return String(value ?? '')
-      .replaceAll('&','&amp;')
-      .replaceAll('<','&lt;')
-      .replaceAll('>','&gt;')
-      .replaceAll('"','&quot;')
-      .replaceAll("'",'&#039;');
+let token =
+  localStorage.getItem(
+    'royalAdminToken'
+  ) || '';
+
+
+let currentAdmin =
+  null;
+
+
+let domains =
+  [];
+
+
+let aliases =
+  [];
+
+
+let codeRequests =
+  [];
+
+
+let inboxMessages =
+  [];
+
+
+let sales =
+  [];
+
+
+function escapeHtml(value) {
+
+  return String(
+    value ?? ''
+  )
+    .replaceAll(
+      '&',
+      '&amp;'
+    )
+    .replaceAll(
+      '<',
+      '&lt;'
+    )
+    .replaceAll(
+      '>',
+      '&gt;'
+    )
+    .replaceAll(
+      '"',
+      '&quot;'
+    )
+    .replaceAll(
+      "'",
+      '&#039;'
+    );
+}
+
+
+function extractData(json) {
+
+  if (
+    json &&
+    typeof json === 'object' &&
+    json.data !== undefined
+  ) {
+    return json.data;
   }
 
-
-  function extractData(json) {
-
-    if (
-      json &&
-      typeof json === 'object' &&
-      json.data !== undefined
-    ) {
-      return json.data;
-    }
-
-    return json;
-  }
+  return json;
+}
 
 
-  async function request(
-    url,
-    options = {},
-    authenticated = true
+async function request(
+  url,
+  options = {},
+  authenticated = true
+) {
+
+  const headers = {
+    ...(options.headers || {})
+  };
+
+
+  if (
+    options.body &&
+    !(options.body instanceof FormData)
   ) {
 
-    const headers = {
-      ...(options.headers || {})
-    };
-
-    if (
-      options.body &&
-      !(options.body instanceof FormData)
-    ) {
-      headers['Content-Type'] =
-        headers['Content-Type'] ||
-        'application/json';
-    }
-
-    if (
-      authenticated &&
-      token
-    ) {
-      headers.Authorization =
-        `Bearer ${token}`;
-    }
-
-    const response =
-      await fetch(
-        url,
-        {
-          ...options,
-          headers
-        }
-      );
-
-    let json;
-
-    try {
-      json = await response.json();
-    } catch {
-      json = {
-        success: false,
-        message:
-          'Respuesta inválida del servidor'
-      };
-    }
-
-    if (!response.ok) {
-
-      const error =
-        new Error(
-          json.message ||
-          `HTTP ${response.status}`
-        );
-
-      error.status =
-        response.status;
-
-      throw error;
-    }
-
-    return json;
+    headers[
+      'Content-Type'
+    ] =
+      'application/json';
   }
 
 
-  // =========================
-  // LOGIN
-  // =========================
+  if (
+    authenticated &&
+    token
+  ) {
 
-  async function adminLogin() {
+    headers.Authorization =
+      `Bearer ${token}`;
+  }
 
-    const message =
-      document.getElementById(
-        'loginMessage'
-      );
 
-    message.className =
-      'notice';
-
-    message.textContent =
-      'Iniciando sesión...';
-
-    try {
-
-      const json =
-        await request(
-          `${API}/auth/admin/login`,
-          {
-            method: 'POST',
-
-            body:
-              JSON.stringify({
-                email:
-                  document
-                    .getElementById(
-                      'adminEmail'
-                    )
-                    .value
-                    .trim(),
-
-                password:
-                  document
-                    .getElementById(
-                      'adminPassword'
-                    )
-                    .value
-              })
-          },
-          false
-        );
-
-      const payload =
-        extractData(json);
-
-      const newToken =
-        payload?.token ||
-        json?.token;
-
-      const user =
-        payload?.user ||
-        json?.user;
-
-      if (!newToken) {
-        throw new Error(
-          'El servidor no devolvió un token'
-        );
+  const response =
+    await fetch(
+      url,
+      {
+        ...options,
+        headers
       }
-
-      token = newToken;
-
-      currentAdmin =
-        user || null;
-
-      localStorage.setItem(
-        'royalAdminToken',
-        token
-      );
-
-      showApp();
-
-      await refreshAll();
-
-    } catch (error) {
-
-      message.className =
-        'notice error';
-
-      message.textContent =
-        error.message;
-    }
-  }
-
-
-  function logout() {
-
-    token = '';
-    currentAdmin = null;
-
-    localStorage.removeItem(
-      'royalAdminToken'
     );
 
-    document
-      .getElementById('app')
-      .classList
-      .add('hidden');
 
-    document
-      .getElementById(
-        'loginScreen'
-      )
-      .classList
-      .remove('hidden');
+  let json;
+
+
+  try {
+
+    json =
+      await response.json();
+
+  } catch {
+
+    json = {
+      success: false,
+      message:
+        'Respuesta inválida del servidor'
+    };
   }
 
 
-  function showApp() {
+  if (!response.ok) {
 
-    document
-      .getElementById(
-        'loginScreen'
-      )
-      .classList
-      .add('hidden');
-
-    document
-      .getElementById('app')
-      .classList
-      .remove('hidden');
-
-    if (currentAdmin) {
-
-      document
-        .getElementById(
-          'adminIdentity'
-        )
-        .textContent =
-          `${currentAdmin.name || ''} · ${currentAdmin.role || 'ADMIN'}`;
-    }
+    throw new Error(
+      json.message ||
+      `HTTP ${response.status}`
+    );
   }
 
 
-  function showTab(tabId) {
-
-    document
-      .querySelectorAll(
-        '.section'
-      )
-      .forEach(section => {
-        section.classList.remove(
-          'active'
-        );
-      });
-
-    document
-      .querySelectorAll(
-        '.tab'
-      )
-      .forEach(tab => {
-        tab.classList.remove(
-          'active'
-        );
-      });
-
-    document
-      .getElementById(tabId)
-      .classList
-      .add('active');
-
-    document
-      .querySelector(
-        `[data-tab="${tabId}"]`
-      )
-      .classList
-      .add('active');
-
-    if (tabId === 'sales') {
-      loadSales();
-    }
-  }
+  return json;
+}
 
 
-  async function validateSavedToken() {
+// =========================================
+// LOGIN
+// =========================================
 
-    if (!token) {
-      return;
-    }
+async function adminLogin() {
 
-    try {
-
-      const json =
-        await request(
-          `${API}/auth/admin/me`
-        );
-
-      const payload =
-        extractData(json);
-
-      currentAdmin =
-        payload?.user ||
-        json?.user ||
-        payload;
-
-      showApp();
-
-      await refreshAll();
-
-    } catch {
-      logout();
-    }
-  }
+  const message =
+    document.getElementById(
+      'loginMessage'
+    );
 
 
-  async function refreshAll() {
-
-    await Promise.allSettled([
-      loadDomains(),
-      loadAliases(),
-      loadCodes(),
-      loadSales()
-    ]);
-  }
+  message.textContent =
+    'Iniciando sesión...';
 
 
-  // =========================
-  // DOMINIOS
-  // =========================
+  try {
 
-  async function loadDomains() {
-
-    try {
-
-      const json =
-        await request(
-          `${API}/mail/domains`
-        );
-
-      const data =
-        extractData(json);
-
-      domains =
-        Array.isArray(data)
-          ? data
-          : [];
-
-      document
-        .getElementById(
-          'domainCount'
-        )
-        .textContent =
-          domains.length;
-
-      renderDomains();
-      fillDomainSelect();
-
-    } catch (error) {
-
-      document
-        .getElementById(
-          'domainList'
-        )
-        .innerHTML =
-          `<div class="error">${escapeHtml(error.message)}</div>`;
-    }
-  }
-
-
-  function renderDomains() {
-
-    const container =
-      document.getElementById(
-        'domainList'
-      );
-
-    if (!domains.length) {
-
-      container.innerHTML =
-        '<div class="row-meta">No hay dominios.</div>';
-
-      return;
-    }
-
-    container.innerHTML =
-      domains.map(domain => `
-        <div class="row">
-
-          <div class="row-title">
-            @${escapeHtml(domain.domain)}
-          </div>
-
-          <div class="row-meta">
-            Estado:
-            ${escapeHtml(domain.status)}
-            <br>
-
-            Proveedor:
-            ${escapeHtml(domain.providerName || 'Sin proveedor')}
-          </div>
-
-        </div>
-      `).join('');
-  }
-
-
-  function fillDomainSelect() {
-
-    const select =
-      document.getElementById(
-        'generateDomain'
-      );
-
-    const active =
-      domains.filter(
-        item =>
-          item.status === 'ACTIVE'
-      );
-
-    select.innerHTML =
-      active.length
-        ? active.map(domain => `
-            <option value="${escapeHtml(domain.id)}">
-              @${escapeHtml(domain.domain)}
-            </option>
-          `).join('')
-        : '<option value="">No hay dominios activos</option>';
-  }
-
-
-  async function createDomain() {
-
-    const message =
-      document.getElementById(
-        'domainMessage'
-      );
-
-    try {
-
-      const domain =
-        document
-          .getElementById(
-            'domainName'
-          )
-          .value
-          .trim();
-
-      if (!domain) {
-        throw new Error(
-          'Escribe un dominio'
-        );
-      }
-
+    const json =
       await request(
-        `${API}/mail/domains`,
+        `${API}/auth/admin/login`,
         {
-          method: 'POST',
+          method:
+            'POST',
 
           body:
             JSON.stringify({
-              domain,
-
-              providerName:
+              email:
                 document
                   .getElementById(
-                    'providerName'
+                    'adminEmail'
                   )
                   .value
                   .trim(),
 
-              platformGroup:
+              password:
                 document
                   .getElementById(
-                    'domainPlatform'
+                    'adminPassword'
                   )
                   .value
-                  .trim(),
+            })
+        },
+        false
+      );
 
-              rotationPriority:
+
+    const data =
+      extractData(json);
+
+
+    token =
+      data?.token ||
+      json?.token;
+
+
+    currentAdmin =
+      data?.user ||
+      json?.user ||
+      null;
+
+
+    if (!token) {
+
+      throw new Error(
+        'El servidor no devolvió token'
+      );
+    }
+
+
+    localStorage.setItem(
+      'royalAdminToken',
+      token
+    );
+
+
+    showApp();
+
+
+    await refreshAll();
+
+  } catch (error) {
+
+    message.className =
+      'notice error';
+
+    message.textContent =
+      error.message;
+  }
+}
+
+
+function logout() {
+
+  token =
+    '';
+
+
+  currentAdmin =
+    null;
+
+
+  localStorage.removeItem(
+    'royalAdminToken'
+  );
+
+
+  document
+    .getElementById(
+      'app'
+    )
+    .classList
+    .add(
+      'hidden'
+    );
+
+
+  document
+    .getElementById(
+      'loginScreen'
+    )
+    .classList
+    .remove(
+      'hidden'
+    );
+}
+
+
+function showApp() {
+
+  document
+    .getElementById(
+      'loginScreen'
+    )
+    .classList
+    .add(
+      'hidden'
+    );
+
+
+  document
+    .getElementById(
+      'app'
+    )
+    .classList
+    .remove(
+      'hidden'
+    );
+
+
+  if (currentAdmin) {
+
+    document
+      .getElementById(
+        'adminIdentity'
+      )
+      .textContent =
+        `${
+          currentAdmin.name ||
+          ''
+        } · ${
+          currentAdmin.role ||
+          'ADMIN'
+        }`;
+  }
+}
+
+
+function showTab(tabId) {
+
+  document
+    .querySelectorAll(
+      '.section'
+    )
+    .forEach(
+      section => {
+
+        section
+          .classList
+          .remove(
+            'active'
+          );
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      '.tab'
+    )
+    .forEach(
+      tab => {
+
+        tab
+          .classList
+          .remove(
+            'active'
+          );
+      }
+    );
+
+
+  document
+    .getElementById(
+      tabId
+    )
+    .classList
+    .add(
+      'active'
+    );
+
+
+  document
+    .querySelector(
+      `[data-tab="${tabId}"]`
+    )
+    .classList
+    .add(
+      'active'
+    );
+
+
+  if (
+    tabId ===
+    'inbox'
+  ) {
+
+    loadInbox();
+  }
+
+
+  if (
+    tabId ===
+    'sales'
+  ) {
+
+    loadSales();
+  }
+}
+
+
+async function validateSavedToken() {
+
+  if (!token) {
+    return;
+  }
+
+
+  try {
+
+    const json =
+      await request(
+        `${API}/auth/admin/me`
+      );
+
+
+    const data =
+      extractData(json);
+
+
+    currentAdmin =
+      data?.user ||
+      json?.user ||
+      data;
+
+
+    showApp();
+
+
+    await refreshAll();
+
+  } catch {
+
+    logout();
+  }
+}
+
+
+async function refreshAll() {
+
+  await Promise.allSettled([
+    loadDomains(),
+    loadAliases(),
+    loadCodes(),
+    loadInbox(),
+    loadSales()
+  ]);
+}
+
+
+// =========================================
+// DOMINIOS
+// =========================================
+
+async function loadDomains() {
+
+  try {
+
+    const json =
+      await request(
+        `${API}/mail/domains`
+      );
+
+
+    const data =
+      extractData(json);
+
+
+    domains =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    document
+      .getElementById(
+        'domainCount'
+      )
+      .textContent =
+        domains.length;
+
+
+    renderDomains();
+
+
+    fillDomainSelect();
+
+  } catch (error) {
+
+    document
+      .getElementById(
+        'domainList'
+      )
+      .innerHTML =
+        `<div class="error">${
+          escapeHtml(
+            error.message
+          )
+        }</div>`;
+  }
+}
+
+
+function renderDomains() {
+
+  const container =
+    document.getElementById(
+      'domainList'
+    );
+
+
+  if (!domains.length) {
+
+    container.innerHTML =
+      '<div class="row-meta">No hay dominios.</div>';
+
+    return;
+  }
+
+
+  container.innerHTML =
+    domains
+      .map(
+        item => `
+
+          <div class="row">
+
+            <div class="row-title">
+
+              @${escapeHtml(
+                item.domain
+              )}
+
+            </div>
+
+            <div class="row-meta">
+
+              Estado:
+              ${escapeHtml(
+                item.status
+              )}
+
+              <br>
+
+              Proveedor:
+              ${escapeHtml(
+                item.providerName ||
+                'Sin proveedor'
+              )}
+
+            </div>
+
+          </div>
+
+        `
+      )
+      .join('');
+}
+
+
+function fillDomainSelect() {
+
+  const select =
+    document.getElementById(
+      'generateDomain'
+    );
+
+
+  const active =
+    domains.filter(
+      item =>
+        item.status ===
+        'ACTIVE'
+    );
+
+
+  select.innerHTML =
+    active.length
+
+      ? active
+          .map(
+            item => `
+
+              <option
+                value="${escapeHtml(
+                  item.id
+                )}"
+              >
+
+                @${escapeHtml(
+                  item.domain
+                )}
+
+              </option>
+
+            `
+          )
+          .join('')
+
+      : '<option value="">No hay dominios activos</option>';
+}
+
+
+async function createDomain() {
+
+  const message =
+    document.getElementById(
+      'domainMessage'
+    );
+
+
+  try {
+
+    const domain =
+      document
+        .getElementById(
+          'domainName'
+        )
+        .value
+        .trim();
+
+
+    if (!domain) {
+
+      throw new Error(
+        'Escribe un dominio'
+      );
+    }
+
+
+    await request(
+      `${API}/mail/domains`,
+      {
+        method:
+          'POST',
+
+        body:
+          JSON.stringify({
+            domain,
+
+            providerName:
+              document
+                .getElementById(
+                  'providerName'
+                )
+                .value
+                .trim(),
+
+            platformGroup:
+              document
+                .getElementById(
+                  'domainPlatform'
+                )
+                .value
+                .trim(),
+
+            rotationPriority:
+              Number(
+                document
+                  .getElementById(
+                    'rotationPriority'
+                  )
+                  .value ||
+                0
+              )
+          })
+      }
+    );
+
+
+    message.className =
+      'notice ok';
+
+
+    message.textContent =
+      'Dominio creado correctamente';
+
+
+    await loadDomains();
+
+  } catch (error) {
+
+    message.className =
+      'notice error';
+
+
+    message.textContent =
+      error.message;
+  }
+}
+
+
+// =========================================
+// ALIASES
+// =========================================
+
+async function loadAliases() {
+
+  try {
+
+    const json =
+      await request(
+        `${API}/mail/aliases`
+      );
+
+
+    const data =
+      extractData(json);
+
+
+    aliases =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    document
+      .getElementById(
+        'aliasCount'
+      )
+      .textContent =
+        aliases.length;
+
+
+    document
+      .getElementById(
+        'availableCount'
+      )
+      .textContent =
+        aliases.filter(
+          item =>
+            item.status ===
+            'AVAILABLE'
+        ).length;
+
+
+    document
+      .getElementById(
+        'assignedCount'
+      )
+      .textContent =
+        aliases.filter(
+          item =>
+            item.status ===
+            'ASSIGNED'
+        ).length;
+
+
+    renderAliases();
+
+  } catch (error) {
+
+    document
+      .getElementById(
+        'aliasList'
+      )
+      .innerHTML =
+        `<div class="error">${
+          escapeHtml(
+            error.message
+          )
+        }</div>`;
+  }
+}
+
+
+function renderAliases() {
+
+  const container =
+    document.getElementById(
+      'aliasList'
+    );
+
+
+  const filter =
+    document
+      .getElementById(
+        'aliasFilter'
+      )
+      .value;
+
+
+  const list =
+    filter
+
+      ? aliases.filter(
+          item =>
+            item.status ===
+            filter
+        )
+
+      : aliases;
+
+
+  if (!list.length) {
+
+    container.innerHTML =
+      '<div class="row-meta">No hay correos.</div>';
+
+    return;
+  }
+
+
+  container.innerHTML =
+    list
+      .map(
+        item => `
+
+          <div class="row">
+
+            <div class="row-title">
+
+              ${escapeHtml(
+                item.fullAddress
+              )}
+
+            </div>
+
+            <div class="row-meta">
+
+              Estado:
+              ${escapeHtml(
+                item.status
+              )}
+
+            </div>
+
+            <div class="actions">
+
+              <button
+                class="ghost"
+                onclick='copyText(${JSON.stringify(
+                  String(
+                    item.fullAddress
+                  )
+                )})'
+              >
+                Copiar correo
+              </button>
+
+            </div>
+
+          </div>
+
+        `
+      )
+      .join('');
+}
+
+
+async function generateEmail() {
+
+  const message =
+    document.getElementById(
+      'generateMessage'
+    );
+
+
+  try {
+
+    const domainId =
+      document
+        .getElementById(
+          'generateDomain'
+        )
+        .value;
+
+
+    if (!domainId) {
+
+      throw new Error(
+        'Selecciona un dominio'
+      );
+    }
+
+
+    const custom =
+      document
+        .getElementById(
+          'customAlias'
+        )
+        .value
+        .trim();
+
+
+    if (custom) {
+
+      await request(
+        `${API}/mail/aliases`,
+        {
+          method:
+            'POST',
+
+          body:
+            JSON.stringify({
+              domainId,
+
+              localPart:
+                custom
+            })
+        }
+      );
+
+    } else {
+
+      await request(
+        `${API}/mail/aliases/generate`,
+        {
+          method:
+            'POST',
+
+          body:
+            JSON.stringify({
+              domainId,
+
+              quantity:
                 Number(
                   document
                     .getElementById(
-                      'rotationPriority'
+                      'generateQuantity'
                     )
-                    .value || 0
+                    .value ||
+                  1
+                ),
+
+              length:
+                Number(
+                  document
+                    .getElementById(
+                      'aliasLength'
+                    )
+                    .value ||
+                  10
                 )
             })
         }
       );
-
-      message.className =
-        'notice ok';
-
-      message.textContent =
-        'Dominio creado correctamente';
-
-      await loadDomains();
-
-    } catch (error) {
-
-      message.className =
-        'notice error';
-
-      message.textContent =
-        error.message;
     }
+
+
+    message.className =
+      'notice ok';
+
+
+    message.textContent =
+      'Correo generado correctamente';
+
+
+    await loadAliases();
+
+  } catch (error) {
+
+    message.className =
+      'notice error';
+
+
+    message.textContent =
+      error.message;
+  }
+}
+
+
+async function assignAliasAutomatically() {
+
+  const message =
+    document.getElementById(
+      'autoAssignMessage'
+    );
+
+
+  const productVariantId =
+    document
+      .getElementById(
+        'autoAssignVariantId'
+      )
+      .value
+      .trim();
+
+
+  if (!productVariantId) {
+
+    message.className =
+      'notice error';
+
+
+    message.textContent =
+      'Escribe el productVariantId';
+
+
+    return;
   }
 
 
-  // =========================
-  // ALIASES
-  // =========================
+  try {
 
-  async function loadAliases() {
+    await request(
+      `${API}/mail/aliases/assign-auto`,
+      {
+        method:
+          'POST',
 
-    try {
+        body:
+          JSON.stringify({
+            productVariantId
+          })
+      }
+    );
 
-      const json =
-        await request(
-          `${API}/mail/aliases`
-        );
 
-      const data =
-        extractData(json);
+    message.className =
+      'notice ok';
 
-      aliases =
-        Array.isArray(data)
-          ? data
-          : [];
 
-      document
-        .getElementById(
-          'aliasCount'
-        )
-        .textContent =
-          aliases.length;
+    message.textContent =
+      'Correo asignado correctamente';
 
-      document
-        .getElementById(
-          'availableCount'
-        )
-        .textContent =
-          aliases.filter(
-            x =>
-              x.status ===
-              'AVAILABLE'
-          ).length;
 
-      document
-        .getElementById(
-          'assignedCount'
-        )
-        .textContent =
-          aliases.filter(
-            x =>
-              x.status ===
-              'ASSIGNED'
-          ).length;
+    await loadAliases();
 
-      renderAliases();
+  } catch (error) {
 
-    } catch (error) {
+    message.className =
+      'notice error';
 
-      document
-        .getElementById(
-          'aliasList'
-        )
-        .innerHTML =
-          `<div class="error">${escapeHtml(error.message)}</div>`;
-    }
+
+    message.textContent =
+      error.message;
   }
+}
 
 
-  function renderAliases() {
+// =========================================
+// CÓDIGOS
+// =========================================
 
-    const container =
-      document.getElementById(
-        'aliasList'
+async function loadCodes() {
+
+  try {
+
+    const json =
+      await request(
+        `${API}/codes`
       );
 
-    const filter =
-      document
-        .getElementById(
-          'aliasFilter'
-        )
-        .value;
 
-    const list =
-      filter
-        ? aliases.filter(
-            x =>
-              x.status === filter
+    const data =
+      extractData(json);
+
+
+    codeRequests =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    document
+      .getElementById(
+        'pendingCodes'
+      )
+      .textContent =
+        codeRequests.filter(
+          item =>
+            item.status ===
+            'PENDING'
+        ).length;
+
+
+    document
+      .getElementById(
+        'receivedCodes'
+      )
+      .textContent =
+        codeRequests.filter(
+          item =>
+            item.status ===
+            'RECEIVED'
+        ).length;
+
+
+    document
+      .getElementById(
+        'deliveredCodes'
+      )
+      .textContent =
+        codeRequests.filter(
+          item =>
+            item.status ===
+            'DELIVERED'
+        ).length;
+
+
+    document
+      .getElementById(
+        'failedCodes'
+      )
+      .textContent =
+        codeRequests.filter(
+          item =>
+            item.status ===
+              'FAILED' ||
+            item.status ===
+              'EXPIRED'
+        ).length;
+
+
+    renderCodes();
+
+  } catch (error) {
+
+    document
+      .getElementById(
+        'codeList'
+      )
+      .innerHTML =
+        `<div class="error">${
+          escapeHtml(
+            error.message
           )
-        : aliases;
+        }</div>`;
+  }
+}
 
-    if (!list.length) {
 
-      container.innerHTML =
-        '<div class="row-meta">No hay correos.</div>';
+function renderCodes() {
 
-      return;
-    }
+  const filter =
+    document
+      .getElementById(
+        'codeFilter'
+      )
+      .value;
+
+
+  const list =
+    filter
+
+      ? codeRequests.filter(
+          item =>
+            item.status ===
+            filter
+        )
+
+      : codeRequests;
+
+
+  const container =
+    document.getElementById(
+      'codeList'
+    );
+
+
+  if (!list.length) {
 
     container.innerHTML =
-      list.map(alias => `
+      '<div class="row-meta">No hay solicitudes.</div>';
 
-        <div class="row">
-
-          <div class="row-title">
-            ${escapeHtml(alias.fullAddress)}
-          </div>
-
-          <div class="row-meta">
-            Estado:
-            ${escapeHtml(alias.status)}
-          </div>
-
-          <div class="actions">
-
-            <button
-              class="ghost"
-              onclick="copyText('${escapeHtml(alias.fullAddress)}')"
-            >
-              Copiar
-            </button>
-
-            ${
-              alias.status === 'AVAILABLE'
-                ? `
-                    <button
-                      class="ghost"
-                      onclick="assignAlias('${alias.id}')"
-                    >
-                      Asignar
-                    </button>
-                  `
-                : ''
-            }
-
-            ${
-              alias.status === 'ASSIGNED'
-                ? `
-                    <button
-                      class="ghost"
-                      onclick="releaseAlias('${alias.id}')"
-                    >
-                      Liberar
-                    </button>
-                  `
-                : ''
-            }
-
-          </div>
-
-        </div>
-      `).join('');
+    return;
   }
 
 
-  async function generateEmail() {
+  container.innerHTML =
+    list
+      .map(
+        item => {
 
-    const message =
-      document.getElementById(
-        'generateMessage'
-      );
-
-    try {
-
-      const domainId =
-        document
-          .getElementById(
-            'generateDomain'
-          )
-          .value;
-
-      if (!domainId) {
-        throw new Error(
-          'Primero agrega un dominio'
-        );
-      }
-
-      const custom =
-        document
-          .getElementById(
-            'customAlias'
-          )
-          .value
-          .trim();
-
-      if (custom) {
-
-        await request(
-          `${API}/mail/aliases`,
-          {
-            method: 'POST',
-            body:
-              JSON.stringify({
-                domainId,
-                localPart: custom
-              })
-          }
-        );
-
-      } else {
-
-        await request(
-          `${API}/mail/aliases/generate`,
-          {
-            method: 'POST',
-
-            body:
-              JSON.stringify({
-                domainId,
-
-                quantity:
-                  Number(
-                    document
-                      .getElementById(
-                        'generateQuantity'
-                      )
-                      .value || 1
-                  ),
-
-                length:
-                  Number(
-                    document
-                      .getElementById(
-                        'aliasLength'
-                      )
-                      .value || 10
-                  )
-              })
-          }
-        );
-      }
-
-      message.className =
-        'notice ok';
-
-      message.textContent =
-        'Correo generado correctamente';
-
-      await loadAliases();
-
-    } catch (error) {
-
-      message.className =
-        'notice error';
-
-      message.textContent =
-        error.message;
-    }
-  }
+          const inventory =
+            item.inventoryItem ||
+            {};
 
 
-  async function assignAlias(aliasId) {
+          const product =
+            inventory
+              .productVariant
+              ?.product
+              ?.name ||
+            'Producto';
+
+
+          const alias =
+            inventory
+              .aliases?.[0]
+              ?.emailAlias
+              ?.fullAddress ||
+            'Sin correo';
+
+
+          return `
+
+            <div class="row">
+
+              <div class="row-title">
+
+                ${escapeHtml(
+                  product
+                )}
+
+                <span class="badge">
+
+                  ${escapeHtml(
+                    item.status
+                  )}
+
+                </span>
+
+              </div>
+
+
+              <div class="row-meta">
+
+                Correo:
+                ${escapeHtml(
+                  alias
+                )}
+
+                <br>
+
+                Inventario:
+                ${escapeHtml(
+                  item.inventoryItemId
+                )}
+
+              </div>
+
+
+              ${
+                item.codeEncrypted
+
+                  ? `
+
+                    <div class="code-value">
+
+                      ${escapeHtml(
+                        item.codeEncrypted
+                      )}
+
+                    </div>
+
+
+                    <div class="actions">
+
+                      <button
+                        class="ghost"
+                        onclick='copyText(${JSON.stringify(
+                          String(
+                            item.codeEncrypted
+                          )
+                        )})'
+                      >
+                        📋 Copiar código
+                      </button>
+
+                    </div>
+
+                  `
+
+                  : ''
+              }
+
+
+              ${
+                item.status ===
+                'RECEIVED'
+
+                  ? `
+
+                    <div class="actions">
+
+                      <button
+                        class="success-btn"
+                        onclick="deliverCode('${item.id}')"
+                      >
+                        Marcar entregado
+                      </button>
+
+                    </div>
+
+                  `
+
+                  : ''
+              }
+
+            </div>
+
+          `;
+        }
+      )
+      .join('');
+}
+
+
+async function createCodeRequest() {
+
+  const message =
+    document.getElementById(
+      'codeCreateMessage'
+    );
+
+
+  try {
 
     const inventoryItemId =
-      prompt(
-        'ID del artículo de inventario:'
-      );
-
-    if (!inventoryItemId) {
-      return;
-    }
-
-    try {
-
-      await request(
-        `${API}/mail/aliases/${aliasId}/assign`,
-        {
-          method: 'POST',
-
-          body:
-            JSON.stringify({
-              inventoryItemId:
-                inventoryItemId.trim()
-            })
-        }
-      );
-
-      await loadAliases();
-
-    } catch (error) {
-      alert(error.message);
-    }
-  }
-
-
-  async function releaseAlias(aliasId) {
-
-    try {
-
-      await request(
-        `${API}/mail/aliases/${aliasId}/release`,
-        {
-          method: 'POST'
-        }
-      );
-
-      await loadAliases();
-
-    } catch (error) {
-      alert(error.message);
-    }
-  }
-
-
-  // =========================
-  // CÓDIGOS
-  // =========================
-
-  async function loadCodes() {
-
-    try {
-
-      const json =
-        await request(
-          `${API}/codes`
-        );
-
-      const data =
-        extractData(json);
-
-      codeRequests =
-        Array.isArray(data)
-          ? data
-          : [];
-
-      updateCodeStats();
-      renderCodes();
-
-    } catch (error) {
-
       document
         .getElementById(
-          'codeList'
+          'codeInventoryId'
         )
-        .innerHTML =
-          `<div class="error">${escapeHtml(error.message)}</div>`;
+        .value
+        .trim();
+
+
+    if (!inventoryItemId) {
+
+      throw new Error(
+        'Escribe el inventoryItemId'
+      );
     }
+
+
+    await request(
+      `${API}/codes`,
+      {
+        method:
+          'POST',
+
+        body:
+          JSON.stringify({
+            inventoryItemId,
+
+            notes:
+              document
+                .getElementById(
+                  'codeNotes'
+                )
+                .value
+                .trim()
+          })
+      }
+    );
+
+
+    message.className =
+      'notice ok';
+
+
+    message.textContent =
+      'Solicitud creada';
+
+
+    await loadCodes();
+
+  } catch (error) {
+
+    message.className =
+      'notice error';
+
+
+    message.textContent =
+      error.message;
+  }
+}
+
+
+async function deliverCode(id) {
+
+  try {
+
+    await request(
+      `${API}/codes/${id}/delivered`,
+      {
+        method:
+          'PATCH'
+      }
+    );
+
+
+    await loadCodes();
+
+  } catch (error) {
+
+    alert(
+      error.message
+    );
+  }
+}
+
+
+// =========================================
+// BANDEJA
+// =========================================
+
+function safeOpenLink(url) {
+
+  try {
+
+    const parsed =
+      new URL(url);
+
+
+    if (
+      parsed.protocol !==
+        'https:' &&
+      parsed.protocol !==
+        'http:'
+    ) {
+
+      throw new Error(
+        'Enlace inválido'
+      );
+    }
+
+
+    /*
+      IMPORTANTE:
+      este admin NO intenta encontrar links.
+      Abre exactamente el primaryLink
+      que manda inboxController.js.
+    */
+
+    window.location.href =
+      parsed.href;
+
+  } catch {
+
+    alert(
+      'No se pudo abrir este enlace.'
+    );
+  }
+}
+
+
+async function loadInbox() {
+
+  const emailInput =
+    document.getElementById(
+      'inboxEmail'
+    );
+
+
+  const message =
+    document.getElementById(
+      'inboxMessage'
+    );
+
+
+  const email =
+    String(
+      emailInput.value ||
+      ''
+    )
+      .trim()
+      .toLowerCase();
+
+
+  if (!email) {
+
+    message.className =
+      'notice error';
+
+
+    message.textContent =
+      'Escribe una dirección de correo.';
+
+
+    return;
   }
 
 
-  function updateCodeStats() {
-
-    pendingCodes.textContent =
-      codeRequests.filter(
-        x => x.status === 'PENDING'
-      ).length;
-
-    receivedCodes.textContent =
-      codeRequests.filter(
-        x => x.status === 'RECEIVED'
-      ).length;
-
-    deliveredCodes.textContent =
-      codeRequests.filter(
-        x => x.status === 'DELIVERED'
-      ).length;
-
-    failedCodes.textContent =
-      codeRequests.filter(
-        x =>
-          x.status === 'FAILED' ||
-          x.status === 'EXPIRED'
-      ).length;
-  }
+  message.className =
+    'notice';
 
 
-  function renderCodes() {
+  message.textContent =
+    'Consultando correos...';
 
-    const filter =
-      codeFilter.value;
 
-    const list =
-      filter
-        ? codeRequests.filter(
-            x => x.status === filter
+  try {
+
+    const json =
+      await request(
+        `${API}/inbox?email=${encodeURIComponent(
+          email
+        )}`,
+        {},
+        false
+      );
+
+
+    inboxMessages =
+      Array.isArray(
+        json?.data
+      )
+        ? json.data
+        : [];
+
+
+    document
+      .getElementById(
+        'inboxCount'
+      )
+      .textContent =
+        inboxMessages.length;
+
+
+    document
+      .getElementById(
+        'inboxCurrentEmail'
+      )
+      .textContent =
+        email;
+
+
+    /*
+      SOLO cuenta códigos que vienen
+      recalculados por el backend.
+      NO usa verificationCodeEncrypted viejo.
+    */
+    document
+      .getElementById(
+        'inboxCodeCount'
+      )
+      .textContent =
+        inboxMessages.filter(
+          item =>
+            Boolean(
+              item.verificationCode ||
+              item.code
+            )
+        ).length;
+
+
+    document
+      .getElementById(
+        'inboxUpdatedAt'
+      )
+      .textContent =
+        new Date()
+          .toLocaleTimeString(
+            'es-MX',
+            {
+              hour:
+                '2-digit',
+
+              minute:
+                '2-digit'
+            }
+          );
+
+
+    message.className =
+      'notice ok';
+
+
+    message.textContent =
+      inboxMessages.length
+
+        ? `${inboxMessages.length} correo(s) recibido(s).`
+
+        : 'No hay correos para esta dirección.';
+
+
+    renderInbox();
+
+  } catch (error) {
+
+    message.className =
+      'notice error';
+
+
+    message.textContent =
+      error.message;
+
+
+    document
+      .getElementById(
+        'inboxList'
+      )
+      .innerHTML =
+        `<div class="error">${
+          escapeHtml(
+            error.message
           )
-        : codeRequests;
+        }</div>`;
+  }
+}
 
-    codeList.innerHTML =
-      list.length
-        ? list.map(item => {
 
-            const inventory =
-              item.inventoryItem || {};
+function renderInbox() {
 
-            const product =
-              inventory
-                .productVariant
-                ?.product
-                ?.name ||
-              'Producto';
+  const container =
+    document.getElementById(
+      'inboxList'
+    );
 
-            const alias =
-              inventory
-                .aliases?.[0]
-                ?.emailAlias
-                ?.fullAddress ||
-              'Sin correo';
 
-            return `
+  if (!inboxMessages.length) {
 
-              <div class="row">
+    container.innerHTML =
+      '<div class="row-meta">No hay mensajes.</div>';
 
-                <div class="row-title">
+    return;
+  }
 
-                  ${escapeHtml(product)}
 
-                  <span class="badge">
-                    ${escapeHtml(item.status)}
-                  </span>
+  container.innerHTML =
+    inboxMessages
+      .map(
+        item => {
 
-                </div>
+          const sender =
+            item.sender ||
+            item.from ||
+            'Remitente desconocido';
 
-                <div class="row-meta">
 
-                  Correo:
-                  ${escapeHtml(alias)}
-                  <br>
+          const recipient =
+            item.recipient ||
+            item.to ||
+            'Sin destinatario';
 
-                  Inventario:
-                  ${escapeHtml(item.inventoryItemId)}
 
-                </div>
+          const subject =
+            item.subject ||
+            '(Sin asunto)';
+
+
+          const body =
+            item.bodyPreview ||
+            '';
+
+
+          /*
+            IMPORTANTE:
+            SOLO tomamos el código
+            recalculado por inboxController.
+          */
+          const code =
+            item.verificationCode ||
+            item.code ||
+            '';
+
+
+          /*
+            IMPORTANTE:
+            NO usamos extractLinks.
+            NO usamos link 1.
+            NO usamos link 2.
+            NO usamos fallback.
+            SOLO primaryLink.
+          */
+          const primaryLink =
+            item.primaryLink ||
+            null;
+
+
+          const platform =
+            item.platform ||
+            '';
+
+
+          const dateValue =
+            item.receivedAt ||
+            item.createdAt ||
+            '';
+
+
+          let date =
+            'Sin fecha';
+
+
+          if (dateValue) {
+
+            const parsed =
+              new Date(
+                dateValue
+              );
+
+
+            if (
+              !Number.isNaN(
+                parsed.getTime()
+              )
+            ) {
+
+              date =
+                parsed
+                  .toLocaleString(
+                    'es-MX'
+                  );
+            }
+          }
+
+
+          const netflix =
+            platform ===
+            'NETFLIX';
+
+
+          return `
+
+            <div class="row">
+
+              <div class="row-title">
+
+                ${escapeHtml(
+                  subject
+                )}
+
 
                 ${
-                  item.codeEncrypted
+                  platform
+
                     ? `
-                        <div class="code-value">
-                          ${escapeHtml(item.codeEncrypted)}
-                        </div>
-                      `
+
+                      <span class="badge">
+
+                        ${escapeHtml(
+                          platform
+                        )}
+
+                      </span>
+
+                    `
+
                     : ''
                 }
 
-                <div class="actions">
 
-                  ${
-                    item.status === 'RECEIVED'
-                      ? `
-                          <button
-                            class="success-btn"
-                            onclick="deliverCode('${item.id}')"
-                          >
-                            Marcar entregado
-                          </button>
-                        `
-                      : ''
-                  }
+                ${
+                  code
 
-                  ${
-                    item.status === 'PENDING' ||
-                    item.status === 'RECEIVED'
-                      ? `
-                          <button
-                            class="ghost"
-                            onclick="expireCode('${item.id}')"
-                          >
-                            Expirar
-                          </button>
-                        `
-                      : ''
-                  }
+                    ? `
 
-                </div>
+                      <span class="badge">
+
+                        Código detectado
+
+                      </span>
+
+                    `
+
+                    : ''
+                }
+
+
+                ${
+                  primaryLink
+
+                    ? `
+
+                      <span class="badge">
+
+                        Enlace detectado
+
+                      </span>
+
+                    `
+
+                    : ''
+                }
 
               </div>
-            `;
-
-          }).join('')
-        : '<div class="row-meta">No hay solicitudes de códigos.</div>';
-  }
 
 
-  async function createCodeRequest() {
+              <div class="row-meta">
 
-    const message =
-      codeCreateMessage;
+                <strong>
+                  De:
+                </strong>
 
-    try {
+                ${escapeHtml(
+                  sender
+                )}
 
-      const inventoryItemId =
-        codeInventoryId
-          .value
-          .trim();
+                <br>
 
-      if (!inventoryItemId) {
 
-        throw new Error(
-          'Escribe el inventoryItemId'
-        );
-      }
+                <strong>
+                  Para:
+                </strong>
 
-      await request(
-        `${API}/codes`,
-        {
-          method: 'POST',
+                ${escapeHtml(
+                  recipient
+                )}
 
-          body:
-            JSON.stringify({
-              inventoryItemId,
+                <br>
 
-              notes:
-                codeNotes
-                  .value
-                  .trim()
-            })
+
+                <strong>
+                  Fecha:
+                </strong>
+
+                ${escapeHtml(
+                  date
+                )}
+
+              </div>
+
+
+              ${
+                code
+
+                  ? `
+
+                    <div class="code-value">
+
+                      ${escapeHtml(
+                        code
+                      )}
+
+                    </div>
+
+
+                    <div class="actions">
+
+                      <button
+                        class="ghost"
+                        onclick='copyText(${JSON.stringify(
+                          String(
+                            code
+                          )
+                        )})'
+                      >
+                        📋 Copiar código
+                      </button>
+
+                    </div>
+
+                  `
+
+                  : ''
+              }
+
+
+              ${
+                primaryLink
+
+                  ? `
+
+                    <div class="email-action">
+
+                      <div class="email-action-title">
+
+                        🔗 Acción disponible
+
+                      </div>
+
+
+                      <button
+                        class="link-btn"
+                        onclick='safeOpenLink(${JSON.stringify(
+                          String(
+                            primaryLink
+                          )
+                        )})'
+                      >
+
+                        ${
+                          netflix
+
+                            ? '🔗 Crear tu cuenta de Netflix'
+
+                            : '🔗 Abrir enlace'
+                        }
+
+                      </button>
+
+                    </div>
+
+                  `
+
+                  : ''
+              }
+
+
+              ${
+                body
+
+                  ? `
+
+                    <div class="notice email-body">
+
+                      ${escapeHtml(
+                        body
+                      )}
+
+                    </div>
+
+                  `
+
+                  : ''
+              }
+
+            </div>
+
+          `;
         }
-      );
-
-      message.className =
-        'notice ok';
-
-      message.textContent =
-        'Solicitud creada correctamente';
-
-      codeInventoryId.value = '';
-      codeNotes.value = '';
-
-      await loadCodes();
-
-    } catch (error) {
-
-      message.className =
-        'notice error';
-
-      message.textContent =
-        error.message;
-    }
-  }
+      )
+      .join('');
+}
 
 
-  async function deliverCode(id) {
+// =========================================
+// VENTAS
+// =========================================
 
-    try {
+async function loadSales() {
 
+  const container =
+    document.getElementById(
+      'salesList'
+    );
+
+
+  try {
+
+    const json =
       await request(
-        `${API}/codes/${id}/delivered`,
-        {
-          method: 'PATCH'
-        }
+        `${API}/sales?page=1&pageSize=100`
       );
 
-      await loadCodes();
 
-    } catch (error) {
-      alert(error.message);
-    }
-  }
+    const data =
+      extractData(json);
 
 
-  async function expireCode(id) {
+    sales =
+      Array.isArray(data)
 
-    try {
+        ? data
 
-      await request(
-        `${API}/codes/${id}/expire`,
-        {
-          method: 'PATCH'
-        }
-      );
+        : Array.isArray(
+            data?.items
+          )
 
-      await loadCodes();
+        ? data.items
 
-    } catch (error) {
-      alert(error.message);
-    }
-  }
+        : [];
 
 
-  // =========================
-  // VENTAS
-  // =========================
-
-  async function loadSales() {
-
-    const container =
-      document.getElementById(
-        'salesList'
-      );
-
-    try {
-
-      const json =
-        await request(
-          `${API}/sales?page=1&pageSize=100`
-        );
-
-      const data =
-        extractData(json);
-
-      sales =
-        Array.isArray(data)
-          ? data
-          : Array.isArray(data?.items)
-          ? data.items
-          : [];
-
-      updateSaleStats();
-      renderSales();
-
-    } catch (error) {
-
-      container.innerHTML =
-        `<div class="error">${escapeHtml(error.message)}</div>`;
-    }
-  }
+    updateSaleStats();
 
 
-  function updateSaleStats() {
+    renderSales();
 
-    const total =
-      sales.reduce(
-        (sum, sale) =>
-          sum +
-          Number(
-            sale.total || 0
-          ),
-        0
-      );
-
-    const cost =
-      sales.reduce(
-        (sum, sale) =>
-          sum +
-          Number(
-            sale.internalCost || 0
-          ),
-        0
-      );
-
-    const profit =
-      sales.reduce(
-        (sum, sale) =>
-          sum +
-          Number(
-            sale.profit || 0
-          ),
-        0
-      );
-
-    saleCount.textContent =
-      sales.length;
-
-    saleTotal.textContent =
-      '$' + total.toFixed(2);
-
-    saleCost.textContent =
-      '$' + cost.toFixed(2);
-
-    saleProfit.textContent =
-      '$' + profit.toFixed(2);
-  }
-
-
-  function renderSales() {
-
-    const container =
-      document.getElementById(
-        'salesList'
-      );
-
-    if (!sales.length) {
-
-      container.innerHTML =
-        '<div class="row-meta">No hay ventas registradas.</div>';
-
-      return;
-    }
+  } catch (error) {
 
     container.innerHTML =
-      sales.map(sale => {
+      `<div class="error">${
+        escapeHtml(
+          error.message
+        )
+      }</div>`;
+  }
+}
 
-        const client =
-          sale.client || {};
 
-        const items =
-          Array.isArray(sale.items)
-            ? sale.items
-            : [];
+function updateSaleStats() {
 
-        const productText =
-          items.map(item => {
+  const total =
+    sales.reduce(
+      (
+        sum,
+        item
+      ) =>
+        sum +
+        Number(
+          item.total ||
+          0
+        ),
+      0
+    );
 
-            const product =
-              item
-                .productVariant
-                ?.product
-                ?.name ||
-              'Producto';
 
-            const variant =
-              item
-                .productVariant
-                ?.publicName ||
-              '';
+  const cost =
+    sales.reduce(
+      (
+        sum,
+        item
+      ) =>
+        sum +
+        Number(
+          item.internalCost ||
+          item.costTotal ||
+          0
+        ),
+      0
+    );
 
-            return `${product} ${variant}`;
 
-          }).join(', ');
+  const profit =
+    sales.reduce(
+      (
+        sum,
+        item
+      ) =>
+        sum +
+        Number(
+          item.profit ||
+          0
+        ),
+      0
+    );
 
-        return `
+
+  document
+    .getElementById(
+      'saleCount'
+    )
+    .textContent =
+      sales.length;
+
+
+  document
+    .getElementById(
+      'saleTotal'
+    )
+    .textContent =
+      '$' +
+      total.toFixed(2);
+
+
+  document
+    .getElementById(
+      'saleCost'
+    )
+    .textContent =
+      '$' +
+      cost.toFixed(2);
+
+
+  document
+    .getElementById(
+      'saleProfit'
+    )
+    .textContent =
+      '$' +
+      profit.toFixed(2);
+}
+
+
+function renderSales() {
+
+  const container =
+    document.getElementById(
+      'salesList'
+    );
+
+
+  if (!sales.length) {
+
+    container.innerHTML =
+      '<div class="row-meta">No hay ventas.</div>';
+
+    return;
+  }
+
+
+  container.innerHTML =
+    sales
+      .map(
+        item => `
 
           <div class="row">
 
             <div class="row-title">
 
               Venta
-              ${escapeHtml(sale.id)}
+              ${escapeHtml(
+                item.id
+              )}
 
               <span class="badge">
-                ${escapeHtml(sale.status)}
+
+                ${escapeHtml(
+                  item.status
+                )}
+
               </span>
 
             </div>
 
+
             <div class="row-meta">
 
-              Cliente:
-              ${escapeHtml(
-                client.name ||
-                client.email ||
-                sale.clientId
-              )}
-
-              <br>
-
-              Producto:
-              ${escapeHtml(productText)}
-
-              <br>
-
               Total:
-              $${Number(sale.total || 0).toFixed(2)}
 
-              <br>
-
-              Costo:
-              $${Number(sale.internalCost || 0).toFixed(2)}
+              $${Number(
+                item.total ||
+                0
+              ).toFixed(2)}
 
               <br>
 
               Ganancia:
-              $${Number(sale.profit || 0).toFixed(2)}
+
+              $${Number(
+                item.profit ||
+                0
+              ).toFixed(2)}
 
             </div>
 
           </div>
-        `;
 
-      }).join('');
-  }
-
-
-  async function createSale() {
-
-    const message =
-      document.getElementById(
-        'saleCreateMessage'
-      );
-
-    try {
-
-      const clientId =
-        saleClientId
-          .value
-          .trim();
-
-      const productVariantId =
-        saleVariantId
-          .value
-          .trim();
-
-      if (!clientId) {
-
-        throw new Error(
-          'Escribe el ID del cliente'
-        );
-      }
-
-      if (!productVariantId) {
-
-        throw new Error(
-          'Escribe el productVariantId'
-        );
-      }
-
-      message.className =
-        'notice';
-
-      message.textContent =
-        'Creando venta...';
+        `
+      )
+      .join('');
+}
 
 
-      const payload = {
+async function createSale() {
 
-        clientId,
-
-        status:
-          'PAID',
-
-        paymentReference:
-          salePaymentReference
-            .value
-            .trim() ||
-          null,
-
-        items: [
-          {
-            productVariantId,
-
-            quantity:
-              Math.max(
-                Number(
-                  saleQuantity.value || 1
-                ),
-                1
-              ),
-
-            unitPrice:
-              Number(
-                saleUnitPrice.value || 0
-              ),
-
-            internalCost:
-              Number(
-                saleInternalCost.value || 0
-              )
-          }
-        ]
-      };
+  const message =
+    document.getElementById(
+      'saleCreateMessage'
+    );
 
 
-      const json =
-        await request(
-          `${API}/sales`,
-          {
-            method: 'POST',
+  try {
 
-            body:
-              JSON.stringify(
-                payload
-              )
-          }
-        );
+    const clientId =
+      document
+        .getElementById(
+          'saleClientId'
+        )
+        .value
+        .trim();
 
 
-      const created =
-        extractData(json);
+    const productVariantId =
+      document
+        .getElementById(
+          'saleVariantId'
+        )
+        .value
+        .trim();
 
 
-      message.className =
-        'notice ok';
+    if (!clientId) {
 
-      message.textContent =
-        `Venta creada correctamente.\nID: ${created?.id || ''}`;
-
-
-      await loadSales();
-
-    } catch (error) {
-
-      message.className =
-        'notice error';
-
-      message.textContent =
-        error.message;
-    }
-  }
-
-
-  async function copyText(value) {
-
-    try {
-
-      await navigator
-        .clipboard
-        .writeText(value);
-
-      alert('Copiado');
-
-    } catch {
-
-      alert(
-        'No se pudo copiar'
+      throw new Error(
+        'Escribe el ID del cliente'
       );
     }
+
+
+    if (!productVariantId) {
+
+      throw new Error(
+        'Escribe el productVariantId'
+      );
+    }
+
+
+    await request(
+      `${API}/sales`,
+      {
+        method:
+          'POST',
+
+        body:
+          JSON.stringify({
+            clientId,
+
+            status:
+              'PAID',
+
+            paymentReference:
+              document
+                .getElementById(
+                  'salePaymentReference'
+                )
+                .value
+                .trim() ||
+              null,
+
+            items: [
+              {
+                productVariantId,
+
+                quantity:
+                  Number(
+                    document
+                      .getElementById(
+                        'saleQuantity'
+                      )
+                      .value ||
+                    1
+                  ),
+
+                unitPrice:
+                  Number(
+                    document
+                      .getElementById(
+                        'saleUnitPrice'
+                      )
+                      .value ||
+                    0
+                  ),
+
+                internalCost:
+                  Number(
+                    document
+                      .getElementById(
+                        'saleInternalCost'
+                      )
+                      .value ||
+                    0
+                  )
+              }
+            ]
+          })
+      }
+    );
+
+
+    message.className =
+      'notice ok';
+
+
+    message.textContent =
+      'Venta creada correctamente';
+
+
+    await loadSales();
+
+  } catch (error) {
+
+    message.className =
+      'notice error';
+
+
+    message.textContent =
+      error.message;
   }
+}
 
 
-  validateSavedToken();
+// =========================================
+// COPIAR
+// =========================================
+
+async function copyText(value) {
+
+  try {
+
+    await navigator
+      .clipboard
+      .writeText(
+        value
+      );
+
+
+    alert(
+      'Copiado'
+    );
+
+  } catch {
+
+    alert(
+      'No se pudo copiar'
+    );
+  }
+}
+
+
+validateSavedToken();
 
 </script>
 

@@ -3,38 +3,82 @@ const inboxController = require('../controllers/inboxController');
 
 const router = express.Router();
 
-function verifyInboxSecret(req, res, next) {
-  const configuredSecret = process.env.INBOX_WEBHOOK_SECRET;
-  const receivedSecret = req.headers['x-inbox-secret'];
 
-  if (!configuredSecret) {
-    return res.status(503).json({
+// ==========================================
+// SECRETO DEL WEBHOOK
+// ==========================================
+
+const FALLBACK_INBOX_SECRET =
+  'RoyalLegacyInbox2026_X9m4K7p2L8';
+
+
+function verifyInboxSecret(req, res, next) {
+
+  const configuredSecret =
+    String(
+      process.env.INBOX_WEBHOOK_SECRET ||
+      FALLBACK_INBOX_SECRET
+    ).trim();
+
+  const receivedSecret =
+    String(
+      req.headers['x-inbox-secret'] || ''
+    ).trim();
+
+
+  if (!receivedSecret) {
+
+    console.error(
+      '[INBOX] Cloudflare no envió x-inbox-secret'
+    );
+
+    return res.status(401).json({
       success: false,
-      message: 'Inbox webhook secret is not configured'
+      message: 'Inbox webhook secret was not received'
     });
   }
 
-  if (!receivedSecret || receivedSecret !== configuredSecret) {
+
+  if (receivedSecret !== configuredSecret) {
+
+    console.error(
+      '[INBOX] Secret incorrecto'
+    );
+
     return res.status(401).json({
       success: false,
       message: 'Invalid inbox webhook secret'
     });
   }
 
+
+  console.log(
+    '[INBOX] Webhook autorizado'
+  );
+
   next();
 }
 
-// Recibir correo desde Cloudflare
+
+// ==========================================
+// RECIBIR CORREO DESDE CLOUDFLARE
+// ==========================================
+
 router.post(
   '/',
   verifyInboxSecret,
   inboxController.receiveEmail
 );
 
-// Consultar bandeja por dirección
+
+// ==========================================
+// CONSULTAR BANDEJA
+// ==========================================
+
 router.get(
   '/',
   inboxController.getInbox
 );
+
 
 module.exports = router;

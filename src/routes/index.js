@@ -9,6 +9,7 @@ const mailRoutes = require('./mailRoutes');
 const codeRoutes = require('./codeRoutes');
 const inboxRoutes = require('./inboxRoutes');
 const salesRoutes = require('./salesRoutes');
+const inventoryRoutes = require('./inventoryRoutes');
 
 const router = express.Router();
 
@@ -35,5 +36,8 @@ router.use('/inbox', inboxRoutes);
 
 // Ventas
 router.use('/sales', salesRoutes);
+
+// Inventario
+router.use('/inventory', inventoryRoutes);
 
 module.exports = router;

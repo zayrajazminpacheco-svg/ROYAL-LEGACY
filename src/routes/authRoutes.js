@@ -1,12 +1,70 @@
 const express = require('express');
-const { register, login, adminLogin, getMe } = require('../controllers/authController');
-const { authenticateToken, authorizeRoles, loginRateLimiter } = require('../middlewares/auth');
+
+const authController = require('../controllers/authController');
+
+const {
+  authenticateToken,
+  authorizeRoles
+} = require('../middlewares/auth');
+
 
 const router = express.Router();
 
-router.post('/register', register);
-router.post('/login', loginRateLimiter(), login);
-router.post('/admin/login', loginRateLimiter(), adminLogin);
-router.get('/me', authenticateToken, authorizeRoles('SUPER_ADMIN', 'ADMIN', 'EMPLOYEE', 'CLIENT'), getMe);
+
+// ========================================
+// REGISTRO DE CLIENTES
+// ========================================
+
+router.post(
+  '/register',
+  authController.register
+);
+
+
+// ========================================
+// LOGIN DE CLIENTES
+// ========================================
+
+router.post(
+  '/login',
+  authController.login
+);
+
+
+// ========================================
+// LOGIN DE ADMINISTRADORES
+// ========================================
+
+router.post(
+  '/admin/login',
+  authController.adminLogin
+);
+
+
+// ========================================
+// USUARIO AUTENTICADO
+// ========================================
+
+router.get(
+  '/me',
+  authenticateToken,
+  authController.getMe
+);
+
+
+// ========================================
+// ADMINISTRADOR AUTENTICADO
+// ========================================
+
+router.get(
+  '/admin/me',
+  authenticateToken,
+  authorizeRoles(
+    'ADMIN',
+    'SUPER_ADMIN'
+  ),
+  authController.getMe
+);
+
 
 module.exports = router;

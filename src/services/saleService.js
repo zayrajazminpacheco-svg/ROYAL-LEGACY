@@ -6,48 +6,51 @@ function createError(status, message) {
   return error;
 }
 
-function normalizeSaleStatus(status) {
-  const value = String(status || 'PENDING').toUpperCase();
-
-  const map = {
-    PENDING: 'PENDING',
-    PAID: 'PAID',
-    PROCESSING: 'PROCESSING',
-    DELIVERED: 'DELIVERED',
-    COMPLETED: 'DELIVERED',
-    EXPIRED: 'EXPIRED',
-    REFUNDED: 'REFUNDED'
-  };
-
-  return map[value] || 'PENDING';
+function toNumber(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
 }
 
-
-// ==========================================
+// ============================================================
 // LISTAR VENTAS
-// ==========================================
+// ============================================================
 
 async function listSales(query = {}) {
   const page = Math.max(
-    Number(query.page || 1),
+    Number.parseInt(query.page || '1', 10),
     1
   );
 
   const pageSize = Math.min(
-    Math.max(Number(query.pageSize || 20), 1),
+    Math.max(
+      Number.parseInt(query.pageSize || '20', 10),
+      1
+    ),
     100
   );
 
   const where = {};
 
   if (query.status) {
-    where.status = normalizeSaleStatus(
-      query.status
-    );
+    where.status = String(query.status).toUpperCase();
   }
 
   if (query.clientId) {
-    where.clientId = query.clientId;
+    where.clientId = String(query.clientId);
+  }
+
+  if (query.employeeId) {
+    where.employeeId = String(query.employeeId);
+  }
+
+  if (query.paymentStatus) {
+    where.paymentStatus =
+      String(query.paymentStatus).toUpperCase();
+  }
+
+  if (query.channel) {
+    where.channel =
+      String(query.channel).toUpperCase();
   }
 
   const [items, total] = await Promise.all([
@@ -64,7 +67,7 @@ async function listSales(query = {}) {
           }
         },
 
-        employee: {
+        User_Sale_employeeIdToUser: {
           select: {
             id: true,
             name: true,
@@ -74,35 +77,19 @@ async function listSales(query = {}) {
 
         items: {
           include: {
-            productVariant: {
+            ProductVariant: {
               include: {
                 product: true
               }
             },
 
-            provider: true,
+            Provider: true,
 
-            inventoryItem: {
-              include: {
-                aliases: {
-                  where: {
-                    active: true
-                  },
+            InventoryItem: true
+          },
 
-                  include: {
-                    emailAlias: true
-                  }
-                },
-
-                codeRequests: {
-                  orderBy: {
-                    requestedAt: 'desc'
-                  },
-
-                  take: 10
-                }
-              }
-            }
+          orderBy: {
+            createdAt: 'asc'
           }
         }
       },
@@ -111,11 +98,9 @@ async function listSales(query = {}) {
         createdAt: 'desc'
       },
 
-      skip:
-        (page - 1) * pageSize,
+      skip: (page - 1) * pageSize,
 
-      take:
-        pageSize
+      take: pageSize
     }),
 
     prisma.sale.count({
@@ -127,16 +112,26 @@ async function listSales(query = {}) {
     items,
     total,
     page,
-    pageSize
+    pageSize,
+    totalPages:
+      total === 0
+        ? 0
+        : Math.ceil(total / pageSize)
   };
 }
 
-
-// ==========================================
+// ============================================================
 // OBTENER UNA VENTA
-// ==========================================
+// ============================================================
 
 async function getSale(id) {
+  if (!id) {
+    throw createError(
+      400,
+      'Sale id is required'
+    );
+  }
+
   const sale =
     await prisma.sale.findUnique({
       where: {
@@ -144,44 +139,50 @@ async function getSale(id) {
       },
 
       include: {
-        client: true,
-        employee: true,
+        client: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true
+          }
+        },
+
+        User_Sale_employeeIdToUser: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        },
 
         items: {
           include: {
-            productVariant: {
+            ProductVariant: {
               include: {
                 product: true
               }
             },
 
-            provider: true,
+            Provider: true,
 
-            inventoryItem: {
-              include: {
-                aliases: {
-                  where: {
-                    active: true
-                  },
+            InventoryItem: true,
 
-                  include: {
-                    emailAlias: {
-                      include: {
-                        domain: true
-                      }
-                    }
-                  }
-                },
+            ProviderOrder: true
+          },
 
-                codeRequests: {
-                  orderBy: {
-                    requestedAt: 'desc'
-                  }
-                }
-              }
-            }
+          orderBy: {
+            createdAt: 'asc'
           }
-        }
+        },
+
+        Delivery: true,
+
+        PurchaseSheet: true,
+
+        ProviderOrder: true,
+
+        WalletTransaction: true
       }
     });
 
@@ -195,31 +196,17 @@ async function getSale(id) {
   return sale;
 }
 
-
-// ==========================================
-// CREAR VENTA + ASIGNAR INVENTARIO
-// + CREAR SOLICITUD DE CÓDIGO
-// ==========================================
+// ============================================================
+// CREAR VENTA
+// ============================================================
 
 async function createSale(payload = {}) {
-  const clientId =
-    payload.clientId ||
-    payload.customerId;
+  const clientId = payload.clientId;
 
   if (!clientId) {
     throw createError(
       400,
-      'clientId or customerId is required'
-    );
-  }
-
-  if (
-    !Array.isArray(payload.items) ||
-    !payload.items.length
-  ) {
-    throw createError(
-      400,
-      'At least one sale item is required'
+      'clientId is required'
     );
   }
 
@@ -237,384 +224,255 @@ async function createSale(payload = {}) {
     );
   }
 
+  if (client.status === 'BLOCKED') {
+    throw createError(
+      409,
+      'Client is blocked'
+    );
+  }
 
-  return prisma.$transaction(async tx => {
+  const rawItems =
+    Array.isArray(payload.items)
+      ? payload.items
+      : [];
 
-    const preparedItems = [];
+  let calculatedSubtotal = 0;
+  let calculatedInternalCost = 0;
 
-    let subtotal = 0;
-    let internalCostTotal = 0;
+  for (const item of rawItems) {
+    const quantity = Math.max(
+      toNumber(item.quantity, 1),
+      1
+    );
 
+    const unitPrice = toNumber(
+      item.unitPrice,
+      0
+    );
 
-    // ======================================
-    // PREPARAR CADA PRODUCTO
-    // ======================================
+    const internalCost = toNumber(
+      item.internalCost ??
+        item.unitCost,
+      0
+    );
 
-    for (const rawItem of payload.items) {
+    calculatedSubtotal +=
+      quantity * unitPrice;
 
-      const productVariantId =
-        rawItem.productVariantId ||
-        rawItem.variantId;
+    calculatedInternalCost +=
+      quantity * internalCost;
+  }
 
-      if (!productVariantId) {
-        throw createError(
-          400,
-          'Each item requires productVariantId'
+  const subtotal =
+    rawItems.length > 0
+      ? calculatedSubtotal
+      : toNumber(
+          payload.subtotal,
+          payload.total
         );
-      }
 
-      const quantity = Math.max(
-        Number(rawItem.quantity || 1),
-        1
-      );
+  const total = toNumber(
+    payload.total,
+    subtotal
+  );
 
-
-      const variant =
-        await tx.productVariant.findUnique({
-          where: {
-            id: productVariantId
-          },
-
-          include: {
-            product: true
-          }
-        });
-
-
-      if (!variant) {
-        throw createError(
-          404,
-          `Product variant not found: ${productVariantId}`
-        );
-      }
-
-
-      if (!variant.active) {
-        throw createError(
-          409,
-          `${variant.publicName} is inactive`
-        );
-      }
-
-
-      // ====================================
-      // BUSCAR INVENTARIO DISPONIBLE
-      // ====================================
-
-      const inventory =
-        await tx.inventoryItem.findMany({
-          where: {
-            productVariantId,
-            status: 'AVAILABLE',
-            saleItemId: null
-          },
-
-          orderBy: {
-            acquiredAt: 'asc'
-          },
-
-          take: quantity
-        });
-
-
-      if (inventory.length < quantity) {
-        throw createError(
-          409,
-          `Not enough inventory for ${variant.publicName}. Available: ${inventory.length}`
-        );
-      }
-
-
-      const unitPrice =
-        Number(
-          rawItem.unitPrice ??
-          rawItem.price ??
-          variant.publicPrice ??
+  const internalCost =
+    rawItems.length > 0
+      ? calculatedInternalCost
+      : toNumber(
+          payload.internalCost ??
+            payload.costTotal,
           0
         );
 
+  const profit = toNumber(
+    payload.profit,
+    total - internalCost
+  );
 
-      const requestedInternalCost =
-        rawItem.internalCost ??
-        rawItem.cost;
+  return prisma.$transaction(
+    async (tx) => {
+      const sale =
+        await tx.sale.create({
+          data: {
+            clientId,
 
+            employeeId:
+              payload.employeeId || null,
 
-      for (
-        let index = 0;
-        index < quantity;
-        index++
-      ) {
+            walletId:
+              payload.walletId || null,
 
-        const inventoryItem =
-          inventory[index];
+            status:
+              payload.status
+                ? String(
+                    payload.status
+                  ).toUpperCase()
+                : 'PENDING',
 
+            channel:
+              payload.channel
+                ? String(
+                    payload.channel
+                  ).toUpperCase()
+                : 'WEB',
 
-        const internalCost =
-          Number(
-            requestedInternalCost ??
+            paymentMethod:
+              payload.paymentMethod
+                ? String(
+                    payload.paymentMethod
+                  ).toUpperCase()
+                : null,
+
+            paymentStatus:
+              payload.paymentStatus
+                ? String(
+                    payload.paymentStatus
+                  ).toUpperCase()
+                : 'PENDING',
+
+            subtotal,
+            total,
+            internalCost,
+            profit,
+
+            paymentReference:
+              payload.paymentReference ||
+              null,
+
+            customerName:
+              payload.customerName ||
+              null,
+
+            customerEmail:
+              payload.customerEmail ||
+              null,
+
+            customerPhone:
+              payload.customerPhone ||
+              null,
+
+            paidAt:
+              payload.paidAt
+                ? new Date(
+                    payload.paidAt
+                  )
+                : null,
+
+            deliveredAt:
+              payload.deliveredAt
+                ? new Date(
+                    payload.deliveredAt
+                  )
+                : null
+          }
+        });
+
+      const createdItems = [];
+
+      for (const item of rawItems) {
+        if (!item.productVariantId) {
+          throw createError(
+            400,
+            'productVariantId is required for every sale item'
+          );
+        }
+
+        const variant =
+          await tx.productVariant.findUnique({
+            where: {
+              id: item.productVariantId
+            }
+          });
+
+        if (!variant) {
+          throw createError(
+            404,
+            `Product variant not found: ${item.productVariantId}`
+          );
+        }
+
+        const quantity = Math.max(
+          toNumber(item.quantity, 1),
+          1
+        );
+
+        const unitPrice = toNumber(
+          item.unitPrice,
+          variant.publicPrice
+        );
+
+        const itemInternalCost =
+          toNumber(
+            item.internalCost ??
+              item.unitCost,
             0
           );
 
-
-        subtotal += unitPrice;
-        internalCostTotal += internalCost;
-
-
-        preparedItems.push({
-          productVariantId,
-
-          providerId:
-            inventoryItem.providerId ||
-            rawItem.providerId ||
-            null,
-
-          quantity: 1,
-
-          unitPrice,
-
-          internalCost,
-
-          inventoryItemId:
-            inventoryItem.id
-        });
-      }
-    }
-
-
-    const total =
-      Number(
-        payload.total ??
-        subtotal
-      );
-
-
-    const profit =
-      total -
-      internalCostTotal;
-
-
-    // ======================================
-    // CREAR VENTA
-    // ======================================
-
-    const sale =
-      await tx.sale.create({
-        data: {
-          clientId,
-
-          employeeId:
-            payload.employeeId ||
-            null,
-
-          status:
-            normalizeSaleStatus(
-              payload.status
-            ),
-
-          subtotal,
-
-          total,
-
-          internalCost:
-            internalCostTotal,
-
-          profit,
-
-          paymentReference:
-            payload.paymentReference ||
-            null,
-
-
-          items: {
-            create:
-              preparedItems.map(item => ({
-                productVariantId:
-                  item.productVariantId,
-
-                providerId:
-                  item.providerId,
-
-                quantity:
-                  item.quantity,
-
-                unitPrice:
-                  item.unitPrice,
-
-                internalCost:
-                  item.internalCost
-              }))
-          }
-        },
-
-        include: {
-          items: true
-        }
-      });
-
-
-    // ======================================
-    // CONECTAR INVENTARIO A SALEITEM
-    // Y CREAR CODEREQUEST AUTOMÁTICO
-    // ======================================
-
-    for (
-      let index = 0;
-      index < sale.items.length;
-      index++
-    ) {
-
-      const saleItem =
-        sale.items[index];
-
-      const prepared =
-        preparedItems[index];
-
-
-      // ------------------------------------
-      // 1. Marcar inventario como vendido
-      // ------------------------------------
-
-      await tx.inventoryItem.update({
-        where: {
-          id:
-            prepared.inventoryItemId
-        },
-
-        data: {
-          saleItemId:
-            saleItem.id,
-
-          status:
-            'SOLD',
-
-          soldAt:
-            new Date()
-        }
-      });
-
-
-      // ------------------------------------
-      // 2. Buscar correo activo asignado
-      // ------------------------------------
-
-      const activeAlias =
-        await tx.inventoryAlias.findFirst({
-          where: {
-            inventoryItemId:
-              prepared.inventoryItemId,
-
-            active: true
-          },
-
-          orderBy: {
-            assignedAt: 'desc'
-          }
-        });
-
-
-      // ------------------------------------
-      // 3. Crear solicitud PENDING
-      // automáticamente si tiene correo
-      // ------------------------------------
-
-      if (activeAlias) {
-
-        const existingPending =
-          await tx.codeRequest.findFirst({
-            where: {
-              inventoryItemId:
-                prepared.inventoryItemId,
-
-              status:
-                'PENDING'
-            }
-          });
-
-
-        if (!existingPending) {
-
-          await tx.codeRequest.create({
+        const saleItem =
+          await tx.saleItem.create({
             data: {
-              inventoryItemId:
-                prepared.inventoryItemId,
+              saleId: sale.id,
 
-              requestedById:
-                payload.employeeId ||
+              productVariantId:
+                item.productVariantId,
+
+              providerId:
+                item.providerId ||
                 null,
 
-              status:
-                'PENDING',
+              quantity,
 
-              notes:
-                `Solicitud automática por venta ${sale.id}`
+              unitPrice,
+
+              internalCost:
+                itemInternalCost,
+
+              expirationDate:
+                item.expirationDate
+                  ? new Date(
+                      item.expirationDate
+                    )
+                  : null,
+
+              warrantyEndDate:
+                item.warrantyEndDate
+                  ? new Date(
+                      item.warrantyEndDate
+                    )
+                  : null,
+
+              updatedAt: new Date()
             }
           });
 
-        }
+        createdItems.push(
+          saleItem
+        );
       }
+
+      return {
+        ...sale,
+        items: createdItems
+      };
     }
-
-
-    // ======================================
-    // DEVOLVER VENTA COMPLETA
-    // ======================================
-
-    return tx.sale.findUnique({
-      where: {
-        id: sale.id
-      },
-
-      include: {
-        client: true,
-
-        employee: true,
-
-        items: {
-          include: {
-            productVariant: {
-              include: {
-                product: true
-              }
-            },
-
-            provider: true,
-
-            inventoryItem: {
-              include: {
-                aliases: {
-                  where: {
-                    active: true
-                  },
-
-                  include: {
-                    emailAlias: true
-                  }
-                },
-
-                codeRequests: {
-                  orderBy: {
-                    requestedAt: 'desc'
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    });
-
-  });
+  );
 }
 
-
-// ==========================================
+// ============================================================
 // ACTUALIZAR VENTA
-// ==========================================
+// ============================================================
 
 async function updateSale(
   id,
   payload = {}
 ) {
+  if (!id) {
+    throw createError(
+      400,
+      'Sale id is required'
+    );
+  }
 
   const existing =
     await prisma.sale.findUnique({
@@ -623,6 +481,156 @@ async function updateSale(
       }
     });
 
+  if (!existing) {
+    throw createError(
+      404,
+      'Sale not found'
+    );
+  }
+
+  const data = {};
+
+  if (payload.employeeId !== undefined) {
+    data.employeeId =
+      payload.employeeId || null;
+  }
+
+  if (payload.walletId !== undefined) {
+    data.walletId =
+      payload.walletId || null;
+  }
+
+  if (payload.status !== undefined) {
+    data.status =
+      String(
+        payload.status
+      ).toUpperCase();
+  }
+
+  if (payload.channel !== undefined) {
+    data.channel =
+      String(
+        payload.channel
+      ).toUpperCase();
+  }
+
+  if (payload.paymentMethod !== undefined) {
+    data.paymentMethod =
+      payload.paymentMethod
+        ? String(
+            payload.paymentMethod
+          ).toUpperCase()
+        : null;
+  }
+
+  if (payload.paymentStatus !== undefined) {
+    data.paymentStatus =
+      String(
+        payload.paymentStatus
+      ).toUpperCase();
+  }
+
+  if (payload.subtotal !== undefined) {
+    data.subtotal =
+      toNumber(payload.subtotal);
+  }
+
+  if (payload.total !== undefined) {
+    data.total =
+      toNumber(payload.total);
+  }
+
+  if (
+    payload.internalCost !== undefined ||
+    payload.costTotal !== undefined
+  ) {
+    data.internalCost =
+      toNumber(
+        payload.internalCost ??
+          payload.costTotal
+      );
+  }
+
+  if (payload.profit !== undefined) {
+    data.profit =
+      toNumber(payload.profit);
+  }
+
+  if (
+    payload.paymentReference !==
+    undefined
+  ) {
+    data.paymentReference =
+      payload.paymentReference ||
+      null;
+  }
+
+  if (payload.customerName !== undefined) {
+    data.customerName =
+      payload.customerName ||
+      null;
+  }
+
+  if (payload.customerEmail !== undefined) {
+    data.customerEmail =
+      payload.customerEmail ||
+      null;
+  }
+
+  if (payload.customerPhone !== undefined) {
+    data.customerPhone =
+      payload.customerPhone ||
+      null;
+  }
+
+  if (payload.paidAt !== undefined) {
+    data.paidAt =
+      payload.paidAt
+        ? new Date(
+            payload.paidAt
+          )
+        : null;
+  }
+
+  if (payload.deliveredAt !== undefined) {
+    data.deliveredAt =
+      payload.deliveredAt
+        ? new Date(
+            payload.deliveredAt
+          )
+        : null;
+  }
+
+  const updated =
+    await prisma.sale.update({
+      where: {
+        id
+      },
+
+      data
+    });
+
+  return getSale(updated.id);
+}
+
+// ============================================================
+// ELIMINAR VENTA
+// ============================================================
+
+async function deleteSale(id) {
+  if (!id) {
+    throw createError(
+      400,
+      'Sale id is required'
+    );
+  }
+
+  const existing =
+    await prisma.sale.findUnique({
+      where: {
+        id
+      }
+    });
 
   if (!existing) {
     throw createError(
@@ -631,197 +639,21 @@ async function updateSale(
     );
   }
 
-
-  if (payload.items) {
-    throw createError(
-      400,
-      'Sale items cannot be replaced from updateSale'
-    );
-  }
-
-
-  const data = {};
-
-
-  if (payload.status) {
-    data.status =
-      normalizeSaleStatus(
-        payload.status
-      );
-  }
-
-
-  if (
-    payload.paymentReference !==
-    undefined
-  ) {
-
-    data.paymentReference =
-      payload.paymentReference ||
-      null;
-  }
-
-
-  if (
-    payload.employeeId !==
-    undefined
-  ) {
-
-    data.employeeId =
-      payload.employeeId ||
-      null;
-  }
-
-
-  return prisma.sale.update({
+  await prisma.sale.delete({
     where: {
       id
-    },
-
-    data,
-
-    include: {
-      client: true,
-
-      employee: true,
-
-      items: {
-        include: {
-          productVariant: {
-            include: {
-              product: true
-            }
-          },
-
-          provider: true,
-
-          inventoryItem: {
-            include: {
-              aliases: {
-                where: {
-                  active: true
-                },
-
-                include: {
-                  emailAlias: true
-                }
-              },
-
-              codeRequests: {
-                orderBy: {
-                  requestedAt: 'desc'
-                }
-              }
-            }
-          }
-        }
-      }
     }
   });
+
+  return {
+    deleted: true,
+    id
+  };
 }
 
-
-// ==========================================
-// ELIMINAR VENTA Y LIBERAR INVENTARIO
-// ==========================================
-
-async function deleteSale(id) {
-
-  return prisma.$transaction(
-    async tx => {
-
-      const existing =
-        await tx.sale.findUnique({
-          where: {
-            id
-          },
-
-          include: {
-            items: {
-              include: {
-                inventoryItem: true
-              }
-            }
-          }
-        });
-
-
-      if (!existing) {
-        throw createError(
-          404,
-          'Sale not found'
-        );
-      }
-
-
-      for (const item of existing.items) {
-
-        if (item.inventoryItem) {
-
-          // Cancelar solicitudes pendientes
-          // relacionadas con ese inventario.
-          await tx.codeRequest.updateMany({
-            where: {
-              inventoryItemId:
-                item.inventoryItem.id,
-
-              status: {
-                in: [
-                  'PENDING',
-                  'RECEIVED'
-                ]
-              }
-            },
-
-            data: {
-              status:
-                'EXPIRED',
-
-              expiresAt:
-                new Date(),
-
-              notes:
-                `Venta ${id} eliminada`
-            }
-          });
-
-
-          // Liberar inventario
-          await tx.inventoryItem.update({
-            where: {
-              id:
-                item.inventoryItem.id
-            },
-
-            data: {
-              saleItemId: null,
-              status: 'AVAILABLE',
-              soldAt: null
-            }
-          });
-        }
-      }
-
-
-      await tx.sale.delete({
-        where: {
-          id
-        }
-      });
-
-
-      return {
-        success: true,
-        id
-      };
-    }
-  );
-}
-
-
-// ==========================================
+// ============================================================
 // EXPORTAR
-// ==========================================
+// ============================================================
 
 module.exports = {
   listSales,

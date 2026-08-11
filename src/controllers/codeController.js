@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 const prisma = require('../lib/prisma');
 
 function createError(status, message) {
@@ -6,13 +7,18 @@ function createError(status, message) {
   return error;
 }
 
-// =============================
-// SOLICITUDES DE CÓDIGO
-// =============================
+// ============================================================
+// LISTAR SOLICITUDES DE CÓDIGO
+// ============================================================
 
 async function listCodeRequests(req, res, next) {
   try {
-    const status = req.query?.status;
+    const status =
+      req.query?.status
+        ? String(req.query.status)
+            .trim()
+            .toUpperCase()
+        : null;
 
     const where = {};
 
@@ -20,35 +26,65 @@ async function listCodeRequests(req, res, next) {
       where.status = status;
     }
 
-    const requests = await prisma.codeRequest.findMany({
-      where,
-      include: {
-        inventoryItem: {
-          include: {
-            productVariant: {
-              include: {
-                product: true
-              }
-            },
-            aliases: {
-              where: {
-                active: true
+    const requests =
+      await prisma.codeRequest.findMany({
+        where,
+
+        include: {
+          InventoryItem: {
+            include: {
+              ProductVariant: {
+                include: {
+                  product: {
+                    include: {
+                      Category: true
+                    }
+                  }
+                }
               },
-              include: {
-                emailAlias: {
-                  include: {
-                    domain: true
+
+              InventoryAlias: {
+                where: {
+                  active: true
+                },
+
+                include: {
+                  EmailAlias: {
+                    include: {
+                      MailDomain: true
+                    }
+                  }
+                },
+
+                orderBy: {
+                  assignedAt: 'desc'
+                }
+              },
+
+              SaleItem: {
+                include: {
+                  sale: {
+                    include: {
+                      client: {
+                        select: {
+                          id: true,
+                          name: true,
+                          email: true,
+                          phone: true
+                        }
+                      }
+                    }
                   }
                 }
               }
             }
           }
+        },
+
+        orderBy: {
+          requestedAt: 'desc'
         }
-      },
-      orderBy: {
-        requestedAt: 'desc'
-      }
-    });
+      });
 
     return res.status(200).json({
       success: true,
@@ -60,41 +96,74 @@ async function listCodeRequests(req, res, next) {
   }
 }
 
+// ============================================================
+// VER UNA SOLICITUD
+// ============================================================
+
 async function getCodeRequest(req, res, next) {
   try {
-    const request = await prisma.codeRequest.findUnique({
-      where: {
-        id: req.params.id
-      },
-      include: {
-        inventoryItem: {
-          include: {
-            productVariant: {
-              include: {
-                product: true
-              }
-            },
-            aliases: {
-              where: {
-                active: true
+    const request =
+      await prisma.codeRequest.findUnique({
+        where: {
+          id: req.params.id
+        },
+
+        include: {
+          InventoryItem: {
+            include: {
+              ProductVariant: {
+                include: {
+                  product: {
+                    include: {
+                      Category: true
+                    }
+                  }
+                }
               },
-              include: {
-                emailAlias: {
-                  include: {
-                    domain: true
+
+              InventoryAlias: {
+                where: {
+                  active: true
+                },
+
+                include: {
+                  EmailAlias: {
+                    include: {
+                      MailDomain: true
+                    }
+                  }
+                },
+
+                orderBy: {
+                  assignedAt: 'desc'
+                }
+              },
+
+              SaleItem: {
+                include: {
+                  sale: {
+                    include: {
+                      client: {
+                        select: {
+                          id: true,
+                          name: true,
+                          email: true,
+                          phone: true
+                        }
+                      }
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-    });
+      });
 
     if (!request) {
       throw createError(
         404,
-        'Code request not found'
+        'Solicitud de código no encontrada'
       );
     }
 
@@ -108,14 +177,22 @@ async function getCodeRequest(req, res, next) {
   }
 }
 
+// ============================================================
+// CREAR SOLICITUD
+// ============================================================
+
 async function createCodeRequest(req, res, next) {
   try {
-    const inventoryItemId = req.body?.inventoryItemId;
+    const inventoryItemId =
+      String(
+        req.body?.inventoryItemId ||
+        ''
+      ).trim();
 
     if (!inventoryItemId) {
       throw createError(
         400,
-        'inventoryItemId is required'
+        'inventoryItemId es obligatorio'
       );
     }
 
@@ -124,13 +201,29 @@ async function createCodeRequest(req, res, next) {
         where: {
           id: inventoryItemId
         },
+
         include: {
-          aliases: {
+          ProductVariant: {
+            include: {
+              product: true
+            }
+          },
+
+          InventoryAlias: {
             where: {
               active: true
             },
+
             include: {
-              emailAlias: true
+              EmailAlias: {
+                include: {
+                  MailDomain: true
+                }
+              }
+            },
+
+            orderBy: {
+              assignedAt: 'desc'
             }
           }
         }
@@ -139,7 +232,21 @@ async function createCodeRequest(req, res, next) {
     if (!inventoryItem) {
       throw createError(
         404,
-        'Inventory item not found'
+        'Artículo de inventario no encontrado'
+      );
+    }
+
+    const activeAlias =
+      Array.isArray(
+        inventoryItem.InventoryAlias
+      )
+        ? inventoryItem.InventoryAlias[0]
+        : null;
+
+    if (!activeAlias) {
+      throw createError(
+        409,
+        'Este artículo no tiene un correo activo asignado'
       );
     }
 
@@ -148,29 +255,85 @@ async function createCodeRequest(req, res, next) {
         where: {
           inventoryItemId,
           status: 'PENDING'
+        },
+
+        orderBy: {
+          requestedAt: 'desc'
         }
       });
 
     if (pending) {
       throw createError(
         409,
-        'There is already a pending code request for this item'
+        'Ya existe una solicitud de código pendiente para este artículo'
       );
     }
 
-    const request = await prisma.codeRequest.create({
-      data: {
-        inventoryItemId,
-        requestedById: req.user?.id || null,
-        status: 'PENDING',
-        notes: req.body?.notes?.trim() || null
-      }
-    });
+    const request =
+      await prisma.codeRequest.create({
+        data: {
+          id: uuidv4(),
+
+          inventoryItemId,
+
+          requestedById:
+            req.user?.id ||
+            null,
+
+          status:
+            'PENDING',
+
+          notes:
+            req.body?.notes
+              ? String(
+                  req.body.notes
+                ).trim()
+              : null
+        }
+      });
+
+    const complete =
+      await prisma.codeRequest.findUnique({
+        where: {
+          id: request.id
+        },
+
+        include: {
+          InventoryItem: {
+            include: {
+              ProductVariant: {
+                include: {
+                  product: {
+                    include: {
+                      Category: true
+                    }
+                  }
+                }
+              },
+
+              InventoryAlias: {
+                where: {
+                  active: true
+                },
+
+                include: {
+                  EmailAlias: {
+                    include: {
+                      MailDomain: true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
 
     return res.status(201).json({
       success: true,
-      message: 'Code request created successfully',
-      data: request
+      message:
+        'Solicitud de código creada correctamente',
+      data: complete
     });
 
   } catch (error) {
@@ -178,32 +341,39 @@ async function createCodeRequest(req, res, next) {
   }
 }
 
-// =============================
-// MARCAR CÓDIGO RECIBIDO
-// =============================
+// ============================================================
+// MARCAR CÓDIGO COMO RECIBIDO
+// ============================================================
 
 async function markCodeReceived(req, res, next) {
   try {
-    const id = req.params.id;
-    const code = String(req.body?.code || '').trim();
+    const id =
+      req.params.id;
+
+    const code =
+      String(
+        req.body?.code ||
+        ''
+      ).trim();
 
     if (!code) {
       throw createError(
         400,
-        'Code is required'
+        'El código es obligatorio'
       );
     }
 
-    const existing = await prisma.codeRequest.findUnique({
-      where: {
-        id
-      }
-    });
+    const existing =
+      await prisma.codeRequest.findUnique({
+        where: {
+          id
+        }
+      });
 
     if (!existing) {
       throw createError(
         404,
-        'Code request not found'
+        'Solicitud de código no encontrada'
       );
     }
 
@@ -213,24 +383,32 @@ async function markCodeReceived(req, res, next) {
     ) {
       throw createError(
         409,
-        'This code request can no longer be modified'
+        'Esta solicitud ya no puede modificarse'
       );
     }
 
-    const updated = await prisma.codeRequest.update({
-      where: {
-        id
-      },
-      data: {
-        codeEncrypted: code,
-        status: 'RECEIVED',
-        receivedAt: new Date()
-      }
-    });
+    const updated =
+      await prisma.codeRequest.update({
+        where: {
+          id
+        },
+
+        data: {
+          codeEncrypted:
+            code,
+
+          status:
+            'RECEIVED',
+
+          receivedAt:
+            new Date()
+        }
+      });
 
     return res.status(200).json({
       success: true,
-      message: 'Code marked as received',
+      message:
+        'Código marcado como recibido',
       data: updated
     });
 
@@ -239,64 +417,71 @@ async function markCodeReceived(req, res, next) {
   }
 }
 
-// =============================
-// MARCAR CÓDIGO ENTREGADO
-// =============================
+// ============================================================
+// MARCAR CÓDIGO COMO ENTREGADO
+// ============================================================
 
 async function markCodeDelivered(req, res, next) {
   try {
-    const id = req.params.id;
+    const id =
+      req.params.id;
 
-    const existing = await prisma.codeRequest.findUnique({
-      where: {
-        id
-      }
-    });
+    const existing =
+      await prisma.codeRequest.findUnique({
+        where: {
+          id
+        }
+      });
 
     if (!existing) {
       throw createError(
         404,
-        'Code request not found'
+        'Solicitud de código no encontrada'
       );
     }
 
-    // Si ya fue entregado, respondemos OK
-    // para evitar errores por llamadas repetidas.
-    if (existing.status === 'DELIVERED') {
+    if (
+      existing.status ===
+      'DELIVERED'
+    ) {
       return res.status(200).json({
         success: true,
-        message: 'Code was already delivered',
+        message:
+          'El código ya estaba marcado como entregado',
         data: existing
       });
     }
 
-    // No permitimos entregar una solicitud
-    // que todavía no tenga código asociado.
     if (!existing.codeEncrypted) {
       throw createError(
         409,
-        'No code has been received yet'
+        'Todavía no se ha recibido ningún código'
       );
     }
 
-    // Si el código ya fue almacenado, permitimos
-    // completar la entrega aunque el estado todavía
-    // no haya cambiado correctamente a RECEIVED.
-    const updated = await prisma.codeRequest.update({
-      where: {
-        id
-      },
-      data: {
-        status: 'DELIVERED',
-        receivedAt:
-          existing.receivedAt || new Date(),
-        deliveredAt: new Date()
-      }
-    });
+    const updated =
+      await prisma.codeRequest.update({
+        where: {
+          id
+        },
+
+        data: {
+          status:
+            'DELIVERED',
+
+          receivedAt:
+            existing.receivedAt ||
+            new Date(),
+
+          deliveredAt:
+            new Date()
+        }
+      });
 
     return res.status(200).json({
       success: true,
-      message: 'Code marked as delivered',
+      message:
+        'Código marcado como entregado',
       data: updated
     });
 
@@ -305,40 +490,48 @@ async function markCodeDelivered(req, res, next) {
   }
 }
 
-// =============================
+// ============================================================
 // MARCAR COMO EXPIRADO
-// =============================
+// ============================================================
 
 async function expireCodeRequest(req, res, next) {
   try {
-    const id = req.params.id;
+    const id =
+      req.params.id;
 
-    const existing = await prisma.codeRequest.findUnique({
-      where: {
-        id
-      }
-    });
+    const existing =
+      await prisma.codeRequest.findUnique({
+        where: {
+          id
+        }
+      });
 
     if (!existing) {
       throw createError(
         404,
-        'Code request not found'
+        'Solicitud de código no encontrada'
       );
     }
 
-    const updated = await prisma.codeRequest.update({
-      where: {
-        id
-      },
-      data: {
-        status: 'EXPIRED',
-        expiresAt: new Date()
-      }
-    });
+    const updated =
+      await prisma.codeRequest.update({
+        where: {
+          id
+        },
+
+        data: {
+          status:
+            'EXPIRED',
+
+          expiresAt:
+            new Date()
+        }
+      });
 
     return res.status(200).json({
       success: true,
-      message: 'Code request expired',
+      message:
+        'Solicitud marcada como expirada',
       data: updated
     });
 
@@ -347,42 +540,52 @@ async function expireCodeRequest(req, res, next) {
   }
 }
 
-// =============================
-// MARCAR COMO FALLIDO
-// =============================
+// ============================================================
+// MARCAR COMO FALLIDA
+// ============================================================
 
 async function failCodeRequest(req, res, next) {
   try {
-    const id = req.params.id;
+    const id =
+      req.params.id;
 
-    const existing = await prisma.codeRequest.findUnique({
-      where: {
-        id
-      }
-    });
+    const existing =
+      await prisma.codeRequest.findUnique({
+        where: {
+          id
+        }
+      });
 
     if (!existing) {
       throw createError(
         404,
-        'Code request not found'
+        'Solicitud de código no encontrada'
       );
     }
 
-    const updated = await prisma.codeRequest.update({
-      where: {
-        id
-      },
-      data: {
-        status: 'FAILED',
-        notes:
-          req.body?.notes?.trim() ||
-          existing.notes
-      }
-    });
+    const updated =
+      await prisma.codeRequest.update({
+        where: {
+          id
+        },
+
+        data: {
+          status:
+            'FAILED',
+
+          notes:
+            req.body?.notes
+              ? String(
+                  req.body.notes
+                ).trim()
+              : existing.notes
+        }
+      });
 
     return res.status(200).json({
       success: true,
-      message: 'Code request marked as failed',
+      message:
+        'Solicitud marcada como fallida',
       data: updated
     });
 
@@ -390,6 +593,10 @@ async function failCodeRequest(req, res, next) {
     next(error);
   }
 }
+
+// ============================================================
+// EXPORTAR
+// ============================================================
 
 module.exports = {
   listCodeRequests,

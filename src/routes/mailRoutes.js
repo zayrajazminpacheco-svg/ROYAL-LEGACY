@@ -1,30 +1,71 @@
 const express = require('express');
-
-const {
-  authenticateToken,
-  authorizeRoles
-} = require('../middlewares/auth');
-
 const mailController = require('../controllers/mailController');
 
 const router = express.Router();
 
-// Solo administradores
-router.use(
-  authenticateToken,
-  authorizeRoles('SUPER_ADMIN', 'ADMIN')
+// ==========================================
+// DOMINIOS
+// ==========================================
+
+router.get(
+  '/domains',
+  mailController.listDomains
 );
 
-// ===== DOMINIOS =====
-router.get('/domains', mailController.listDomains);
-router.post('/domains', mailController.createDomain);
+router.post(
+  '/domains',
+  mailController.createDomain
+);
 
-// ===== ALIAS =====
-router.get('/aliases', mailController.listAliases);
-router.post('/aliases', mailController.createAlias);
-router.post('/aliases/generate', mailController.generateAliases);
-router.patch('/aliases/:id/status', mailController.updateAliasStatus);
-router.post('/aliases/:id/assign', mailController.assignAlias);
-router.post('/aliases/:id/release', mailController.releaseAlias);
+
+// ==========================================
+// CORREOS / ALIAS
+// ==========================================
+
+router.get(
+  '/aliases',
+  mailController.listAliases
+);
+
+router.post(
+  '/aliases',
+  mailController.createAlias
+);
+
+router.post(
+  '/aliases/generate',
+  mailController.generateAliases
+);
+
+
+// ==========================================
+// ASIGNAR MANUALMENTE
+// ==========================================
+
+router.post(
+  '/aliases/:aliasId/assign',
+  mailController.assignAlias
+);
+
+
+// ==========================================
+// ASIGNAR AUTOMÁTICAMENTE
+// ==========================================
+
+router.post(
+  '/aliases/assign-auto',
+  mailController.assignAliasAutomatically
+);
+
+
+// ==========================================
+// LIBERAR
+// ==========================================
+
+router.post(
+  '/aliases/:aliasId/release',
+  mailController.releaseAlias
+);
+
 
 module.exports = router;
