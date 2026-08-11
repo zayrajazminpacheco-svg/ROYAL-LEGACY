@@ -11,6 +11,38 @@ async function ensureDatabaseConnection() {
   }
 }
 
+function createError(
+  status,
+  message
+) {
+  const error =
+    new Error(message);
+
+  error.status =
+    status;
+
+  return error;
+}
+
+function normalizeSlug(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(
+      /[\u0300-\u036f]/g,
+      ''
+    )
+    .replace(
+      /[^a-z0-9]+/g,
+      '-'
+    )
+    .replace(
+      /^-+|-+$/g,
+      ''
+    );
+}
+
 
 // ============================================================
 // LISTAR CATEGORÍAS
@@ -92,15 +124,10 @@ async function getProductBySlug(slug) {
   await ensureDatabaseConnection();
 
   if (!slug) {
-    const error =
-      new Error(
-        'Product slug is required'
-      );
-
-    error.status =
-      400;
-
-    throw error;
+    throw createError(
+      400,
+      'El slug del producto es obligatorio'
+    );
   }
 
   const product =
@@ -143,18 +170,238 @@ async function getProductBySlug(slug) {
     !product ||
     !product.active
   ) {
-    const error =
-      new Error(
-        'Product not found'
-      );
-
-    error.status =
-      404;
-
-    throw error;
+    throw createError(
+      404,
+      'Producto no encontrado'
+    );
   }
 
   return product;
+}
+
+
+// ============================================================
+// CREAR PRODUCTO
+// ============================================================
+
+async function createProduct(data = {}) {
+  await ensureDatabaseConnection();
+
+  const categoryId =
+    String(
+      data.categoryId || ''
+    ).trim();
+
+  const name =
+    String(
+      data.name || ''
+    ).trim();
+
+  const description =
+    String(
+      data.description || ''
+    ).trim();
+
+  const imageUrl =
+    String(
+      data.imageUrl || ''
+    ).trim();
+
+  const requestedSlug =
+    String(
+      data.slug || ''
+    ).trim();
+
+  if (!categoryId) {
+    throw createError(
+      400,
+      'Selecciona una categoría'
+    );
+  }
+
+  if (!name) {
+    throw createError(
+      400,
+      'El nombre del producto es obligatorio'
+    );
+  }
+
+  const category =
+    await prisma.category.findUnique({
+      where: {
+        id: categoryId
+      }
+    });
+
+  if (
+    !category ||
+    !category.active
+  ) {
+    throw createError(
+      400,
+      'La categoría seleccionada no es válida'
+    );
+  }
+
+  let slug =
+    normalizeSlug(
+      requestedSlug ||
+      name
+    );
+
+  if (!slug) {
+    throw createError(
+      400,
+      'No se pudo generar el slug'
+    );
+  }
+
+  const existing =
+    await prisma.product.findUnique({
+      where: {
+        slug
+      }
+    });
+
+  if (existing) {
+    slug =
+      `${slug}-${Date.now()}`;
+  }
+
+  return prisma.product.create({
+    data: {
+      categoryId,
+      name,
+      slug,
+
+      description:
+        description ||
+        null,
+
+      imageUrl:
+        imageUrl ||
+        null,
+
+      active:
+        data.active !== false
+    },
+
+    include: {
+      Category: true,
+      variants: true
+    }
+  });
+}
+
+
+// ============================================================
+// CREAR VARIANTE
+// ============================================================
+
+async function createProductVariant(
+  productId,
+  data = {}
+) {
+  await ensureDatabaseConnection();
+
+  const id =
+    String(
+      productId || ''
+    ).trim();
+
+  if (!id) {
+    throw createError(
+      400,
+      'El producto es obligatorio'
+    );
+  }
+
+  const product =
+    await prisma.product.findUnique({
+      where: {
+        id
+      }
+    });
+
+  if (
+    !product ||
+    !product.active
+  ) {
+    throw createError(
+      404,
+      'Producto no encontrado'
+    );
+  }
+
+  const publicName =
+    String(
+      data.publicName || ''
+    ).trim();
+
+  const accessType =
+    String(
+      data.accessType || ''
+    ).trim();
+
+  const durationDays =
+    Number(
+      data.durationDays
+    );
+
+  const publicPrice =
+    Number(
+      data.publicPrice
+    );
+
+  if (!publicName) {
+    throw createError(
+      400,
+      'El nombre de la variante es obligatorio'
+    );
+  }
+
+  if (!accessType) {
+    throw createError(
+      400,
+      'Selecciona el tipo de acceso'
+    );
+  }
+
+  if (
+    !Number.isInteger(
+      durationDays
+    ) ||
+    durationDays <= 0
+  ) {
+    throw createError(
+      400,
+      'La duración debe ser mayor a 0 días'
+    );
+  }
+
+  if (
+    !Number.isFinite(
+      publicPrice
+    ) ||
+    publicPrice < 0
+  ) {
+    throw createError(
+      400,
+      'El precio público no es válido'
+    );
+  }
+
+  return prisma.productVariant.create({
+    data: {
+      productId: id,
+      accessType,
+      durationDays,
+      publicName,
+      publicPrice,
+      active:
+        data.active !== false
+    }
+  });
 }
 
 
@@ -165,5 +412,7 @@ async function getProductBySlug(slug) {
 module.exports = {
   listCategories,
   listProducts,
-  getProductBySlug
+  getProductBySlug,
+  createProduct,
+  createProductVariant
 };
