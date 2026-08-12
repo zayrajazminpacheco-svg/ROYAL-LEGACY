@@ -4893,6 +4893,352 @@ html, body {
   #catalog .rl-platform-picker img{object-fit:contain!important;background:#050912!important}
 }
 </style>
+
+<style>
+/* ==========================================================
+   ROYAL LEGACY — BOT WHATSAPP PREMIUM
+   ========================================================== */
+#whatsappBot{
+  padding-bottom:40px;
+}
+.wa-shell{
+  display:grid;
+  gap:18px;
+}
+.wa-hero{
+  position:relative;
+  overflow:hidden;
+  padding:24px;
+  border:1px solid rgba(52,211,153,.22);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 92% 10%,rgba(37,211,102,.16),transparent 28%),
+    radial-gradient(circle at 10% 0%,rgba(35,217,255,.09),transparent 26%),
+    linear-gradient(145deg,rgba(9,19,36,.98),rgba(4,10,22,.98));
+  box-shadow:0 20px 60px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.03);
+}
+.wa-hero-row{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:center;
+}
+.wa-title-wrap{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.wa-logo{
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  font-size:28px;
+  color:#dffff0;
+  background:linear-gradient(145deg,rgba(37,211,102,.24),rgba(8,30,23,.86));
+  border:1px solid rgba(37,211,102,.42);
+  box-shadow:0 0 28px rgba(37,211,102,.15);
+}
+.wa-hero h1{
+  margin:0;
+  font-size:28px;
+  line-height:1.05;
+  letter-spacing:-.03em;
+}
+.wa-hero p{
+  margin:7px 0 0;
+  color:#8fa0b8;
+  font-size:13px;
+}
+.wa-status-pill{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 13px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,.18);
+  background:rgba(3,8,18,.64);
+  color:#a9b7c8;
+  font-size:12px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.wa-status-dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#64748b;
+  box-shadow:0 0 0 4px rgba(100,116,139,.10);
+}
+.wa-status-pill.on{
+  color:#9cf9c0;
+  border-color:rgba(37,211,102,.28);
+}
+.wa-status-pill.on .wa-status-dot{
+  background:#25d366;
+  box-shadow:0 0 14px rgba(37,211,102,.65),0 0 0 4px rgba(37,211,102,.10);
+}
+.wa-kpis{
+  margin-top:20px;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.wa-kpi{
+  padding:14px 16px;
+  border-radius:16px;
+  background:rgba(2,8,17,.55);
+  border:1px solid rgba(89,119,164,.15);
+}
+.wa-kpi span{
+  display:block;
+  color:#75859e;
+  font-size:10px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:900;
+}
+.wa-kpi strong{
+  display:block;
+  margin-top:5px;
+  color:white;
+  font-size:19px;
+}
+.wa-grid{
+  display:grid;
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr);
+  gap:18px;
+}
+.wa-card{
+  padding:20px;
+  border-radius:22px;
+  border:1px solid rgba(72,122,187,.18);
+  background:linear-gradient(145deg,rgba(9,18,34,.98),rgba(4,9,20,.98));
+  box-shadow:0 16px 40px rgba(0,0,0,.24);
+}
+.wa-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+.wa-card-head h2{
+  margin:0;
+  font-size:17px;
+}
+.wa-card-head p{
+  margin:4px 0 0;
+  color:#74849c;
+  font-size:11px;
+}
+.wa-toggle-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:12px 13px;
+  border-radius:15px;
+  border:1px solid rgba(83,115,161,.14);
+  background:rgba(2,7,15,.56);
+  margin-bottom:12px;
+}
+.wa-toggle-copy strong,
+.wa-toggle-copy span{
+  display:block;
+}
+.wa-toggle-copy strong{
+  font-size:13px;
+}
+.wa-toggle-copy span{
+  color:#74849b;
+  margin-top:3px;
+  font-size:10px;
+}
+.wa-switch{
+  position:relative;
+  width:46px;
+  height:25px;
+  flex:0 0 auto;
+}
+.wa-switch input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.wa-switch i{
+  position:absolute;
+  inset:0;
+  border-radius:999px;
+  background:#182235;
+  border:1px solid rgba(148,163,184,.18);
+  transition:.2s ease;
+}
+.wa-switch i:after{
+  content:"";
+  position:absolute;
+  width:19px;
+  height:19px;
+  top:2px;
+  left:3px;
+  border-radius:50%;
+  background:#75849a;
+  transition:.2s ease;
+}
+.wa-switch input:checked + i{
+  background:rgba(37,211,102,.20);
+  border-color:rgba(37,211,102,.48);
+  box-shadow:0 0 18px rgba(37,211,102,.12);
+}
+.wa-switch input:checked + i:after{
+  transform:translateX(20px);
+  background:#25d366;
+}
+.wa-form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.wa-form-grid .full{
+  grid-column:1/-1;
+}
+.wa-card label{
+  color:#8fa0b8;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.04em;
+}
+.wa-card input,
+.wa-card select,
+.wa-card textarea{
+  margin-top:6px;
+}
+.wa-card textarea{
+  width:100%;
+  min-height:96px;
+  resize:vertical;
+  box-sizing:border-box;
+  background:#050b17;
+  color:white;
+  border:1px solid rgba(74,196,255,.18);
+  border-radius:14px;
+  padding:12px;
+  font:inherit;
+}
+.wa-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  margin-top:14px;
+}
+.wa-save{
+  background:linear-gradient(100deg,#19c66f,#25d366 48%,#23d9ff)!important;
+  box-shadow:0 0 22px rgba(37,211,102,.16)!important;
+}
+.wa-command-form{
+  padding:15px;
+  margin-bottom:14px;
+  border-radius:17px;
+  border:1px solid rgba(139,92,246,.18);
+  background:rgba(5,10,22,.74);
+}
+.wa-command-list{
+  display:grid;
+  gap:9px;
+}
+.wa-command{
+  display:grid;
+  grid-template-columns:minmax(150px,.75fr) minmax(220px,1.35fr) auto;
+  gap:12px;
+  align-items:center;
+  padding:13px;
+  border-radius:16px;
+  border:1px solid rgba(74,106,156,.16);
+  background:rgba(3,8,18,.72);
+}
+.wa-command-code{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+.wa-command-code b{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  color:#9af7ff;
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.wa-mini-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#64748b;
+}
+.wa-mini-dot.on{
+  background:#25d366;
+  box-shadow:0 0 9px rgba(37,211,102,.55);
+}
+.wa-command-response{
+  min-width:0;
+}
+.wa-command-response strong{
+  display:block;
+  color:#d9e4f2;
+  font-size:11px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.wa-command-response span{
+  display:block;
+  margin-top:3px;
+  color:#667790;
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.wa-command-actions{
+  display:flex;
+  gap:6px;
+}
+.wa-command-actions button{
+  min-height:34px!important;
+  padding:7px 9px!important;
+  border-radius:10px!important;
+  font-size:10px!important;
+}
+.wa-empty{
+  padding:28px 18px;
+  text-align:center;
+  color:#6f819b;
+  border:1px dashed rgba(90,120,160,.20);
+  border-radius:16px;
+}
+.wa-notice{
+  min-height:0!important;
+  margin-top:12px!important;
+}
+@media(max-width:900px){
+  .wa-grid{grid-template-columns:1fr;}
+}
+@media(max-width:650px){
+  .wa-hero{padding:18px;border-radius:19px;}
+  .wa-hero-row{align-items:flex-start;}
+  .wa-title-wrap{align-items:flex-start;}
+  .wa-logo{width:46px;height:46px;border-radius:15px;font-size:23px;}
+  .wa-hero h1{font-size:22px;}
+  .wa-kpis{grid-template-columns:1fr 1fr;}
+  .wa-kpis .wa-kpi:last-child{grid-column:1/-1;}
+  .wa-form-grid{grid-template-columns:1fr;}
+  .wa-form-grid .full{grid-column:auto;}
+  .wa-command{grid-template-columns:1fr;}
+  .wa-command-actions{justify-content:flex-start;}
+}
+</style>
+
 </head>
 
 <!-- ROYAL LEGACY V5 CATALOGO VISIBLE 2026-08-11 -->
@@ -5017,6 +5363,7 @@ html, body {
 
   <div class="royal-nav-group-title royal-gestion">GESTIÓN</div>
   <button class="tab" data-tab="sales" onclick="showTab('sales')"><span class="tab-icon">▥</span><span class="tab-label">Ventas</span></button>
+  <button class="tab" data-tab="whatsappBot" onclick="showTab('whatsappBot')"><span class="tab-icon">◉</span><span class="tab-label">Bot WhatsApp</span></button>
 
   <div class="royal-nav-group-title royal-support-title">SOPORTE</div>
   <button class="royal-support-link" type="button"><span>?</span><b>Centro de ayuda</b></button>
@@ -6304,6 +6651,192 @@ html, body {
   </section>
 
 
+
+  <!-- =============================== -->
+  <!-- BOT WHATSAPP -->
+  <!-- =============================== -->
+
+  <section id="whatsappBot" class="section">
+    <div class="m-section-head">
+      <button type="button" onclick="mobileGo('home')" aria-label="Volver">←</button>
+      <div>
+        <strong>BOT WHATSAPP</strong>
+        <span>Comandos y grupo autorizado</span>
+      </div>
+    </div>
+
+    <div class="wa-shell">
+      <article class="wa-hero">
+        <div class="wa-hero-row">
+          <div class="wa-title-wrap">
+            <div class="wa-logo">◉</div>
+            <div>
+              <h1>Bot WhatsApp</h1>
+              <p>Controla las respuestas automáticas de Royal Legacy desde un solo lugar.</p>
+            </div>
+          </div>
+
+          <div id="waBotStatusPill" class="wa-status-pill">
+            <span class="wa-status-dot"></span>
+            <span id="waBotStatusText">Desactivado</span>
+          </div>
+        </div>
+
+        <div class="wa-kpis">
+          <div class="wa-kpi">
+            <span>Grupo autorizado</span>
+            <strong id="waGroupKpi">Sin configurar</strong>
+          </div>
+          <div class="wa-kpi">
+            <span>Comandos activos</span>
+            <strong id="waCommandsKpi">0</strong>
+          </div>
+          <div class="wa-kpi">
+            <span>Prefijo</span>
+            <strong id="waPrefixKpi">!</strong>
+          </div>
+        </div>
+      </article>
+
+      <div class="wa-grid">
+        <article class="wa-card">
+          <div class="wa-card-head">
+            <div>
+              <h2>Configuración</h2>
+              <p>El bot solo responderá dentro del grupo autorizado.</p>
+            </div>
+          </div>
+
+          <div class="wa-toggle-row">
+            <div class="wa-toggle-copy">
+              <strong>Activar bot</strong>
+              <span>Permite ejecutar comandos del grupo.</span>
+            </div>
+            <label class="wa-switch">
+              <input id="waEnabled" type="checkbox">
+              <i></i>
+            </label>
+          </div>
+
+          <div class="wa-form-grid">
+            <div class="full">
+              <label>ID del grupo permitido</label>
+              <input id="waAllowedGroupId" placeholder="Se llenará al conectar WhatsApp">
+            </div>
+
+            <div class="full">
+              <label>Nombre del grupo</label>
+              <input id="waAllowedGroupName" placeholder="Ej. Royal Legacy Clientes">
+            </div>
+
+            <div>
+              <label>Prefijo de comandos</label>
+              <input id="waPrefix" maxlength="5" value="!" placeholder="!">
+            </div>
+
+            <div class="wa-toggle-row" style="margin:20px 0 0">
+              <div class="wa-toggle-copy">
+                <strong>Bienvenida</strong>
+                <span>Preparado para la fase de conexión.</span>
+              </div>
+              <label class="wa-switch">
+                <input id="waWelcomeEnabled" type="checkbox">
+                <i></i>
+              </label>
+            </div>
+
+            <div class="full">
+              <label>Mensaje de bienvenida</label>
+              <textarea id="waWelcomeMessage" placeholder="Bienvenido al grupo de Royal Legacy..."></textarea>
+            </div>
+          </div>
+
+          <div class="wa-actions">
+            <button class="primary wa-save" type="button" onclick="saveWhatsAppBotSettings()">Guardar configuración</button>
+          </div>
+
+          <div id="waSettingsMessage" class="notice wa-notice"></div>
+        </article>
+
+        <article class="wa-card">
+          <div class="wa-card-head">
+            <div>
+              <h2>Comandos automáticos</h2>
+              <p>Crea, modifica, activa o elimina respuestas sin tocar código.</p>
+            </div>
+            <button class="ghost" type="button" onclick="resetWhatsAppCommandForm()">Nuevo</button>
+          </div>
+
+          <div class="wa-command-form">
+            <input id="waCommandId" type="hidden">
+
+            <div class="wa-form-grid">
+              <div>
+                <label>Comando</label>
+                <input id="waCommandName" placeholder="!precio netflix">
+              </div>
+
+              <div>
+                <label>Coincidencia</label>
+                <select id="waMatchType">
+                  <option value="EXACT">Exacta</option>
+                  <option value="STARTS_WITH">Empieza con</option>
+                  <option value="CONTAINS">Contiene</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Tipo de respuesta</label>
+                <select id="waResponseType">
+                  <option value="TEXT">Texto</option>
+                  <option value="LINK">Enlace</option>
+                  <option value="AUDIO">Audio</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Orden</label>
+                <input id="waSortOrder" type="number" value="0">
+              </div>
+
+              <div class="full">
+                <label>Respuesta</label>
+                <textarea id="waCommandResponse" placeholder="Escribe exactamente lo que quieres que responda el bot..."></textarea>
+              </div>
+
+              <div class="full">
+                <label>URL de audio o enlace (opcional)</label>
+                <input id="waMediaUrl" placeholder="https://...">
+              </div>
+            </div>
+
+            <div class="wa-toggle-row" style="margin-top:12px">
+              <div class="wa-toggle-copy">
+                <strong>Comando activo</strong>
+                <span>Si lo apagas, el bot lo ignora sin eliminarlo.</span>
+              </div>
+              <label class="wa-switch">
+                <input id="waCommandEnabled" type="checkbox" checked>
+                <i></i>
+              </label>
+            </div>
+
+            <div class="wa-actions">
+              <button class="ghost" type="button" onclick="resetWhatsAppCommandForm()">Cancelar</button>
+              <button class="primary wa-save" type="button" onclick="saveWhatsAppCommand()">Guardar comando</button>
+            </div>
+
+            <div id="waCommandMessage" class="notice wa-notice"></div>
+          </div>
+
+          <div id="waCommandsList" class="wa-command-list">
+            <div class="wa-empty">Cargando comandos...</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <nav class="mobile-bottom-nav rl-bottom-nav" aria-label="Navegación móvil">
     <button type="button" class="mnav active" data-mobile-tab="home" onclick="mobileGo('home')"><span class="rl-nav-ico">⌂</span><b>Inicio</b></button>
     <button type="button" class="mnav" data-mobile-tab="catalog" onclick="mobileGo('catalog')"><span class="rl-nav-ico">☷</span><b>Catálogo</b></button>
@@ -6760,6 +7293,13 @@ html, body {
       fillInboxEmailSelect();
 
       loadInbox();
+    }
+
+    if (
+      tabId ===
+      'whatsappBot'
+    ) {
+      loadWhatsAppBotPanel();
     }
   }
 
@@ -10267,6 +10807,339 @@ html, body {
       );
     }
   );
+
+
+
+
+  // ============================================================
+  // BOT WHATSAPP
+  // ============================================================
+
+  let whatsappBotSettings = null;
+  let whatsappBotCommands = [];
+
+
+  async function loadWhatsAppBotPanel() {
+    await Promise.allSettled([
+      loadWhatsAppBotSettings(),
+      loadWhatsAppBotCommands()
+    ]);
+
+    renderWhatsAppBotSummary();
+  }
+
+
+  async function loadWhatsAppBotSettings() {
+    try {
+      const json = await request(`${API}/whatsapp-bot/settings`);
+      const data = extractData(json) || {};
+
+      whatsappBotSettings = data;
+
+      const enabled = document.getElementById('waEnabled');
+      const groupId = document.getElementById('waAllowedGroupId');
+      const groupName = document.getElementById('waAllowedGroupName');
+      const prefix = document.getElementById('waPrefix');
+      const welcomeEnabled = document.getElementById('waWelcomeEnabled');
+      const welcomeMessage = document.getElementById('waWelcomeMessage');
+
+      if (enabled) enabled.checked = Boolean(data.enabled);
+      if (groupId) groupId.value = data.allowedGroupId || '';
+      if (groupName) groupName.value = data.allowedGroupName || '';
+      if (prefix) prefix.value = data.prefix || '!';
+      if (welcomeEnabled) welcomeEnabled.checked = Boolean(data.welcomeEnabled);
+      if (welcomeMessage) welcomeMessage.value = data.welcomeMessage || '';
+
+      renderWhatsAppBotSummary();
+    } catch (error) {
+      const box = document.getElementById('waSettingsMessage');
+      if (box) {
+        box.textContent = error.message || 'No se pudo cargar la configuración del bot.';
+        box.className = 'notice wa-notice error';
+      }
+    }
+  }
+
+
+  async function saveWhatsAppBotSettings() {
+    const box = document.getElementById('waSettingsMessage');
+
+    try {
+      if (box) {
+        box.textContent = 'Guardando...';
+        box.className = 'notice wa-notice';
+      }
+
+      const payload = {
+        enabled: Boolean(document.getElementById('waEnabled')?.checked),
+        allowedGroupId: document.getElementById('waAllowedGroupId')?.value || '',
+        allowedGroupName: document.getElementById('waAllowedGroupName')?.value || '',
+        prefix: document.getElementById('waPrefix')?.value || '!',
+        welcomeEnabled: Boolean(document.getElementById('waWelcomeEnabled')?.checked),
+        welcomeMessage: document.getElementById('waWelcomeMessage')?.value || ''
+      };
+
+      const json = await request(
+        `${API}/whatsapp-bot/settings`,
+        {
+          method: 'PUT',
+          body: JSON.stringify(payload)
+        }
+      );
+
+      whatsappBotSettings = extractData(json) || payload;
+
+      if (box) {
+        box.textContent = 'Configuración guardada correctamente.';
+        box.className = 'notice wa-notice ok';
+      }
+
+      renderWhatsAppBotSummary();
+    } catch (error) {
+      if (box) {
+        box.textContent = error.message || 'No se pudo guardar la configuración.';
+        box.className = 'notice wa-notice error';
+      }
+    }
+  }
+
+
+  async function loadWhatsAppBotCommands() {
+    const list = document.getElementById('waCommandsList');
+
+    try {
+      const json = await request(`${API}/whatsapp-bot/commands`);
+      const data = extractData(json);
+
+      whatsappBotCommands = Array.isArray(data) ? data : [];
+
+      renderWhatsAppBotCommands();
+      renderWhatsAppBotSummary();
+    } catch (error) {
+      if (list) {
+        list.innerHTML = `<div class="wa-empty">${escapeHtml(error.message || 'No se pudieron cargar los comandos.')}</div>`;
+      }
+    }
+  }
+
+
+  function renderWhatsAppBotSummary() {
+    const settings = whatsappBotSettings || {};
+    const pill = document.getElementById('waBotStatusPill');
+    const statusText = document.getElementById('waBotStatusText');
+    const groupKpi = document.getElementById('waGroupKpi');
+    const commandsKpi = document.getElementById('waCommandsKpi');
+    const prefixKpi = document.getElementById('waPrefixKpi');
+
+    if (pill) {
+      pill.classList.toggle('on', Boolean(settings.enabled));
+    }
+
+    if (statusText) {
+      statusText.textContent = settings.enabled ? 'Activado' : 'Desactivado';
+    }
+
+    if (groupKpi) {
+      groupKpi.textContent =
+        settings.allowedGroupName ||
+        (settings.allowedGroupId ? 'Grupo configurado' : 'Sin configurar');
+    }
+
+    if (commandsKpi) {
+      commandsKpi.textContent =
+        whatsappBotCommands.filter(item => item.enabled).length;
+    }
+
+    if (prefixKpi) {
+      prefixKpi.textContent = settings.prefix || '!';
+    }
+  }
+
+
+  function renderWhatsAppBotCommands() {
+    const list = document.getElementById('waCommandsList');
+
+    if (!list) return;
+
+    if (!whatsappBotCommands.length) {
+      list.innerHTML = `
+        <div class="wa-empty">
+          Todavía no tienes comandos. Crea el primero arriba.
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = whatsappBotCommands.map(item => `
+      <div class="wa-command">
+        <div class="wa-command-code">
+          <span class="wa-mini-dot ${item.enabled ? 'on' : ''}"></span>
+          <b>${escapeHtml(item.command)}</b>
+        </div>
+
+        <div class="wa-command-response">
+          <strong>${escapeHtml(item.response || item.mediaUrl || 'Sin respuesta')}</strong>
+          <span>${escapeHtml(item.matchType || 'EXACT')} · ${escapeHtml(item.responseType || 'TEXT')}</span>
+        </div>
+
+        <div class="wa-command-actions">
+          <button class="ghost" type="button" onclick='editWhatsAppCommand(${JSON.stringify(item.id)})'>Editar</button>
+          <button class="ghost" type="button" onclick='toggleWhatsAppCommand(${JSON.stringify(item.id)})'>${item.enabled ? 'Apagar' : 'Activar'}</button>
+          <button class="danger" type="button" onclick='deleteWhatsAppCommand(${JSON.stringify(item.id)})'>Eliminar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+
+  function resetWhatsAppCommandForm() {
+    const ids = [
+      'waCommandId',
+      'waCommandName',
+      'waCommandResponse',
+      'waMediaUrl'
+    ];
+
+    ids.forEach(id => {
+      const input = document.getElementById(id);
+      if (input) input.value = '';
+    });
+
+    const matchType = document.getElementById('waMatchType');
+    const responseType = document.getElementById('waResponseType');
+    const sortOrder = document.getElementById('waSortOrder');
+    const enabled = document.getElementById('waCommandEnabled');
+    const message = document.getElementById('waCommandMessage');
+
+    if (matchType) matchType.value = 'EXACT';
+    if (responseType) responseType.value = 'TEXT';
+    if (sortOrder) sortOrder.value = '0';
+    if (enabled) enabled.checked = true;
+
+    if (message) {
+      message.textContent = '';
+      message.className = 'notice wa-notice';
+    }
+  }
+
+
+  function editWhatsAppCommand(id) {
+    const item = whatsappBotCommands.find(command => command.id === id);
+
+    if (!item) return;
+
+    document.getElementById('waCommandId').value = item.id || '';
+    document.getElementById('waCommandName').value = item.command || '';
+    document.getElementById('waCommandResponse').value = item.response || '';
+    document.getElementById('waMatchType').value = item.matchType || 'EXACT';
+    document.getElementById('waResponseType').value = item.responseType || 'TEXT';
+    document.getElementById('waMediaUrl').value = item.mediaUrl || '';
+    document.getElementById('waSortOrder').value = item.sortOrder ?? 0;
+    document.getElementById('waCommandEnabled').checked = Boolean(item.enabled);
+
+    document.getElementById('waCommandName')?.focus();
+  }
+
+
+  async function saveWhatsAppCommand() {
+    const message = document.getElementById('waCommandMessage');
+    const id = document.getElementById('waCommandId')?.value || '';
+
+    const payload = {
+      command: document.getElementById('waCommandName')?.value || '',
+      response: document.getElementById('waCommandResponse')?.value || '',
+      matchType: document.getElementById('waMatchType')?.value || 'EXACT',
+      responseType: document.getElementById('waResponseType')?.value || 'TEXT',
+      mediaUrl: document.getElementById('waMediaUrl')?.value || '',
+      sortOrder: Number(document.getElementById('waSortOrder')?.value || 0),
+      enabled: Boolean(document.getElementById('waCommandEnabled')?.checked)
+    };
+
+    try {
+      if (message) {
+        message.textContent = id ? 'Actualizando...' : 'Creando...';
+        message.className = 'notice wa-notice';
+      }
+
+      await request(
+        id
+          ? `${API}/whatsapp-bot/commands/${encodeURIComponent(id)}`
+          : `${API}/whatsapp-bot/commands`,
+        {
+          method: id ? 'PUT' : 'POST',
+          body: JSON.stringify(payload)
+        }
+      );
+
+      if (message) {
+        message.textContent = id
+          ? 'Comando actualizado correctamente.'
+          : 'Comando creado correctamente.';
+        message.className = 'notice wa-notice ok';
+      }
+
+      resetWhatsAppCommandForm();
+      await loadWhatsAppBotCommands();
+    } catch (error) {
+      if (message) {
+        message.textContent = error.message || 'No se pudo guardar el comando.';
+        message.className = 'notice wa-notice error';
+      }
+    }
+  }
+
+
+  async function toggleWhatsAppCommand(id) {
+    const item = whatsappBotCommands.find(command => command.id === id);
+
+    if (!item) return;
+
+    try {
+      await request(
+        `${API}/whatsapp-bot/commands/${encodeURIComponent(id)}`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({
+            enabled: !item.enabled
+          })
+        }
+      );
+
+      await loadWhatsAppBotCommands();
+    } catch (error) {
+      alert(error.message || 'No se pudo cambiar el estado del comando.');
+    }
+  }
+
+
+  async function deleteWhatsAppCommand(id) {
+    const item = whatsappBotCommands.find(command => command.id === id);
+
+    if (!item) return;
+
+    const confirmed = window.confirm(
+      `¿Eliminar el comando "${item.command}"?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await request(
+        `${API}/whatsapp-bot/commands/${encodeURIComponent(id)}`,
+        {
+          method: 'DELETE'
+        }
+      );
+
+      if (document.getElementById('waCommandId')?.value === id) {
+        resetWhatsAppCommandForm();
+      }
+
+      await loadWhatsAppBotCommands();
+    } catch (error) {
+      alert(error.message || 'No se pudo eliminar el comando.');
+    }
+  }
 
 
   validateSavedToken();
