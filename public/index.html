@@ -5365,6 +5365,69 @@ html, body {
 }
 </style>
 
+
+<style id="royal-mobile-whatsapp-fix">
+@media (max-width: 768px) {
+
+  .tabs.royal-sidebar {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .tabs.royal-sidebar .tab {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-width: 70px !important;
+  }
+
+  .tabs.royal-sidebar .tab[data-tab="whatsappBot"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  #whatsappBot {
+    display: none;
+    width: 100% !important;
+  }
+
+  #whatsappBot.active {
+    display: block !important;
+  }
+
+  #whatsappBot .wa-connect-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  #whatsappBot .wa-connect-actions button {
+    width: 100% !important;
+    min-height: 48px !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  #whatsappBot .wa-qr-box {
+    display: block !important;
+    width: 100% !important;
+    min-height: 220px !important;
+    overflow: hidden !important;
+  }
+
+  #whatsappBot .wa-qr-box img,
+  #whatsappBot .wa-qr-box canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+</style>
+
 </head>
 
 <!-- ROYAL LEGACY V5 CATALOGO VISIBLE 2026-08-11 -->
