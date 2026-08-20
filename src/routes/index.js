@@ -1,58 +1,155 @@
-const express = require('express');
+const express =
+  require('express');
 
-const { getHealth } = require('../controllers/healthController');
+const {
+  getHealth
+} = require(
+  '../controllers/healthController'
+);
 
-const authRoutes = require('./authRoutes');
-const adminRoutes = require('./adminRoutes');
-const catalogRoutes = require('./catalogRoutes');
-const mailRoutes = require('./mailRoutes');
-const codeRoutes = require('./codeRoutes');
-const inboxRoutes = require('./inboxRoutes');
-const salesRoutes = require('./salesRoutes');
-const inventoryRoutes = require('./inventoryRoutes');
-const whatsappBotRoutes = require('./whatsappBotRoutes');
+const authRoutes =
+  require('./authRoutes');
 
-const router = express.Router();
+const adminRoutes =
+  require('./adminRoutes');
 
+const catalogRoutes =
+  require('./catalogRoutes');
 
-// Health
-router.get('/health', getHealth);
+const mailRoutes =
+  require('./mailRoutes');
 
+const codeRoutes =
+  require('./codeRoutes');
 
-// Autenticación
-router.use('/auth', authRoutes);
+const inboxRoutes =
+  require('./inboxRoutes');
 
+const salesRoutes =
+  require('./salesRoutes');
 
-// Catálogo
-router.use('/', catalogRoutes);
+const inventoryRoutes =
+  require('./inventoryRoutes');
 
+const supportReportRoutes =
+  require('./supportReportRoutes');
 
-// Administración
-router.use('/admin', adminRoutes);
+const whatsappBotRoutes =
+  require('./whatsappBotRoutes');
 
+const botCatalogRoutes =
+  require('./botCatalogRoutes');
 
-// Correos
-router.use('/mail', mailRoutes);
+const router =
+  express.Router();
 
+// ============================================================
+// HEALTH
+// ============================================================
 
-// Códigos
-router.use('/codes', codeRoutes);
+router.get(
+  '/health',
+  getHealth
+);
 
+// ============================================================
+// AUTENTICACIÓN
+// ============================================================
 
-// Inbox
-router.use('/inbox', inboxRoutes);
+router.use(
+  '/auth',
+  authRoutes
+);
 
+// ============================================================
+// CATÁLOGO
+// ============================================================
 
-// Ventas
-router.use('/sales', salesRoutes);
+router.use(
+  '/',
+  catalogRoutes
+);
 
+// ============================================================
+// ADMINISTRACIÓN
+// ============================================================
 
-// Inventario
-router.use('/inventory', inventoryRoutes);
+router.use(
+  '/admin',
+  adminRoutes
+);
 
+// ============================================================
+// CORREOS
+// ============================================================
 
-// Bot de WhatsApp
-router.use('/whatsapp-bot', whatsappBotRoutes);
+router.use(
+  '/mail',
+  mailRoutes
+);
 
+// ============================================================
+// CÓDIGOS
+// ============================================================
 
-module.exports = router;
+router.use(
+  '/codes',
+  codeRoutes
+);
+
+// ============================================================
+// BANDEJA
+// ============================================================
+
+router.use(
+  '/inbox',
+  inboxRoutes
+);
+
+// ============================================================
+// VENTAS
+// ============================================================
+
+router.use(
+  '/sales',
+  salesRoutes
+);
+
+// ============================================================
+// INVENTARIO
+// ============================================================
+
+router.use(
+  '/inventory',
+  inventoryRoutes
+);
+
+// ============================================================
+// REPORTES Y SOPORTE
+// ============================================================
+
+router.use(
+  '/reports',
+  supportReportRoutes
+);
+
+// ============================================================
+// BOT DE WHATSAPP
+// ============================================================
+
+router.use(
+  '/whatsapp-bot',
+  whatsappBotRoutes
+);
+
+// ============================================================
+// CATÁLOGO PARA BOT
+// ============================================================
+
+router.use(
+  '/bot',
+  botCatalogRoutes
+);
+
+module.exports =
+  router;

@@ -5,57 +5,115 @@ const {
   authorizeRoles
 } = require('../middlewares/auth');
 
-const codeController = require('../controllers/codeController');
+const codeController =
+  require('../controllers/codeController');
 
-const router = express.Router();
+const router =
+  express.Router();
 
-// Todas las rutas requieren autenticación.
-// Admin y Super Admin pueden gestionar códigos.
+const clientOnly =
+  authorizeRoles(
+    'CLIENT'
+  );
+
+const adminOnly =
+  authorizeRoles(
+    'SUPER_ADMIN',
+    'ADMIN'
+  );
+
+// ============================================================
+// TODAS LAS RUTAS REQUIEREN AUTENTICACIÓN
+// ============================================================
+
 router.use(
-  authenticateToken,
-  authorizeRoles('SUPER_ADMIN', 'ADMIN')
+  authenticateToken
 );
 
-// Listar solicitudes
+// ============================================================
+// PORTAL DEL CLIENTE
+// ============================================================
+
+// Listar compras que pueden solicitar código
+router.get(
+  '/my/eligible-items',
+  clientOnly,
+  codeController.listMyEligibleItems
+);
+
+// Listar las solicitudes del cliente
+router.get(
+  '/my',
+  clientOnly,
+  codeController.listMyCodeRequests
+);
+
+// Consultar una solicitud propia
+router.get(
+  '/my/:id',
+  clientOnly,
+  codeController.getMyCodeRequest
+);
+
+// Crear una solicitud para una compra propia
+router.post(
+  '/my',
+  clientOnly,
+  codeController.createMyCodeRequest
+);
+
+// ============================================================
+// ADMINISTRACIÓN
+// ============================================================
+
+// Listar todas las solicitudes
 router.get(
   '/',
+  adminOnly,
   codeController.listCodeRequests
 );
 
-// Ver una solicitud
+// Consultar cualquier solicitud
 router.get(
   '/:id',
+  adminOnly,
   codeController.getCodeRequest
 );
 
-// Crear solicitud
+// Crear una solicitud administrativa
 router.post(
   '/',
+  adminOnly,
   codeController.createCodeRequest
 );
 
-// Marcar código como recibido
+// Registrar el código recibido
 router.patch(
   '/:id/received',
+  adminOnly,
   codeController.markCodeReceived
 );
 
-// Marcar código como entregado
+// Marcar el código como entregado
 router.patch(
   '/:id/delivered',
+  adminOnly,
   codeController.markCodeDelivered
 );
 
-// Marcar solicitud como expirada
+// Marcar la solicitud como expirada
 router.patch(
   '/:id/expire',
+  adminOnly,
   codeController.expireCodeRequest
 );
 
-// Marcar solicitud como fallida
+// Marcar la solicitud como fallida
 router.patch(
   '/:id/fail',
+  adminOnly,
   codeController.failCodeRequest
 );
 
-module.exports = router;
+module.exports =
+  router;

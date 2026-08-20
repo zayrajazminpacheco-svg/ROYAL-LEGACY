@@ -1,66 +1,18 @@
-const saleService =
-  require('../services/saleService');
+const supportReportService =
+  require('../services/supportReportService');
 
 // ============================================================
-// ADMINISTRACIÓN: LISTAR VENTAS
+// CLIENTE: LISTAR MIS REPORTES
 // ============================================================
 
-async function listSales(
+async function listMyReports(
   req,
   res,
   next
 ) {
   try {
     const result =
-      await saleService.listSales(
-        req.query
-      );
-
-    return res.status(200).json({
-      success: true,
-      data: result
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-// ============================================================
-// ADMINISTRACIÓN: OBTENER VENTA
-// ============================================================
-
-async function getSale(
-  req,
-  res,
-  next
-) {
-  try {
-    const result =
-      await saleService.getSale(
-        req.params.id
-      );
-
-    return res.status(200).json({
-      success: true,
-      data: result
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-// ============================================================
-// CLIENTE: LISTAR MIS COMPRAS
-// ============================================================
-
-async function listMySales(
-  req,
-  res,
-  next
-) {
-  try {
-    const result =
-      await saleService.listMySales(
+      await supportReportService.listMyReports(
         req.user.id,
         req.query
       );
@@ -69,23 +21,24 @@ async function listMySales(
       success: true,
       data: result
     });
+
   } catch (error) {
     next(error);
   }
 }
 
 // ============================================================
-// CLIENTE: OBTENER MI PEDIDO
+// CLIENTE: VER UN REPORTE PROPIO
 // ============================================================
 
-async function getMySale(
+async function getMyReport(
   req,
   res,
   next
 ) {
   try {
     const result =
-      await saleService.getMySale(
+      await supportReportService.getMyReport(
         req.params.id,
         req.user.id
       );
@@ -94,23 +47,24 @@ async function getMySale(
       success: true,
       data: result
     });
+
   } catch (error) {
     next(error);
   }
 }
 
 // ============================================================
-// CLIENTE: CREAR PEDIDO DESDE LA TIENDA
+// CLIENTE: CREAR REPORTE
 // ============================================================
 
-async function createClientSale(
+async function createMyReport(
   req,
   res,
   next
 ) {
   try {
     const result =
-      await saleService.createClientSale(
+      await supportReportService.createMyReport(
         req.user.id,
         req.body
       );
@@ -118,52 +72,77 @@ async function createClientSale(
     return res.status(201).json({
       success: true,
       message:
-        'Pedido creado correctamente',
+        'Reporte enviado correctamente',
       data: result
     });
+
   } catch (error) {
     next(error);
   }
 }
 
 // ============================================================
-// ADMINISTRACIÓN: CREAR VENTA
+// ADMINISTRACIÓN: LISTAR REPORTES
 // ============================================================
 
-async function createSale(
+async function listReports(
   req,
   res,
   next
 ) {
   try {
     const result =
-      await saleService.createSale(
-        req.body
+      await supportReportService.listReports(
+        req.query
       );
 
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
-      message:
-        'Venta creada correctamente',
       data: result
     });
+
   } catch (error) {
     next(error);
   }
 }
 
 // ============================================================
-// ADMINISTRACIÓN: ACTUALIZAR VENTA
+// ADMINISTRACIÓN: VER REPORTE
 // ============================================================
 
-async function updateSale(
+async function getReport(
   req,
   res,
   next
 ) {
   try {
     const result =
-      await saleService.updateSale(
+      await supportReportService.getReport(
+        req.params.id
+      );
+
+    return res.status(200).json({
+      success: true,
+      data: result
+    });
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+// ============================================================
+// ADMINISTRACIÓN: ACTUALIZAR REPORTE
+// ============================================================
+
+async function updateReport(
+  req,
+  res,
+  next
+) {
+  try {
+    const result =
+      await supportReportService.updateReport(
         req.params.id,
         req.body
       );
@@ -171,33 +150,78 @@ async function updateSale(
     return res.status(200).json({
       success: true,
       message:
-        'Venta actualizada correctamente',
+        'Reporte actualizado correctamente',
       data: result
     });
+
   } catch (error) {
     next(error);
   }
 }
 
 // ============================================================
-// ADMINISTRACIÓN: ELIMINAR VENTA
+// CLIENTE O ADMINISTRACIÓN: VER ARCHIVO PROTEGIDO
 // ============================================================
 
-async function deleteSale(
+async function getReportAttachment(
   req,
   res,
   next
 ) {
   try {
-    await saleService.deleteSale(
-      req.params.id
+    const attachment =
+      await supportReportService.getReportAttachment(
+        req.params.id,
+        req.user
+      );
+
+    const encodedName =
+      encodeURIComponent(
+        attachment.name ||
+        'archivo'
+      );
+
+    res.setHeader(
+      'Content-Type',
+      attachment.mimeType
     );
 
-    return res.status(200).json({
-      success: true,
-      message:
-        'Venta eliminada correctamente'
-    });
+    res.setHeader(
+      'Content-Disposition',
+      `inline; filename*=UTF-8''${encodedName}`
+    );
+
+    res.setHeader(
+      'Cache-Control',
+      'private, no-store, max-age=0'
+    );
+
+    res.setHeader(
+      'X-Content-Type-Options',
+      'nosniff'
+    );
+
+    if (
+      Number.isFinite(
+        Number(
+          attachment.size
+        )
+      )
+    ) {
+      res.setHeader(
+        'Content-Length',
+        String(
+          attachment.size
+        )
+      );
+    }
+
+    return res
+      .status(200)
+      .send(
+        attachment.data
+      );
+
   } catch (error) {
     next(error);
   }
@@ -208,12 +232,11 @@ async function deleteSale(
 // ============================================================
 
 module.exports = {
-  listSales,
-  getSale,
-  listMySales,
-  getMySale,
-  createClientSale,
-  createSale,
-  updateSale,
-  deleteSale
+  listMyReports,
+  getMyReport,
+  createMyReport,
+  listReports,
+  getReport,
+  updateReport,
+  getReportAttachment
 };

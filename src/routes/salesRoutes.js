@@ -1,21 +1,122 @@
 const express = require('express');
-const saleController = require('../controllers/saleController');
+
+const saleController =
+  require('../controllers/saleController');
+
+const {
+  authenticateToken,
+  authorizeRoles
+} = require('../middlewares/auth');
 
 const router = express.Router();
 
-// Listar ventas
-router.get('/', saleController.listSales);
+// ============================================================
+// CLIENTE: MIS COMPRAS
+// ============================================================
 
-// Obtener una venta
-router.get('/:id', saleController.getSale);
+router.get(
+  '/my',
+  authenticateToken,
+  authorizeRoles(
+    'CLIENT'
+  ),
+  saleController.listMySales
+);
 
-// Crear venta
-router.post('/', saleController.createSale);
+// ============================================================
+// CLIENTE: OBTENER UNO DE MIS PEDIDOS
+// ============================================================
 
-// Actualizar venta
-router.put('/:id', saleController.updateSale);
+router.get(
+  '/my/:id',
+  authenticateToken,
+  authorizeRoles(
+    'CLIENT'
+  ),
+  saleController.getMySale
+);
 
-// Eliminar venta
-router.delete('/:id', saleController.deleteSale);
+// ============================================================
+// CLIENTE: CREAR PEDIDO DESDE LA TIENDA
+// ============================================================
+
+router.post(
+  '/checkout',
+  authenticateToken,
+  authorizeRoles(
+    'CLIENT'
+  ),
+  saleController.createClientSale
+);
+
+// ============================================================
+// ADMINISTRACIÓN: LISTAR TODAS LAS VENTAS
+// ============================================================
+
+router.get(
+  '/',
+  authenticateToken,
+  authorizeRoles(
+    'SUPER_ADMIN',
+    'ADMIN'
+  ),
+  saleController.listSales
+);
+
+// ============================================================
+// ADMINISTRACIÓN: OBTENER UNA VENTA
+// ============================================================
+
+router.get(
+  '/:id',
+  authenticateToken,
+  authorizeRoles(
+    'SUPER_ADMIN',
+    'ADMIN'
+  ),
+  saleController.getSale
+);
+
+// ============================================================
+// ADMINISTRACIÓN: CREAR VENTA
+// ============================================================
+
+router.post(
+  '/',
+  authenticateToken,
+  authorizeRoles(
+    'SUPER_ADMIN',
+    'ADMIN'
+  ),
+  saleController.createSale
+);
+
+// ============================================================
+// ADMINISTRACIÓN: ACTUALIZAR VENTA
+// ============================================================
+
+router.put(
+  '/:id',
+  authenticateToken,
+  authorizeRoles(
+    'SUPER_ADMIN',
+    'ADMIN'
+  ),
+  saleController.updateSale
+);
+
+// ============================================================
+// ADMINISTRACIÓN: ELIMINAR VENTA
+// ============================================================
+
+router.delete(
+  '/:id',
+  authenticateToken,
+  authorizeRoles(
+    'SUPER_ADMIN',
+    'ADMIN'
+  ),
+  saleController.deleteSale
+);
 
 module.exports = router;
