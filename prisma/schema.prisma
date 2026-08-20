@@ -1,5 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -7,32 +9,19 @@ datasource db {
 }
 
 model User {
-  id                                     String                 @id @default(cuid())
-  name                                   String
-  email                                  String                 @unique
-  phone                                  String?
-  passwordHash                           String
-  role                                   Role                   @default(CLIENT)
-  status                                 UserStatus             @default(PENDING)
-  createdAt                              DateTime               @default(now())
-  updatedAt                              DateTime               @updatedAt
-  auditLogs                              AuditLog[]
-  clientProfile                          ClientProfile?
-  Delivery                               Delivery[]
-  InboxThread                            InboxThread[]
-  Notification                           Notification[]
-  PurchaseSheet                          PurchaseSheet[]
-  sales                                  Sale[]                 @relation("ClientSales")
-  Sale_Sale_employeeIdToUser             Sale[]                 @relation("Sale_employeeIdToUser")
-  SpeiTopUp_SpeiTopUp_userIdToUser       SpeiTopUp[]            @relation("SpeiTopUp_userIdToUser")
-  SpeiTopUp_SpeiTopUp_verifiedByIdToUser SpeiTopUp[]            @relation("SpeiTopUp_verifiedByIdToUser")
-  VerificationCode                       VerificationCode[]
-  Wallet                                 Wallet?
-  WalletTransaction                      WalletTransaction[]
-  WhatsAppConversation                   WhatsAppConversation[]
-
-  @@index([role])
-  @@index([status])
+  id                         String         @id @default(cuid())
+  name                       String
+  email                      String         @unique
+  phone                      String?
+  passwordHash               String
+  role                       Role           @default(CLIENT)
+  status                     UserStatus     @default(PENDING)
+  createdAt                  DateTime       @default(now())
+  updatedAt                  DateTime       @updatedAt
+  auditLogs                  AuditLog[]
+  clientProfile              ClientProfile?
+  sales                      Sale[]         @relation("ClientSales")
+  Sale_Sale_employeeIdToUser Sale[]         @relation("Sale_employeeIdToUser")
 }
 
 model ClientProfile {
@@ -56,7 +45,6 @@ model Provider {
   updatedAt         DateTime        @updatedAt
   inventory         InventoryItem[]
   ProviderOffer     ProviderOffer[]
-  ProviderOrder     ProviderOrder[]
   panels            ProviderPanel[]
   SaleItem          SaleItem[]
 }
@@ -72,37 +60,21 @@ model ProviderPanel {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   inventoryItems InventoryItem[]
-  ProviderOrder  ProviderOrder[]
   provider       Provider        @relation(fields: [providerId], references: [id], onDelete: Cascade)
 }
 
-model Category {
-  id          String    @id
+model Product {
+  id          String           @id @default(cuid())
+  categoryId  String
   name        String
-  slug        String    @unique
+  slug        String           @unique
   description String?
   imageUrl    String?
-  active      Boolean   @default(true)
-  sortOrder   Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime
-  Product     Product[]
-}
-
-model Product {
-  id              String                 @id @default(cuid())
-  categoryId      String
-  name            String
-  slug            String                 @unique
-  description     String?
-  imageUrl        String?
-  active          Boolean                @default(true)
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @updatedAt
-  fulfillmentMode ProductFulfillmentMode @default(AUTO)
-  outletEnabled   Boolean                @default(true)
-  Category        Category               @relation(fields: [categoryId], references: [id])
-  variants        ProductVariant[]
+  active      Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  Category    Category         @relation(fields: [categoryId], references: [id])
+  variants    ProductVariant[]
 }
 
 model ProductVariant {
@@ -121,92 +93,53 @@ model ProductVariant {
   SaleItem      SaleItem[]
 }
 
-model ProviderOffer {
-  id                 String             @id
-  providerId         String
-  productVariantId   String
-  internalCost       Decimal
-  priority           Int                @default(0)
-  availabilityStatus AvailabilityStatus @default(UNKNOWN)
-  active             Boolean            @default(true)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime
-  ProductVariant     ProductVariant     @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
-  Provider           Provider           @relation(fields: [providerId], references: [id], onDelete: Cascade)
-
-  @@index([productVariantId])
-  @@index([providerId])
-}
-
 model InventoryItem {
-  id                        String          @id @default(cuid())
+  id                        String           @id @default(cuid())
   productVariantId          String
   providerId                String?
   providerPanelId           String?
-  saleItemId                String?         @unique
+  saleItemId                String?          @unique
   loginEmailEncrypted       String?
   loginEmailMasked          String?
   loginEmailHash            String?
   passwordEncrypted         String?
-  passwordMode              PasswordMode    @default(STATIC)
+  passwordMode              PasswordMode     @default(STATIC)
   profileNameEncrypted      String?
   profilePinEncrypted       String?
   externalLookupIdEncrypted String?
   externalReference         String?
   notes                     String?
-  status                    InventoryStatus @default(AVAILABLE)
-  acquiredAt                DateTime        @default(now())
+  internalCost              Decimal          @default(0)
+  salePrice                 Decimal?
+  status                    InventoryStatus  @default(AVAILABLE)
+  acquiredAt                DateTime         @default(now())
   expirationDate            DateTime?
   soldAt                    DateTime?
-  createdAt                 DateTime        @default(now())
-  updatedAt                 DateTime        @updatedAt
-  removalReason             String?
-  removedAt                 DateTime?
+  createdAt                 DateTime         @default(now())
+  updatedAt                 DateTime         @updatedAt
   CodeRequest               CodeRequest[]
   InventoryAlias            InventoryAlias[]
-  ProductVariant            ProductVariant  @relation(fields: [productVariantId], references: [id])
-  provider                  Provider?       @relation(fields: [providerId], references: [id])
-  providerPanel             ProviderPanel?  @relation(fields: [providerPanelId], references: [id])
-  SaleItem                  SaleItem?       @relation(fields: [saleItemId], references: [id])
-  OutletOffer               OutletOffer?
-
-  @@index([expirationDate])
-  @@index([productVariantId, status, acquiredAt])
+  ProductVariant            ProductVariant   @relation(fields: [productVariantId], references: [id])
+  provider                  Provider?        @relation(fields: [providerId], references: [id])
+  providerPanel             ProviderPanel?   @relation(fields: [providerPanelId], references: [id])
+  SaleItem                  SaleItem?        @relation(fields: [saleItemId], references: [id])
 }
 
 model Sale {
-  id                         String        @id @default(cuid())
+  id                         String      @id @default(cuid())
   clientId                   String
   employeeId                 String?
-  status                     SaleStatus    @default(PENDING)
+  status                     SaleStatus  @default(PENDING)
   subtotal                   Decimal
   total                      Decimal
-  internalCost               Decimal       @default(0)
-  profit                     Decimal       @default(0)
+  internalCost               Decimal     @default(0)
+  profit                     Decimal     @default(0)
   paymentReference           String?
-  createdAt                  DateTime      @default(now())
-  updatedAt                  DateTime      @updatedAt
-  channel                    SaleChannel   @default(WEB)
-  customerEmail              String?
-  customerName               String?
-  customerPhone              String?
-  deliveredAt                DateTime?
-  paidAt                     DateTime?
-  paymentMethod              PaymentMethod?
-  paymentStatus              PaymentStatus @default(PENDING)
-  walletId                   String?
-  Delivery                   Delivery[]
-  ProviderOrder              ProviderOrder[]
-  PurchaseSheet              PurchaseSheet?
-  client                     User          @relation("ClientSales", fields: [clientId], references: [id])
-  User_Sale_employeeIdToUser User?         @relation("Sale_employeeIdToUser", fields: [employeeId], references: [id])
-  Wallet                     Wallet?       @relation(fields: [walletId], references: [id])
+  createdAt                  DateTime    @default(now())
+  updatedAt                  DateTime    @updatedAt
+  client                     User        @relation("ClientSales", fields: [clientId], references: [id])
+  User_Sale_employeeIdToUser User?       @relation("Sale_employeeIdToUser", fields: [employeeId], references: [id])
   items                      SaleItem[]
-  WalletTransaction          WalletTransaction[]
-
-  @@index([createdAt])
-  @@index([paymentStatus])
-  @@index([status])
 }
 
 model SaleItem {
@@ -222,10 +155,50 @@ model SaleItem {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime
   InventoryItem    InventoryItem?
-  ProviderOrder    ProviderOrder[]
   ProductVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
   Provider         Provider?      @relation(fields: [providerId], references: [id])
   sale             Sale           @relation(fields: [saleId], references: [id], onDelete: Cascade)
+}
+
+model InboxMessage {
+  id                        String      @id @default(cuid())
+  emailAliasId              String?
+  externalMessageId         String?     @unique
+  sender                    String?
+  recipient                 String
+  subject                   String?
+  bodyPreview               String?
+  bodyEncrypted             String?
+  verificationCodeEncrypted String?
+  processed                 Boolean     @default(false)
+  receivedAt                DateTime    @default(now())
+  createdAt                 DateTime    @default(now())
+  EmailAlias                EmailAlias? @relation(fields: [emailAliasId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  active      Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  Product     Product[]
 }
 
 model CodeRequest {
@@ -240,23 +213,6 @@ model CodeRequest {
   expiresAt       DateTime?
   notes           String?
   InventoryItem   InventoryItem     @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
-}
-
-model MailDomain {
-  id               String       @id
-  domain           String       @unique
-  providerName     String?
-  platformGroup    String?
-  catchAllEnabled  Boolean      @default(false)
-  rotationGroup    String?
-  rotationPriority Int          @default(0)
-  status           DomainStatus @default(ACTIVE)
-  verifiedAt       DateTime?
-  expiresAt        DateTime?
-  notes            String?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime
-  EmailAlias       EmailAlias[]
 }
 
 model EmailAlias {
@@ -291,286 +247,35 @@ model InventoryAlias {
   @@unique([inventoryItemId, emailAliasId])
 }
 
-model InboxMessage {
-  id                        String      @id @default(cuid())
-  emailAliasId              String?
-  externalMessageId         String?     @unique
-  sender                    String?
-  recipient                 String
-  subject                   String?
-  bodyPreview               String?
-  bodyEncrypted             String?
-  verificationCodeEncrypted String?
-  processed                 Boolean     @default(false)
-  receivedAt                DateTime    @default(now())
-  createdAt                 DateTime    @default(now())
-  EmailAlias                EmailAlias? @relation(fields: [emailAliasId], references: [id])
+model MailDomain {
+  id               String       @id
+  domain           String       @unique
+  providerName     String?
+  platformGroup    String?
+  catchAllEnabled  Boolean      @default(false)
+  rotationGroup    String?
+  rotationPriority Int          @default(0)
+  status           DomainStatus @default(ACTIVE)
+  verifiedAt       DateTime?
+  expiresAt        DateTime?
+  notes            String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime
+  EmailAlias       EmailAlias[]
 }
 
-model AuditLog {
-  id        String   @id @default(cuid())
-  userId    String?
-  action    String
-  entity    String
-  entityId  String?
-  metadata  Json?
-  ipAddress String?
-  createdAt DateTime @default(now())
-  user      User?    @relation(fields: [userId], references: [id])
-}
-
-model AdminSetting {
-  id          String   @id
-  key         String   @unique
-  value       Json
-  description String?
-  public      Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-}
-
-model Delivery {
-  id             String         @id
-  saleId         String
-  handledById    String?
-  status         DeliveryStatus @default(PENDING)
-  method         DeliveryMethod @default(AUTOMATIC)
-  recipientName  String?
-  recipientEmail String?
-  recipientPhone String?
-  deliveryText   String?
-  deliveryData   Json?
-  errorMessage   String?
-  attempts       Int            @default(0)
-  deliveredAt    DateTime?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime
-  User           User?          @relation(fields: [handledById], references: [id])
-  Sale           Sale           @relation(fields: [saleId], references: [id], onDelete: Cascade)
-
-  @@index([saleId])
-  @@index([status])
-}
-
-model InboxThread {
-  id            String            @id
-  assignedToId  String?
-  status        InboxThreadStatus @default(OPEN)
-  subject       String?
-  contactName   String?
-  contactEmail  String?
-  unreadCount   Int               @default(0)
-  lastMessageAt DateTime?
-  metadata      Json?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime
-  User          User?             @relation(fields: [assignedToId], references: [id])
-
-  @@index([contactEmail])
-  @@index([status])
-}
-
-model Notification {
-  id        String             @id
-  userId    String
-  type      NotificationType   @default(INFO)
-  status    NotificationStatus @default(UNREAD)
-  title     String
-  message   String
-  actionUrl String?
-  metadata  Json?
-  readAt    DateTime?
-  createdAt DateTime           @default(now())
-  User      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, status])
-}
-
-model OutletOffer {
-  id              String        @id
-  inventoryItemId String        @unique
-  tier            OutletTier
-  originalPrice   Decimal       @db.Decimal(12, 2)
-  outletPrice     Decimal       @db.Decimal(12, 2)
-  daysRemaining   Int
-  currency        String        @default("MXN")
-  active          Boolean       @default(true)
-  startsAt        DateTime      @default(now())
-  endsAt          DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime
-  InventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
-
-  @@index([active])
-  @@index([daysRemaining])
-  @@index([tier])
-}
-
-model ProviderOrder {
-  id                String              @id
-  providerId        String
-  providerPanelId   String?
-  saleId            String?
-  saleItemId        String?
-  status            ProviderOrderStatus @default(PENDING)
-  providerReference String?
-  quantity          Int                 @default(1)
-  unitCost          Decimal?            @db.Decimal(12, 2)
-  totalCost         Decimal?            @db.Decimal(12, 2)
-  responseData      Json?
-  errorMessage      String?
-  requestedAt       DateTime            @default(now())
-  completedAt       DateTime?
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime
-  Provider          Provider            @relation(fields: [providerId], references: [id])
-  ProviderPanel     ProviderPanel?      @relation(fields: [providerPanelId], references: [id])
-  Sale              Sale?               @relation(fields: [saleId], references: [id])
-  SaleItem          SaleItem?           @relation(fields: [saleItemId], references: [id])
-
-  @@index([providerId])
-  @@index([status])
-}
-
-model PurchaseSheet {
-  id                   String              @id
-  saleId               String              @unique
-  createdById          String?
-  status               PurchaseSheetStatus @default(PENDING)
-  title                String?
-  content              String
-  clientVisibleContent String?
-  sentAt               DateTime?
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime
-  User                 User?               @relation(fields: [createdById], references: [id])
-  Sale                 Sale                @relation(fields: [saleId], references: [id], onDelete: Cascade)
-}
-
-model SpeiTopUp {
-  id                                String          @id
-  userId                            String
-  walletId                          String
-  amount                            Decimal         @db.Decimal(12, 2)
-  status                            SpeiTopUpStatus @default(PENDING)
-  reference                         String          @unique
-  trackingKey                       String?
-  bankReference                     String?
-  senderName                        String?
-  senderBank                        String?
-  senderAccount                     String?
-  receiverAccount                   String?
-  receiptUrl                        String?
-  requestedAt                       DateTime        @default(now())
-  expiresAt                         DateTime?
-  verifiedAt                        DateTime?
-  verifiedById                      String?
-  rejectedReason                    String?
-  metadata                          Json?
-  createdAt                         DateTime        @default(now())
-  updatedAt                         DateTime
-  User_SpeiTopUp_userIdToUser       User            @relation("SpeiTopUp_userIdToUser", fields: [userId], references: [id], onDelete: Cascade)
-  User_SpeiTopUp_verifiedByIdToUser User?           @relation("SpeiTopUp_verifiedByIdToUser", fields: [verifiedById], references: [id])
-  Wallet                            Wallet          @relation(fields: [walletId], references: [id], onDelete: Cascade)
-  WalletTransaction                 WalletTransaction[]
-
-  @@index([status])
-  @@index([trackingKey])
-}
-
-model VerificationCode {
-  id          String                 @id
-  userId      String?
-  purpose     VerificationPurpose
-  status      VerificationCodeStatus @default(PENDING)
-  target      String
-  codeHash    String
-  attempts    Int                    @default(0)
-  maxAttempts Int                    @default(5)
-  expiresAt   DateTime
-  verifiedAt  DateTime?
-  createdAt   DateTime               @default(now())
-  updatedAt   DateTime
-  User        User?                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([status])
-  @@index([target])
-}
-
-model Wallet {
-  id                String       @id
-  userId            String       @unique
-  balance           Decimal      @default(0) @db.Decimal(12, 2)
-  reservedBalance   Decimal      @default(0) @db.Decimal(12, 2)
-  currency          String       @default("MXN")
-  status            WalletStatus @default(ACTIVE)
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime
-  Sale              Sale[]
-  SpeiTopUp         SpeiTopUp[]
-  User              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  WalletTransaction WalletTransaction[]
-}
-
-model WalletTransaction {
-  id            String                  @id
-  walletId      String
-  actorUserId   String?
-  type          WalletTransactionType
-  status        WalletTransactionStatus @default(COMPLETED)
-  amount        Decimal                 @db.Decimal(12, 2)
-  balanceBefore Decimal                 @db.Decimal(12, 2)
-  balanceAfter  Decimal                 @db.Decimal(12, 2)
-  reference     String?
-  concept       String?
-  metadata      Json?
-  saleId        String?
-  speiTopUpId   String?
-  createdAt     DateTime                @default(now())
-  User          User?                   @relation(fields: [actorUserId], references: [id])
-  Sale          Sale?                   @relation(fields: [saleId], references: [id])
-  SpeiTopUp     SpeiTopUp?              @relation(fields: [speiTopUpId], references: [id])
-  Wallet        Wallet                  @relation(fields: [walletId], references: [id], onDelete: Cascade)
-
-  @@index([saleId])
-  @@index([speiTopUpId])
-  @@index([walletId, createdAt])
-}
-
-model WhatsAppConversation {
-  id                     String                     @id
-  phone                  String
-  contactName            String?
-  status                 WhatsAppConversationStatus @default(OPEN)
-  assignedToId           String?
-  externalConversationId String?
-  lastMessageAt          DateTime?
-  metadata               Json?
-  createdAt              DateTime                   @default(now())
-  updatedAt              DateTime
-  User                   User?                      @relation(fields: [assignedToId], references: [id])
-  WhatsAppMessage        WhatsAppMessage[]
-
-  @@index([phone])
-  @@index([status])
-}
-
-model WhatsAppMessage {
-  id                   String               @id
-  conversationId       String
-  direction            MessageDirection
-  status               MessageStatus        @default(PENDING)
-  externalMessageId    String?              @unique
-  body                 String?
-  mediaUrl             String?
-  metadata             Json?
-  sentAt               DateTime?
-  deliveredAt          DateTime?
-  readAt               DateTime?
-  createdAt            DateTime             @default(now())
-  WhatsAppConversation WhatsAppConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-
-  @@index([conversationId, createdAt])
+model ProviderOffer {
+  id                 String             @id
+  providerId         String
+  productVariantId   String
+  internalCost       Decimal
+  priority           Int                @default(0)
+  availabilityStatus AvailabilityStatus @default(UNKNOWN)
+  active             Boolean            @default(true)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime
+  ProductVariant     ProductVariant     @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  Provider           Provider           @relation(fields: [providerId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
@@ -622,7 +327,6 @@ enum InventoryStatus {
   BLOCKED
   EXPIRED
   MAINTENANCE
-  REMOVED
 }
 
 enum AliasStatus {
@@ -652,174 +356,4 @@ enum PasswordMode {
   RESET_IN_PANEL
   INVITATION
   NONE
-}
-
-enum DeliveryMethod {
-  AUTOMATIC
-  MANUAL
-  WHATSAPP
-  EMAIL
-  PANEL
-  BOT
-}
-
-enum DeliveryStatus {
-  PENDING
-  PREPARING
-  DELIVERED
-  FAILED
-  CANCELLED
-}
-
-enum InboxThreadStatus {
-  OPEN
-  PENDING
-  RESOLVED
-  CLOSED
-  SPAM
-}
-
-enum MessageDirection {
-  INBOUND
-  OUTBOUND
-}
-
-enum MessageStatus {
-  PENDING
-  SENT
-  DELIVERED
-  READ
-  FAILED
-}
-
-enum NotificationStatus {
-  UNREAD
-  READ
-  ARCHIVED
-}
-
-enum NotificationType {
-  INFO
-  SUCCESS
-  WARNING
-  ERROR
-  SALE
-  WALLET
-  SPEI
-  INVENTORY
-  DELIVERY
-  MESSAGE
-}
-
-enum OutletTier {
-  ONE_MONTH
-  DAYS_25
-  DAYS_20
-  DAYS_15
-}
-
-enum PaymentMethod {
-  WALLET
-  SPEI
-  CASH
-  MANUAL
-  FREE
-}
-
-enum PaymentStatus {
-  PENDING
-  PAID
-  FAILED
-  CANCELLED
-  REFUNDED
-}
-
-enum ProductFulfillmentMode {
-  AUTO
-  PROVIDER
-  HYBRID
-}
-
-enum ProviderOrderStatus {
-  PENDING
-  PROCESSING
-  COMPLETED
-  FAILED
-  CANCELLED
-  REFUNDED
-}
-
-enum PurchaseSheetStatus {
-  PENDING
-  READY
-  SENT
-  CANCELLED
-}
-
-enum SaleChannel {
-  WEB
-  ADMIN
-  WHATSAPP
-  API
-  MANUAL
-}
-
-enum SpeiTopUpStatus {
-  PENDING
-  REVIEW
-  APPROVED
-  REJECTED
-  EXPIRED
-  CANCELLED
-}
-
-enum VerificationCodeStatus {
-  PENDING
-  VERIFIED
-  EXPIRED
-  CANCELLED
-  USED
-}
-
-enum VerificationPurpose {
-  REGISTER
-  LOGIN
-  EMAIL
-  PHONE
-  PASSWORD_RESET
-  WALLET
-  SPEI
-  PURCHASE
-  ADMIN_ACTION
-}
-
-enum WalletStatus {
-  ACTIVE
-  BLOCKED
-  CLOSED
-}
-
-enum WalletTransactionStatus {
-  PENDING
-  COMPLETED
-  CANCELLED
-  FAILED
-}
-
-enum WalletTransactionType {
-  CREDIT
-  DEBIT
-  HOLD
-  RELEASE
-  REFUND
-  ADJUSTMENT
-  SPEI_RECHARGE
-  PURCHASE
-}
-
-enum WhatsAppConversationStatus {
-  OPEN
-  PENDING
-  RESOLVED
-  CLOSED
 }

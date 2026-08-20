@@ -20,7 +20,6 @@ async function listInventory(
       success: true,
       data: result
     });
-
   } catch (error) {
     next(error);
   }
@@ -45,7 +44,41 @@ async function getInventoryItem(
       success: true,
       data: result
     });
+  } catch (error) {
+    next(error);
+  }
+}
 
+// ============================================================
+// MOSTRAR CREDENCIALES
+// ============================================================
+
+async function getInventoryCredentials(
+  req,
+  res,
+  next
+) {
+  try {
+    const result =
+      await inventoryService
+        .getInventoryCredentials(
+          req.params.id
+        );
+
+    res.set(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, private'
+    );
+
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+
+    return res.status(200).json({
+      success: true,
+      message:
+        'Credenciales obtenidas correctamente',
+      data: result
+    });
   } catch (error) {
     next(error);
   }
@@ -72,7 +105,6 @@ async function createInventoryItem(
         'Artículo de inventario creado correctamente',
       data: result
     });
-
   } catch (error) {
     next(error);
   }
@@ -100,7 +132,6 @@ async function updateInventoryItem(
         'Artículo de inventario actualizado correctamente',
       data: result
     });
-
   } catch (error) {
     next(error);
   }
@@ -125,10 +156,9 @@ async function removeInventoryItem(
     return res.status(200).json({
       success: true,
       message:
-        'Artículo removido del inventario',
+        'Artículo removido del inventario correctamente',
       data: result
     });
-
   } catch (error) {
     next(error);
   }
@@ -145,13 +175,13 @@ async function getInventoryStats(
 ) {
   try {
     const result =
-      await inventoryService.getInventoryStats();
+      await inventoryService
+        .getInventoryStats();
 
     return res.status(200).json({
       success: true,
       data: result
     });
-
   } catch (error) {
     next(error);
   }
@@ -164,6 +194,7 @@ async function getInventoryStats(
 module.exports = {
   listInventory,
   getInventoryItem,
+  getInventoryCredentials,
   createInventoryItem,
   updateInventoryItem,
   removeInventoryItem,

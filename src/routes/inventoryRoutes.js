@@ -1,39 +1,79 @@
 const express = require('express');
-const inventoryController = require('../controllers/inventoryController');
+
+const inventoryController =
+  require('../controllers/inventoryController');
+
+const {
+  authenticateToken,
+  authorizeRoles
+} = require('../middlewares/auth');
 
 const router = express.Router();
 
-// Estadísticas del inventario
+// ============================================================
+// ESTADÍSTICAS
+// ============================================================
+
 router.get(
   '/stats',
   inventoryController.getInventoryStats
 );
 
-// Listar inventario
+// ============================================================
+// LISTAR INVENTARIO
+// ============================================================
+
 router.get(
   '/',
   inventoryController.listInventory
 );
 
-// Obtener un artículo del inventario
+// ============================================================
+// MOSTRAR CREDENCIALES
+// SOLO SUPERADMINISTRADOR Y ADMINISTRADOR
+// ============================================================
+
+router.get(
+  '/:id/credentials',
+  authenticateToken,
+  authorizeRoles(
+    'SUPER_ADMIN',
+    'ADMIN'
+  ),
+  inventoryController.getInventoryCredentials
+);
+
+// ============================================================
+// OBTENER UN ARTÍCULO
+// ============================================================
+
 router.get(
   '/:id',
   inventoryController.getInventoryItem
 );
 
-// Crear un artículo de inventario
+// ============================================================
+// CREAR ARTÍCULO
+// ============================================================
+
 router.post(
   '/',
   inventoryController.createInventoryItem
 );
 
-// Actualizar un artículo de inventario
+// ============================================================
+// ACTUALIZAR ARTÍCULO
+// ============================================================
+
 router.patch(
   '/:id',
   inventoryController.updateInventoryItem
 );
 
-// Remover un artículo del inventario
+// ============================================================
+// REMOVER ARTÍCULO
+// ============================================================
+
 router.post(
   '/:id/remove',
   inventoryController.removeInventoryItem

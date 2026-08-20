@@ -5428,6 +5428,32 @@ html, body {
 }
 </style>
 
+<style id="royal-inventory-stock-v2">
+  #inventory .inventory-form-card{align-self:start}
+  #inventory .inventory-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+  #inventory .inventory-full{grid-column:1/-1}
+  #inventory .inventory-form-actions{margin-top:14px}
+  #inventory .inventory-form-actions .primary{margin-top:0}
+  #inventory .inventory-credentials-box{margin-top:14px;padding:14px;border:1px solid rgba(64,227,255,.28);border-radius:14px;background:rgba(3,15,31,.82)}
+  #inventory .inventory-credential-line{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+  #inventory .inventory-credential-line span{color:#9daabe;font-size:12px;font-weight:800}
+  #inventory .inventory-credential-line strong{overflow-wrap:anywhere;color:#fff}
+  #inventory .inventory-account-row{border-left:3px solid rgba(64,227,255,.48)}
+  #inventory .inventory-account-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;margin-top:9px}
+  #inventory .inventory-account-grid div{font-size:12px;color:#9daabe}
+  #inventory .inventory-account-grid strong{display:block;margin-top:2px;color:#eef3ff;font-size:13px;overflow-wrap:anywhere}
+  #inventory .inventory-profit-positive{color:#83f2ad!important}
+  #inventory .inventory-profit-negative{color:#ff8897!important}
+  #inventory .inventory-actions{margin-top:13px}
+  #inventory .inventory-actions button{flex:1 1 130px}
+  @media(max-width:850px){
+    #inventory .inventory-form-grid,#inventory .inventory-account-grid{grid-template-columns:1fr}
+    #inventory .inventory-full{grid-column:auto}
+    #inventory .inventory-credential-line{grid-template-columns:1fr;gap:3px}
+    #inventory .inventory-actions button{flex:1 1 100%}
+  }
+</style>
+
 </head>
 
 <!-- ROYAL LEGACY V5 CATALOGO VISIBLE 2026-08-11 -->
@@ -6514,231 +6540,126 @@ html, body {
   <!-- INVENTARIO -->
   <!-- =============================== -->
 
-
-  <section
-    id="inventory"
-    class="section"
-  >
-
+  <section id="inventory" class="section">
     <div class="m-section-head">
       <button type="button" onclick="mobileGo('home')" aria-label="Volver">←</button>
       <div>
-        <strong>INVENTARIO</strong>
-        <span>Agregar nuevo stock</span>
+        <strong>STOCK</strong>
+        <span>Agregar y administrar cuentas</span>
       </div>
     </div>
-
 
     <div class="stats">
-
-      <div class="stat">
-        <span>Total</span>
-        <strong id="inventoryTotal">0</strong>
-      </div>
-
-      <div class="stat">
-        <span>Disponibles</span>
-        <strong id="inventoryAvailable">0</strong>
-      </div>
-
-      <div class="stat">
-        <span>Vendidos</span>
-        <strong id="inventorySold">0</strong>
-      </div>
-
-      <div class="stat">
-        <span>Bloqueados</span>
-        <strong id="inventoryBlocked">0</strong>
-      </div>
-
+      <div class="stat"><span>Total</span><strong id="inventoryTotal">0</strong></div>
+      <div class="stat"><span>Disponibles</span><strong id="inventoryAvailable">0</strong></div>
+      <div class="stat"><span>Vendidos</span><strong id="inventorySold">0</strong></div>
+      <div class="stat"><span>Bloqueados</span><strong id="inventoryBlocked">0</strong></div>
     </div>
-
 
     <div class="grid">
+      <article class="card inventory-form-card">
+        <h2 id="inventoryFormTitle">Agregar cuenta al stock</h2>
+        <input id="inventoryEditingId" type="hidden">
 
-      <!-- NUEVO ARTÍCULO -->
+        <div class="inventory-form-grid">
+          <div>
+            <label>Plataforma</label>
+            <select id="inventoryProduct" onchange="fillInventoryVariants()">
+              <option value="">Cargando plataformas...</option>
+            </select>
+          </div>
 
-      <article class="card">
+          <div>
+            <label>Plan</label>
+            <select id="inventoryVariant" onchange="fillInventoryDefaultSalePrice()">
+              <option value="">Selecciona primero una plataforma</option>
+            </select>
+          </div>
 
-        <h2>
-          Nuevo artículo de inventario
-        </h2>
+          <div>
+            <label>Correo</label>
+            <input id="inventoryAccountEmail" type="email" autocomplete="off" placeholder="cuenta@correo.com">
+          </div>
 
-        <label>Producto</label>
+          <div>
+            <label>Contraseña</label>
+            <input id="inventoryAccountPassword" type="text" autocomplete="new-password" placeholder="Contraseña de la cuenta">
+          </div>
 
-        <select
-          id="inventoryProduct"
-          onchange="fillInventoryVariants()"
-        >
-          <option value="">
-            Cargando productos...
-          </option>
-        </select>
+          <div>
+            <label>Costo</label>
+            <input id="inventoryInternalCost" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+          </div>
 
+          <div>
+            <label>Precio de venta</label>
+            <input id="inventorySalePrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+          </div>
 
-        <label>Variante</label>
+          <div>
+            <label>Fecha de vencimiento</label>
+            <input id="inventoryExpirationDate" type="date">
+          </div>
 
-        <select
-          id="inventoryVariant"
-        >
-          <option value="">
-            Selecciona primero un producto
-          </option>
-        </select>
+          <div>
+            <label>Estado</label>
+            <select id="inventoryCreateStatus">
+              <option value="AVAILABLE">Disponible</option>
+              <option value="RESERVED">Reservada</option>
+              <option value="SOLD">Vendida</option>
+              <option value="BLOCKED">Bloqueada</option>
+              <option value="EXPIRED">Vencida</option>
+              <option value="MAINTENANCE">Mantenimiento</option>
+            </select>
+          </div>
 
-
-        <label>Cantidad de stock</label>
-
-        <input
-          id="inventoryCreateQuantity"
-          type="number"
-          min="1"
-          max="100"
-          value="1"
-          inputmode="numeric"
-          placeholder="1"
-        >
-
-
-        <label>Estado inicial</label>
-
-        <select
-          id="inventoryCreateStatus"
-        >
-          <option value="AVAILABLE">
-            Disponible
-          </option>
-
-          <option value="RESERVED">
-            Reservado
-          </option>
-
-          <option value="BLOCKED">
-            Bloqueado
-          </option>
-
-          <option value="MAINTENANCE">
-            Mantenimiento
-          </option>
-        </select>
-
-
-        <label>
-          Fecha de vencimiento
-        </label>
-
-        <input
-          id="inventoryExpirationDate"
-          type="date"
-        >
-
-
-        <label>Notas</label>
-
-        <textarea
-          id="inventoryNotes"
-          rows="4"
-          placeholder="Notas internas del artículo"
-        ></textarea>
-
-
-        <button
-          class="primary"
-          onclick="createInventoryItem()"
-        >
-          Agregar stock
-        </button>
-
-
-        <div
-          id="inventoryCreateMessage"
-          class="notice"
-        ></div>
-
-      </article>
-
-
-      <!-- FILTRO -->
-
-      <article class="card">
-
-        <h2>
-          Control de inventario
-        </h2>
-
-        <label>Filtrar por estado</label>
-
-        <select
-          id="inventoryStatusFilter"
-          onchange="loadInventory()"
-        >
-
-          <option value="">
-            Todos
-          </option>
-
-          <option value="AVAILABLE">
-            Disponibles
-          </option>
-
-          <option value="RESERVED">
-            Reservados
-          </option>
-
-          <option value="SOLD">
-            Vendidos
-          </option>
-
-          <option value="BLOCKED">
-            Bloqueados
-          </option>
-
-          <option value="EXPIRED">
-            Expirados
-          </option>
-
-          <option value="MAINTENANCE">
-            Mantenimiento
-          </option>
-
-          <option value="REMOVED">
-            Removidos
-          </option>
-
-        </select>
-
-        <button
-          class="primary"
-          onclick="loadInventory()"
-        >
-          Actualizar inventario
-        </button>
-
-        <div
-          id="inventoryExtraStats"
-          class="notice"
-        >
-          Reservados: 0 · Expirados: 0 ·
-          Mantenimiento: 0 · Removidos: 0
+          <div class="inventory-full">
+            <label>Notas</label>
+            <textarea id="inventoryNotes" rows="4" placeholder="Notas internas de la cuenta"></textarea>
+          </div>
         </div>
 
+        <div class="row-actions inventory-form-actions">
+          <button id="inventorySaveButton" type="button" class="primary" onclick="createInventoryItem()">Guardar cuenta</button>
+          <button id="inventoryCancelEditButton" type="button" class="secondary hidden" onclick="resetInventoryForm()">Cancelar edición</button>
+        </div>
+
+        <div id="inventoryCreateMessage" class="notice"></div>
+
+        <div id="inventoryCredentialsBox" class="inventory-credentials-box hidden">
+          <div class="row-title">Credenciales de la cuenta</div>
+          <div class="inventory-credential-line"><span>Correo</span><strong id="inventoryCredentialEmail">—</strong></div>
+          <div class="inventory-credential-line"><span>Contraseña</span><strong id="inventoryCredentialPassword">—</strong></div>
+          <div class="row-actions">
+            <button type="button" class="secondary" onclick="copyInventoryCredential('email')">Copiar correo</button>
+            <button type="button" class="secondary" onclick="copyInventoryCredential('password')">Copiar contraseña</button>
+            <button type="button" class="secondary" onclick="closeInventoryCredentials()">Cerrar</button>
+          </div>
+        </div>
       </article>
 
+      <article class="card">
+        <h2>Control de inventario</h2>
+        <label>Filtrar por estado</label>
+        <select id="inventoryStatusFilter" onchange="loadInventory()">
+          <option value="">Todos</option>
+          <option value="AVAILABLE">Disponibles</option>
+          <option value="RESERVED">Reservadas</option>
+          <option value="SOLD">Vendidas</option>
+          <option value="BLOCKED">Bloqueadas</option>
+          <option value="EXPIRED">Vencidas</option>
+          <option value="MAINTENANCE">Mantenimiento</option>
+          <option value="REMOVED">Removidas</option>
+        </select>
+        <button type="button" class="primary" onclick="loadInventory()">Actualizar inventario</button>
+        <div id="inventoryExtraStats" class="notice">Reservados: 0 · Expirados: 0 · Mantenimiento: 0 · Removidos: 0</div>
+      </article>
 
       <article class="card full">
-
-        <h2>
-          Artículos de inventario
-        </h2>
-
-        <div id="inventoryList">
-          Cargando...
-        </div>
-
+        <h2>Cuentas en stock</h2>
+        <div id="inventoryList">Cargando...</div>
       </article>
-
     </div>
-
   </section>
 
 
@@ -10274,678 +10195,496 @@ html, body {
 
   // ===============================
   // INVENTARIO
-  // ===============================
-
-  async function createInventoryItem() {
-
-    const message =
+  function fillInventoryDefaultSalePrice() {
+    const variantId =
       document
         .getElementById(
-          'inventoryCreateMessage'
-        );
-
-    try {
-
-      const productVariantId =
-        document
-          .getElementById(
-            'inventoryVariant'
-          )
-          .value;
-
-      if (
-        !productVariantId
-      ) {
-
-        throw new Error(
-          'Selecciona un producto y una variante'
-        );
-      }
-
-      const quantityInput =
-        document
-          .getElementById(
-            'inventoryCreateQuantity'
-          );
-
-      const quantity =
-        Math.min(
-          Math.max(
-            Number(
-              quantityInput?.value ||
-              1
-            ),
-            1
-          ),
-          100
-        );
-
-      const status =
-        document
-          .getElementById(
-            'inventoryCreateStatus'
-          )
-          .value;
-
-      const expirationDateValue =
-        document
-          .getElementById(
-            'inventoryExpirationDate'
-          )
-          .value;
-
-      const notes =
-        document
-          .getElementById(
-            'inventoryNotes'
-          )
-          .value
-          .trim();
-
-      message.className =
-        'notice';
-
-      message.textContent =
-        quantity === 1
-          ? 'Agregando artículo al inventario...'
-          : `Agregando ${quantity} artículos al inventario...`;
-
-      const payload = {
-        productVariantId,
-        status,
-
-        expirationDate:
-          expirationDateValue
-            ? expirationDateValue
-            : null,
-
-        notes:
-          notes ||
-          null
-      };
-
-      const createdItems =
-        [];
-
-      for (
-        let i = 0;
-        i < quantity;
-        i += 1
-      ) {
-
-        message.textContent =
-          quantity === 1
-            ? 'Agregando artículo al inventario...'
-            : `Agregando stock ${i + 1} de ${quantity}...`;
-
-        const json =
-          await request(
-            `${API}/inventory`,
-            {
-              method:
-                'POST',
-
-              body:
-                JSON.stringify(
-                  payload
-                )
-            }
-          );
-
-        const created =
-          extractData(
-            json
-          );
-
-        createdItems.push(
-          created
-        );
-      }
-
-      message.className =
-        'notice ok';
-
-      message.textContent =
-        quantity === 1
-          ? `Stock agregado correctamente.\nID: ${
-              createdItems[0]?.id ||
-              ''
-            }`
-          : `${createdItems.length} artículos agregados correctamente al stock.`;
-
-      if (
-        quantityInput
-      ) {
-        quantityInput.value =
-          '1';
-      }
-
-      document
-        .getElementById(
-          'inventoryExpirationDate'
+          'inventoryVariant'
         )
-        .value =
-          '';
+        ?.value || '';
 
+    const priceInput =
       document
         .getElementById(
-          'inventoryNotes'
-        )
-        .value =
-          '';
-
-      document
-        .getElementById(
-          'inventoryCreateStatus'
-        )
-        .value =
-          'AVAILABLE';
-
-      await loadInventory();
-
-      renderDashboard();
-
-    } catch (
-      error
-    ) {
-
-      message.className =
-        'notice error';
-
-      message.textContent =
-        error.message;
-    }
-  }
-
-  async function loadInventory() {
-
-    const container =
-      document
-        .getElementById(
-          'inventoryList'
-        );
-
-    try {
-
-      const status =
-        document
-          .getElementById(
-            'inventoryStatusFilter'
-          )
-          ?.value ||
-        '';
-
-      const query =
-        status
-          ? `?page=1&pageSize=100&status=${
-              encodeURIComponent(
-                status
-              )
-            }`
-          : '?page=1&pageSize=100';
-
-      const [
-        inventoryJson,
-        statsJson
-      ] =
-        await Promise.all([
-          request(
-            `${API}/inventory${query}`
-          ),
-
-          request(
-            `${API}/inventory/stats`
-          )
-        ]);
-
-      const inventoryData =
-        extractData(
-          inventoryJson
-        );
-
-      inventoryItems =
-        Array.isArray(
-          inventoryData
-        )
-          ? inventoryData
-          : Array.isArray(
-              inventoryData?.items
-            )
-          ? inventoryData.items
-          : [];
-
-      inventoryStats =
-        extractData(
-          statsJson
-        ) ||
-        {};
-
-      updateInventoryStats();
-
-      renderInventory();
-
-    } catch (
-      error
-    ) {
-
-      if (
-        container
-      ) {
-
-        container.innerHTML =
-          `<div class="error">${
-            escapeHtml(
-              error.message
-            )
-          }</div>`;
-      }
-    }
-  }
-
-
-  function updateInventoryStats() {
-
-    document
-      .getElementById(
-        'inventoryTotal'
-      )
-      .textContent =
-        Number(
-          inventoryStats.total ||
-          0
-        );
-
-    document
-      .getElementById(
-        'inventoryAvailable'
-      )
-      .textContent =
-        Number(
-          inventoryStats.available ||
-          0
-        );
-
-    document
-      .getElementById(
-        'inventorySold'
-      )
-      .textContent =
-        Number(
-          inventoryStats.sold ||
-          0
-        );
-
-    document
-      .getElementById(
-        'inventoryBlocked'
-      )
-      .textContent =
-        Number(
-          inventoryStats.blocked ||
-          0
-        );
-
-    const extra =
-      document
-        .getElementById(
-          'inventoryExtraStats'
+          'inventorySalePrice'
         );
 
     if (
-      extra
+      !variantId ||
+      !priceInput ||
+      priceInput.value !== ''
     ) {
-
-      extra.textContent =
-        `Reservados: ${
-          Number(
-            inventoryStats.reserved ||
-            0
-          )
-        } · ` +
-        `Expirados: ${
-          Number(
-            inventoryStats.expired ||
-            0
-          )
-        } · ` +
-        `Mantenimiento: ${
-          Number(
-            inventoryStats.maintenance ||
-            0
-          )
-        } · ` +
-        `Removidos: ${
-          Number(
-            inventoryStats.removed ||
-            0
-          )
-        }`;
-    }
-  }
-
-
-  function inventoryStatusLabel(
-    status
-  ) {
-
-    const labels = {
-
-      AVAILABLE:
-        'DISPONIBLE',
-
-      RESERVED:
-        'RESERVADO',
-
-      SOLD:
-        'VENDIDO',
-
-      BLOCKED:
-        'BLOQUEADO',
-
-      EXPIRED:
-        'EXPIRADO',
-
-      MAINTENANCE:
-        'MANTENIMIENTO',
-
-      REMOVED:
-        'REMOVIDO'
-    };
-
-    return (
-      labels[
-        status
-      ] ||
-      status ||
-      'SIN ESTADO'
-    );
-  }
-
-
-  function renderInventory() {
-
-    const container =
-      document
-        .getElementById(
-          'inventoryList'
-        );
-
-    if (
-      !inventoryItems.length
-    ) {
-
-      container.innerHTML =
-        `
-          <div class="row-meta">
-            No hay artículos con este filtro.
-          </div>
-        `;
-
       return;
     }
 
-    container.innerHTML =
-      inventoryItems
-        .map(
-          item => {
-
-            const variant =
-              item.ProductVariant ||
-              item.productVariant ||
-              {};
-
-            const product =
-              variant.product ||
-              variant.Product ||
-              {};
-
-            const category =
-              product.Category ||
-              product.category ||
-              {};
-
-            const saleItem =
-              item.SaleItem ||
-              item.saleItem ||
-              {};
-
-            const sale =
-              saleItem.sale ||
-              saleItem.Sale ||
-              {};
-
-            const client =
-              sale.client ||
-              sale.Client ||
-              {};
-
-            const inventoryAliases =
-              item.InventoryAlias ||
-              item.inventoryAliases ||
-              item.aliases ||
-              [];
-
-            const activeAlias =
-              Array.isArray(
-                inventoryAliases
-              )
-                ? (
-                    inventoryAliases
-                      .find(
-                        alias =>
-                          alias.active
-                      ) ||
-                    inventoryAliases[0]
-                  )
-                : null;
-
-            const emailAlias =
-              activeAlias?.EmailAlias ||
-              activeAlias?.emailAlias ||
-              {};
-
-            const email =
-              emailAlias.fullAddress ||
-              item.loginEmailMasked ||
-              'Sin correo asignado';
-
-            const provider =
-              item.provider?.name ||
-              item.Provider?.name ||
-              'Sin proveedor';
-
-            const expiration =
-              item.expirationDate
-                ? new Date(
-                    item.expirationDate
-                  )
-                    .toLocaleDateString(
-                      'es-MX'
-                    )
-                : 'Sin vencimiento';
-
-            const soldAt =
-              item.soldAt
-                ? new Date(
-                    item.soldAt
-                  )
-                    .toLocaleString(
-                      'es-MX'
-                    )
-                : '';
-
-            const clientText =
-              client.name ||
-              client.email ||
-              'Sin cliente';
-
-            const productName =
-              product.name ||
-              'Producto';
-
-            const variantName =
-              variant.publicName ||
-              'Sin variante';
-
-            const categoryName =
-              category.name ||
-              'Sin categoría';
-
-            return `
-
-              <div class="row">
-
-                <div class="row-title">
-
-                  ${
-                    escapeHtml(
-                      productName
-                    )
-                  }
-
-                  <span class="badge">
-                    ${
-                      escapeHtml(
-                        inventoryStatusLabel(
-                          item.status
-                        )
-                      )
-                    }
-                  </span>
-
-                </div>
-
-                <div class="row-meta">
-
-                  Variante:
-                  ${
-                    escapeHtml(
-                      variantName
-                    )
-                  }
-
-                  <br>
-
-                  Categoría:
-                  ${
-                    escapeHtml(
-                      categoryName
-                    )
-                  }
-
-                  <br>
-
-                  Correo:
-                  ${
-                    escapeHtml(
-                      email
-                    )
-                  }
-
-                  <br>
-
-                  Cliente:
-                  ${
-                    escapeHtml(
-                      clientText
-                    )
-                  }
-
-                  <br>
-
-                  Proveedor:
-                  ${
-                    escapeHtml(
-                      provider
-                    )
-                  }
-
-                  <br>
-
-                  Vencimiento:
-                  ${
-                    escapeHtml(
-                      expiration
-                    )
-                  }
-
-                  ${
-                    soldAt
-                      ? `
-                          <br>
-                          Vendido:
-                          ${
-                            escapeHtml(
-                              soldAt
-                            )
-                          }
-                        `
-                      : ''
-                  }
-
-                  <br>
-
-                  ID:
-                  ${
-                    escapeHtml(
-                      item.id
-                    )
-                  }
-
-                  ${
-                    item.notes
-                      ? `
-                          <br>
-                          Notas:
-                          ${
-                            escapeHtml(
-                              item.notes
-                            )
-                          }
-                        `
-                      : ''
-                  }
-
-                </div>
-
-                <div class="row-actions">
-
-                  <button
-                    class="secondary"
-                    onclick='copyText(${
-                      JSON.stringify(
-                        item.id
-                      )
-                    })'
-                  >
-                    Copiar ID
-                  </button>
-
-                  ${
-                    email !==
-                    'Sin correo asignado'
-                      ? `
-                          <button
-                            class="secondary"
-                            onclick='copyText(${
-                              JSON.stringify(
-                                email
-                              )
-                            })'
-                          >
-                            Copiar correo
-                          </button>
-                        `
-                      : ''
-                  }
-
-                </div>
-
-              </div>
-            `;
-          }
+    const variant =
+      products
+        .flatMap(
+          product =>
+            Array.isArray(
+              product.variants
+            )
+              ? product.variants
+              : []
         )
-        .join('');
+        .find(
+          item =>
+            item.id === variantId
+        );
+
+    if (
+      variant?.publicPrice !== null &&
+      variant?.publicPrice !== undefined
+    ) {
+      priceInput.value =
+        Number(
+          variant.publicPrice
+        ).toFixed(2);
+    }
+  }
+
+
+  // ===============================
+  // INVENTARIO / STOCK DE CUENTAS
+  // ===============================
+
+  function inventoryMoney(value) {
+    const amount = Number(value || 0);
+
+    return amount.toLocaleString('es-MX', {
+      style: 'currency',
+      currency: 'MXN'
+    });
+  }
+
+  function inventoryDateForInput(value) {
+    if (!value) {
+      return '';
+    }
+
+    return String(value).slice(0, 10);
+  }
+
+  function inventoryDisplayDate(value) {
+    if (!value) {
+      return 'Sin vencimiento';
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return 'Fecha inválida';
+    }
+
+    return date.toLocaleDateString('es-MX', {
+      timeZone: 'UTC'
+    });
+  }
+
+  function getInventoryFormValue(id) {
+    return document.getElementById(id)?.value ?? '';
+  }
+
+  function resetInventoryForm() {
+    const editingId = document.getElementById('inventoryEditingId');
+    const title = document.getElementById('inventoryFormTitle');
+    const saveButton = document.getElementById('inventorySaveButton');
+    const cancelButton = document.getElementById('inventoryCancelEditButton');
+    const emailInput = document.getElementById('inventoryAccountEmail');
+    const passwordInput = document.getElementById('inventoryAccountPassword');
+    const message = document.getElementById('inventoryCreateMessage');
+
+    if (editingId) editingId.value = '';
+    if (title) title.textContent = 'Agregar cuenta al stock';
+    if (saveButton) saveButton.textContent = 'Guardar cuenta';
+    if (cancelButton) cancelButton.classList.add('hidden');
+
+    ['inventoryProduct','inventoryVariant','inventoryAccountEmail','inventoryAccountPassword','inventoryInternalCost','inventorySalePrice','inventoryExpirationDate','inventoryNotes']
+      .forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.value = '';
+      });
+
+    const status = document.getElementById('inventoryCreateStatus');
+    if (status) status.value = 'AVAILABLE';
+    if (emailInput) emailInput.placeholder = 'cuenta@correo.com';
+    if (passwordInput) passwordInput.placeholder = 'Contraseña de la cuenta';
+    if (message) {
+      message.className = 'notice';
+      message.textContent = '';
+    }
+
+    fillInventoryVariants();
+    closeInventoryCredentials();
+  }
+
+  async function createInventoryItem() {
+    const message = document.getElementById('inventoryCreateMessage');
+
+    try {
+      const editingId = getInventoryFormValue('inventoryEditingId').trim();
+      const productVariantId = getInventoryFormValue('inventoryVariant');
+      const accountEmail = getInventoryFormValue('inventoryAccountEmail').trim();
+      const accountPassword = getInventoryFormValue('inventoryAccountPassword');
+      const internalCostValue = getInventoryFormValue('inventoryInternalCost');
+      const salePriceValue = getInventoryFormValue('inventorySalePrice');
+      const selectedVariant = products
+        .flatMap(
+          product =>
+            Array.isArray(product.variants)
+              ? product.variants
+              : []
+        )
+        .find(
+          item =>
+            item.id === productVariantId
+        );
+      const effectiveSalePrice =
+        salePriceValue !== ''
+          ? Number(salePriceValue)
+          : selectedVariant?.publicPrice !== null &&
+            selectedVariant?.publicPrice !== undefined
+          ? Number(selectedVariant.publicPrice)
+          : null;
+      const expirationDateValue = getInventoryFormValue('inventoryExpirationDate');
+      const status = getInventoryFormValue('inventoryCreateStatus');
+      const notes = getInventoryFormValue('inventoryNotes').trim();
+
+      if (!productVariantId) {
+        throw new Error('Selecciona una plataforma y un plan');
+      }
+
+      if (!editingId && !accountEmail) {
+        throw new Error('Escribe el correo de la cuenta');
+      }
+
+      if (!editingId && !accountPassword) {
+        throw new Error('Escribe la contraseña de la cuenta');
+      }
+
+      if (internalCostValue === '' || Number(internalCostValue) < 0) {
+        throw new Error('Escribe un costo válido mayor o igual a 0');
+      }
+
+      if (salePriceValue !== '' && Number(salePriceValue) < 0) {
+        throw new Error('El precio de venta debe ser mayor o igual a 0');
+      }
+
+      const payload = {
+        productVariantId,
+        internalCost: Number(internalCostValue),
+        salePrice: effectiveSalePrice,
+        status,
+        expirationDate: expirationDateValue || null,
+        notes: notes || null
+      };
+
+      if (accountEmail) payload.accountEmail = accountEmail;
+      if (accountPassword) payload.accountPassword = accountPassword;
+
+      message.className = 'notice';
+      message.textContent = editingId
+        ? 'Actualizando cuenta...'
+        : 'Guardando cuenta en el stock...';
+
+      const json = await request(
+        editingId ? `${API}/inventory/${encodeURIComponent(editingId)}` : `${API}/inventory`,
+        {
+          method: editingId ? 'PATCH' : 'POST',
+          body: JSON.stringify(payload)
+        }
+      );
+
+      const saved = extractData(json);
+      resetInventoryForm();
+
+      message.className = 'notice ok';
+      message.textContent = editingId
+        ? 'Cuenta actualizada correctamente.'
+        : `Cuenta agregada correctamente al stock.\nID: ${saved?.id || ''}`;
+
+      await loadInventory();
+      renderDashboard();
+    } catch (error) {
+      message.className = 'notice error';
+      message.textContent = error.message;
+    }
+  }
+
+  function editInventoryItem(id) {
+    const item = inventoryItems.find(current => current.id === id);
+
+    if (!item) {
+      alert('No se encontró la cuenta en el inventario');
+      return;
+    }
+
+    const variant = item.ProductVariant || item.productVariant || {};
+    const product = variant.product || variant.Product || {};
+
+    document.getElementById('inventoryEditingId').value = item.id;
+    document.getElementById('inventoryProduct').value = product.id || variant.productId || '';
+    fillInventoryVariants();
+    document.getElementById('inventoryVariant').value = item.productVariantId || variant.id || '';
+    document.getElementById('inventoryAccountEmail').value = '';
+    document.getElementById('inventoryAccountPassword').value = '';
+    document.getElementById('inventoryAccountEmail').placeholder = 'Déjalo vacío para conservar el correo';
+    document.getElementById('inventoryAccountPassword').placeholder = 'Déjala vacía para conservarla';
+    document.getElementById('inventoryInternalCost').value = Number(item.internalCost || 0);
+    document.getElementById('inventorySalePrice').value = item.salePrice === null || item.salePrice === undefined ? '' : Number(item.salePrice);
+    document.getElementById('inventoryExpirationDate').value = inventoryDateForInput(item.expirationDate);
+    document.getElementById('inventoryCreateStatus').value = item.status || 'AVAILABLE';
+    document.getElementById('inventoryNotes').value = item.notes || '';
+    document.getElementById('inventoryFormTitle').textContent = 'Editar cuenta del stock';
+    document.getElementById('inventorySaveButton').textContent = 'Actualizar cuenta';
+    document.getElementById('inventoryCancelEditButton').classList.remove('hidden');
+
+    const message = document.getElementById('inventoryCreateMessage');
+    message.className = 'notice';
+    message.textContent = 'Puedes cambiar plataforma, plan, costo, precio, vencimiento, estado y notas. Deja correo o contraseña vacíos para conservarlos.';
+
+    document.querySelector('#inventory .inventory-form-card')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+
+  async function loadInventory() {
+    const container = document.getElementById('inventoryList');
+
+    try {
+      const status = document.getElementById('inventoryStatusFilter')?.value || '';
+      const query = status
+        ? `?page=1&pageSize=100&status=${encodeURIComponent(status)}`
+        : '?page=1&pageSize=100';
+
+      const [inventoryJson, statsJson] = await Promise.all([
+        request(`${API}/inventory${query}`),
+        request(`${API}/inventory/stats`)
+      ]);
+
+      const inventoryData = extractData(inventoryJson);
+
+      inventoryItems = Array.isArray(inventoryData)
+        ? inventoryData
+        : Array.isArray(inventoryData?.items)
+        ? inventoryData.items
+        : [];
+
+      inventoryStats = extractData(statsJson) || {};
+      updateInventoryStats();
+      renderInventory();
+    } catch (error) {
+      if (container) {
+        container.innerHTML = `<div class="error">${escapeHtml(error.message)}</div>`;
+      }
+    }
+  }
+
+  function updateInventoryStats() {
+    const values = {
+      inventoryTotal: inventoryStats.total || 0,
+      inventoryAvailable: inventoryStats.available || 0,
+      inventorySold: inventoryStats.sold || 0,
+      inventoryBlocked: inventoryStats.blocked || 0
+    };
+
+    Object.entries(values).forEach(([id, value]) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = Number(value);
+    });
+
+    const extra = document.getElementById('inventoryExtraStats');
+
+    if (extra) {
+      extra.textContent =
+        `Reservados: ${Number(inventoryStats.reserved || 0)} · ` +
+        `Expirados: ${Number(inventoryStats.expired || 0)} · ` +
+        `Mantenimiento: ${Number(inventoryStats.maintenance || 0)} · ` +
+        `Removidos: ${Number(inventoryStats.removed || 0)}`;
+    }
+  }
+
+  function inventoryStatusLabel(status) {
+    const labels = {
+      AVAILABLE: 'DISPONIBLE',
+      RESERVED: 'RESERVADA',
+      SOLD: 'VENDIDA',
+      BLOCKED: 'BLOQUEADA',
+      EXPIRED: 'VENCIDA',
+      MAINTENANCE: 'MANTENIMIENTO',
+      REMOVED: 'REMOVIDA'
+    };
+
+    return labels[status] || status || 'SIN ESTADO';
+  }
+
+  function renderInventory() {
+    const container = document.getElementById('inventoryList');
+
+    if (!container) return;
+
+    if (!inventoryItems.length) {
+      container.innerHTML = '<div class="row-meta">No hay cuentas con este filtro.</div>';
+      return;
+    }
+
+    container.innerHTML = inventoryItems.map(item => {
+      const variant = item.ProductVariant || item.productVariant || {};
+      const product = variant.product || variant.Product || {};
+      const internalCost = Number(item.internalCost || 0);
+      const hasOwnSalePrice =
+        item.salePrice !== null &&
+        item.salePrice !== undefined;
+
+      const hasPlanPrice =
+        variant.publicPrice !== null &&
+        variant.publicPrice !== undefined;
+
+      const salePrice =
+        hasOwnSalePrice
+          ? Number(item.salePrice)
+          : hasPlanPrice
+          ? Number(variant.publicPrice)
+          : null;
+      const profit = item.profit !== null && item.profit !== undefined
+        ? Number(item.profit)
+        : salePrice === null
+        ? null
+        : salePrice - internalCost;
+      const profitDisplay =
+        profit === null
+          ? 'Sin calcular'
+          : inventoryMoney(profit);
+
+      const profitClass =
+        profit === null
+          ? ''
+          : profit >= 0
+          ? 'inventory-profit-positive'
+          : 'inventory-profit-negative';
+      const email = item.loginEmailMasked || 'Correo protegido';
+      const soldAt = item.soldAt
+        ? new Date(item.soldAt).toLocaleString('es-MX')
+        : '';
+      const itemId = JSON.stringify(item.id);
+
+      return `
+        <div class="row inventory-account-row">
+          <div class="row-title">
+            ${escapeHtml(product.name || 'Plataforma')}
+            <span class="badge">${escapeHtml(inventoryStatusLabel(item.status))}</span>
+          </div>
+
+          <div class="inventory-account-grid">
+            <div>Plan<strong>${escapeHtml(variant.publicName || 'Sin plan')}</strong></div>
+            <div>Correo<strong>${escapeHtml(email)}</strong></div>
+            <div>Costo<strong>${escapeHtml(inventoryMoney(internalCost))}</strong></div>
+            <div>Precio de venta<strong>${salePrice === null ? 'Sin precio' : escapeHtml(inventoryMoney(salePrice))}</strong></div>
+            <div>Utilidad<strong class="${profitClass}">${escapeHtml(profitDisplay)}</strong></div>
+            <div>Vencimiento<strong>${escapeHtml(inventoryDisplayDate(item.expirationDate))}</strong></div>
+            ${soldAt ? `<div>Vendida<strong>${escapeHtml(soldAt)}</strong></div>` : ''}
+            <div>ID<strong>${escapeHtml(item.id)}</strong></div>
+          </div>
+
+          ${item.notes ? `<div class="row-meta"><br>Notas: ${escapeHtml(item.notes)}</div>` : ''}
+
+          <div class="row-actions inventory-actions">
+            <button type="button" class="secondary" onclick='viewInventoryCredentials(${itemId})'>Ver credenciales</button>
+            ${item.status !== 'REMOVED' ? `<button type="button" class="secondary" onclick='editInventoryItem(${itemId})'>Editar</button>` : ''}
+            ${item.status !== 'SOLD' && item.status !== 'REMOVED' ? `<button type="button" class="secondary" onclick='markInventorySold(${itemId})'>Marcar vendida</button>` : ''}
+            ${item.status !== 'SOLD' && item.status !== 'REMOVED' ? `<button type="button" class="red" onclick='removeInventoryAccount(${itemId})'>Remover</button>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function viewInventoryCredentials(id) {
+    const box = document.getElementById('inventoryCredentialsBox');
+    const emailElement = document.getElementById('inventoryCredentialEmail');
+    const passwordElement = document.getElementById('inventoryCredentialPassword');
+    const message = document.getElementById('inventoryCreateMessage');
+
+    try {
+      message.className = 'notice';
+      message.textContent = 'Cargando credenciales protegidas...';
+
+      const json = await request(`${API}/inventory/${encodeURIComponent(id)}/credentials`);
+      const credentials = extractData(json) || {};
+
+      emailElement.textContent = credentials.email || 'Sin correo';
+      passwordElement.textContent = credentials.password || 'Sin contraseña';
+      box.dataset.email = credentials.email || '';
+      box.dataset.password = credentials.password || '';
+      box.classList.remove('hidden');
+      message.textContent = '';
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } catch (error) {
+      message.className = 'notice error';
+      message.textContent = error.message;
+    }
+  }
+
+  function closeInventoryCredentials() {
+    const box = document.getElementById('inventoryCredentialsBox');
+    if (!box) return;
+
+    box.dataset.email = '';
+    box.dataset.password = '';
+    box.classList.add('hidden');
+
+    const email = document.getElementById('inventoryCredentialEmail');
+    const password = document.getElementById('inventoryCredentialPassword');
+    if (email) email.textContent = '—';
+    if (password) password.textContent = '—';
+  }
+
+  async function copyInventoryCredential(type) {
+    const box = document.getElementById('inventoryCredentialsBox');
+    const value = type === 'password' ? box?.dataset.password : box?.dataset.email;
+
+    if (!value) {
+      alert('No hay información para copiar');
+      return;
+    }
+
+    await copyText(value);
+  }
+
+  async function markInventorySold(id) {
+    if (!confirm('¿Quieres marcar esta cuenta como vendida?')) return;
+
+    try {
+      await request(`${API}/inventory/${encodeURIComponent(id)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: 'SOLD' })
+      });
+
+      await loadInventory();
+      renderDashboard();
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  async function removeInventoryAccount(id) {
+    const reason = prompt('Motivo para remover la cuenta:', 'Removida manualmente');
+    if (reason === null) return;
+
+    if (!confirm('La cuenta dejará de aparecer como disponible. ¿Continuar?')) return;
+
+    try {
+      await request(`${API}/inventory/${encodeURIComponent(id)}/remove`, {
+        method: 'POST',
+        body: JSON.stringify({ removalReason: reason.trim() || 'Removida manualmente' })
+      });
+
+      await loadInventory();
+      renderDashboard();
+    } catch (error) {
+      alert(error.message);
+    }
   }
 
 
