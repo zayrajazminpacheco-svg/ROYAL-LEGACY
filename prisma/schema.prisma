@@ -2,6 +2,7 @@ generator client {
   provider   = "prisma-client-js"
   engineType = "client"
 }
+
 datasource db {
   provider = "postgresql"
 }
@@ -135,6 +136,10 @@ model InventoryItem {
   removedAt                 DateTime?
   internalCost              Decimal          @default(0) @db.Decimal
   salePrice                 Decimal?         @db.Decimal
+  imageName                 String?
+  imageMimeType             String?
+  imageSize                 Int?
+  imageData                 Bytes?
   CodeRequest               CodeRequest[]
   InventoryAlias            InventoryAlias[]
   ProductVariant            ProductVariant   @relation(fields: [productVariantId], references: [id])

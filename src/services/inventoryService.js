@@ -1,6 +1,16 @@
 const prisma = require('../lib/prisma');
 const crypto = require('crypto');
 
+const MAX_INVENTORY_IMAGE_SIZE =
+  2 * 1024 * 1024;
+
+const ALLOWED_INVENTORY_IMAGE_TYPES =
+  new Set([
+    'image/jpeg',
+    'image/png',
+    'image/webp'
+  ]);
+
 // ============================================================
 // UTILIDADES
 // ============================================================
@@ -79,20 +89,36 @@ function addCalculatedProfit(item) {
     return item;
   }
 
+  const {
+    imageData,
+    ...safeItem
+  } = item;
+
   const internalCost = Number(
-    item.internalCost || 0
+    safeItem.internalCost || 0
   );
 
   const hasSalePrice =
-    item.salePrice !== null &&
-    item.salePrice !== undefined;
+    safeItem.salePrice !== null &&
+    safeItem.salePrice !== undefined;
 
   const salePrice = hasSalePrice
-    ? Number(item.salePrice)
+    ? Number(safeItem.salePrice)
     : null;
 
   return {
-    ...item,
+    ...safeItem,
+    hasImage: Boolean(
+      safeItem.imageMimeType &&
+      safeItem.imageSize
+    ),
+    imageUrl:
+      safeItem.imageMimeType &&
+      safeItem.imageSize
+        ? `/api/inventory/${encodeURIComponent(
+            safeItem.id
+          )}/image`
+        : null,
     profit:
       salePrice === null
         ? null
@@ -399,6 +425,10 @@ async function listInventory(query = {}) {
     prisma.inventoryItem.findMany({
       where,
 
+      omit: {
+        imageData: true
+      },
+
       include: getInventoryIncludes({
         onlyActiveAliases: true,
         limitCodeRequests: true
@@ -447,6 +477,10 @@ async function getInventoryItem(id) {
     await prisma.inventoryItem.findUnique({
       where: {
         id
+      },
+
+      omit: {
+        imageData: true
       },
 
       include: getInventoryIncludes()
@@ -1096,6 +1130,163 @@ async function removeInventoryItem(
 }
 
 // ============================================================
+// IMAGEN DEL ARTÍCULO
+// ============================================================
+
+async function uploadInventoryImage(
+  id,
+  file
+) {
+  if (!id) {
+    throw createError(
+      400,
+      'El ID del artículo es obligatorio'
+    );
+  }
+
+  if (!file || !file.buffer) {
+    throw createError(
+      400,
+      'Selecciona una imagen'
+    );
+  }
+
+  if (
+    !ALLOWED_INVENTORY_IMAGE_TYPES.has(
+      file.mimetype
+    )
+  ) {
+    throw createError(
+      400,
+      'La imagen debe ser JPG, PNG o WEBP'
+    );
+  }
+
+  if (
+    file.size <= 0 ||
+    file.size > MAX_INVENTORY_IMAGE_SIZE
+  ) {
+    throw createError(
+      400,
+      'La imagen debe pesar máximo 2 MB'
+    );
+  }
+
+  const existing =
+    await prisma.inventoryItem.findUnique({
+      where: {
+        id
+      },
+
+      select: {
+        id: true
+      }
+    });
+
+  if (!existing) {
+    throw createError(
+      404,
+      'Artículo de inventario no encontrado'
+    );
+  }
+
+  await prisma.inventoryItem.update({
+    where: {
+      id
+    },
+
+    data: {
+      imageName:
+        cleanText(file.originalname) ||
+        'imagen-inventario',
+      imageMimeType: file.mimetype,
+      imageSize: file.size,
+      imageData: file.buffer
+    }
+  });
+
+  return getInventoryItem(id);
+}
+
+async function getInventoryImage(id) {
+  if (!id) {
+    throw createError(
+      400,
+      'El ID del artículo es obligatorio'
+    );
+  }
+
+  const item =
+    await prisma.inventoryItem.findUnique({
+      where: {
+        id
+      },
+
+      select: {
+        id: true,
+        imageName: true,
+        imageMimeType: true,
+        imageSize: true,
+        imageData: true
+      }
+    });
+
+  if (!item) {
+    throw createError(
+      404,
+      'Artículo de inventario no encontrado'
+    );
+  }
+
+  if (
+    !item.imageData ||
+    !item.imageMimeType
+  ) {
+    throw createError(
+      404,
+      'Este artículo no tiene imagen'
+    );
+  }
+
+  return item;
+}
+
+async function deleteInventoryImage(id) {
+  const existing =
+    await prisma.inventoryItem.findUnique({
+      where: {
+        id
+      },
+
+      select: {
+        id: true
+      }
+    });
+
+  if (!existing) {
+    throw createError(
+      404,
+      'Artículo de inventario no encontrado'
+    );
+  }
+
+  await prisma.inventoryItem.update({
+    where: {
+      id
+    },
+
+    data: {
+      imageName: null,
+      imageMimeType: null,
+      imageSize: null,
+      imageData: null
+    }
+  });
+
+  return getInventoryItem(id);
+}
+
+// ============================================================
 // ESTADÍSTICAS
 // ============================================================
 
@@ -1176,6 +1367,9 @@ module.exports = {
   getInventoryItem,
   createInventoryItem,
   updateInventoryItem,
+  uploadInventoryImage,
+  getInventoryImage,
+  deleteInventoryImage,
   getInventoryCredentials,
   removeInventoryItem,
   getInventoryStats

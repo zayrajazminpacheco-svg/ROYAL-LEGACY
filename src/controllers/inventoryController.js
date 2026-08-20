@@ -138,6 +138,92 @@ async function updateInventoryItem(
 }
 
 // ============================================================
+// IMAGEN DEL ARTÍCULO
+// ============================================================
+
+async function uploadInventoryImage(
+  req,
+  res,
+  next
+) {
+  try {
+    const result =
+      await inventoryService
+        .uploadInventoryImage(
+          req.params.id,
+          req.file
+        );
+
+    return res.status(200).json({
+      success: true,
+      message:
+        'Imagen del inventario guardada correctamente',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getInventoryImage(
+  req,
+  res,
+  next
+) {
+  try {
+    const image =
+      await inventoryService
+        .getInventoryImage(
+          req.params.id
+        );
+
+    res.set(
+      'Content-Type',
+      image.imageMimeType
+    );
+
+    res.set(
+      'Content-Length',
+      String(image.imageSize)
+    );
+
+    res.set(
+      'Cache-Control',
+      'private, max-age=300'
+    );
+
+    return res.status(200).send(
+      image.imageData
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function deleteInventoryImage(
+  req,
+  res,
+  next
+) {
+  try {
+    const result =
+      await inventoryService
+        .deleteInventoryImage(
+          req.params.id
+        );
+
+    return res.status(200).json({
+      success: true,
+      message:
+        'Imagen del inventario eliminada correctamente',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// ============================================================
 // REMOVER ARTÍCULO
 // ============================================================
 
@@ -197,6 +283,9 @@ module.exports = {
   getInventoryCredentials,
   createInventoryItem,
   updateInventoryItem,
+  uploadInventoryImage,
+  getInventoryImage,
+  deleteInventoryImage,
   removeInventoryItem,
   getInventoryStats
 };

@@ -5446,11 +5446,30 @@ html, body {
   #inventory .inventory-profit-negative{color:#ff8897!important}
   #inventory .inventory-actions{margin-top:13px}
   #inventory .inventory-actions button{flex:1 1 130px}
+  #inventory .inventory-image-field{margin-top:5px}
+  #inventory .inventory-image-picker{position:relative;display:grid;place-items:center;min-height:190px;overflow:hidden;border:1px dashed rgba(64,227,255,.42);border-radius:16px;background:radial-gradient(circle at 82% 12%,rgba(221,45,255,.16),transparent 32%),linear-gradient(145deg,rgba(10,29,53,.92),rgba(4,10,22,.96));cursor:pointer;transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease}
+  #inventory .inventory-image-picker:hover{transform:translateY(-1px);border-color:rgba(94,235,255,.75);box-shadow:0 0 28px rgba(43,214,255,.08)}
+  #inventory .inventory-image-picker input{position:absolute;width:1px!important;height:1px!important;min-height:1px!important;opacity:0;pointer-events:none}
+  #inventory .inventory-image-placeholder{text-align:center;padding:22px;color:#9babc2}
+  #inventory .inventory-image-placeholder b{display:block;margin-bottom:7px;color:#eaf9ff;font-size:14px}
+  #inventory .inventory-image-placeholder span{font-size:11px}
+  #inventory .inventory-image-preview{width:100%;height:220px;object-fit:cover;background:#050914}
+  #inventory .inventory-image-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px}
+  #inventory .inventory-image-toolbar small{color:#7889a5;overflow-wrap:anywhere}
+  #inventory .inventory-account-layout{display:grid;grid-template-columns:180px minmax(0,1fr);gap:16px;align-items:start}
+  #inventory .inventory-account-image{position:relative;min-height:152px;overflow:hidden;border:1px solid rgba(66,221,255,.18);border-radius:14px;background:radial-gradient(circle at 78% 15%,rgba(201,48,255,.18),transparent 36%),linear-gradient(145deg,#0a1a31,#050912)}
+  #inventory .inventory-account-image img{display:block;width:100%;height:152px;object-fit:cover}
+  #inventory .inventory-account-image-placeholder{min-height:152px;display:grid;place-items:center;color:#47dfff;font-size:42px;font-weight:950;text-shadow:0 0 24px rgba(58,222,255,.35)}
+  #inventory .inventory-image-chip{position:absolute;left:9px;bottom:9px;padding:5px 8px;border-radius:999px;background:rgba(2,7,16,.80);border:1px solid rgba(75,225,255,.22);color:#c6f8ff;font-size:8px;font-weight:900;letter-spacing:.08em}
   @media(max-width:850px){
     #inventory .inventory-form-grid,#inventory .inventory-account-grid{grid-template-columns:1fr}
     #inventory .inventory-full{grid-column:auto}
     #inventory .inventory-credential-line{grid-template-columns:1fr;gap:3px}
     #inventory .inventory-actions button{flex:1 1 100%}
+    #inventory .inventory-image-picker{min-height:165px}
+    #inventory .inventory-image-preview{height:190px}
+    #inventory .inventory-account-layout{grid-template-columns:1fr}
+    #inventory .inventory-account-image,#inventory .inventory-account-image-placeholder,#inventory .inventory-account-image img{min-height:190px;height:190px}
   }
 </style>
 
@@ -6613,6 +6632,36 @@ html, body {
             </select>
           </div>
 
+          <div class="inventory-full inventory-image-field">
+            <label>Imagen individual de esta cuenta</label>
+            <label class="inventory-image-picker" for="inventoryImageInput">
+              <input
+                id="inventoryImageInput"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onchange="previewInventoryImage(event)"
+              >
+              <div id="inventoryImagePlaceholder" class="inventory-image-placeholder">
+                <b>Seleccionar imagen</b>
+                <span>JPG, PNG o WEBP · máximo 2 MB</span>
+              </div>
+              <img
+                id="inventoryImagePreview"
+                class="inventory-image-preview hidden"
+                alt="Vista previa del artículo"
+              >
+            </label>
+            <div class="inventory-image-toolbar">
+              <small id="inventoryImageInfo">Puedes usar una imagen diferente para cada cuenta.</small>
+              <button
+                id="inventoryRemoveImageButton"
+                type="button"
+                class="red hidden"
+                onclick="removeInventoryFormImage()"
+              >Eliminar imagen</button>
+            </div>
+          </div>
+
           <div class="inventory-full">
             <label>Notas</label>
             <textarea id="inventoryNotes" rows="4" placeholder="Notas internas de la cuenta"></textarea>
@@ -7036,6 +7085,12 @@ html, body {
 
   let inventoryStats =
     {};
+
+  let inventoryFormImageObjectUrl =
+    '';
+
+  const inventoryCardImageObjectUrls =
+    new Map();
 
   let products =
     [];
@@ -10285,6 +10340,263 @@ html, body {
     return document.getElementById(id)?.value ?? '';
   }
 
+  function inventoryImageSize(value) {
+    const bytes = Number(value || 0);
+
+    if (!bytes) {
+      return '';
+    }
+
+    if (bytes < 1024 * 1024) {
+      return `${Math.ceil(bytes / 1024)} KB`;
+    }
+
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  }
+
+  function revokeInventoryFormImageUrl() {
+    if (inventoryFormImageObjectUrl) {
+      URL.revokeObjectURL(
+        inventoryFormImageObjectUrl
+      );
+      inventoryFormImageObjectUrl = '';
+    }
+  }
+
+  function clearInventoryImagePreview(
+    clearInput = true
+  ) {
+    revokeInventoryFormImageUrl();
+
+    const input = document.getElementById(
+      'inventoryImageInput'
+    );
+    const preview = document.getElementById(
+      'inventoryImagePreview'
+    );
+    const placeholder = document.getElementById(
+      'inventoryImagePlaceholder'
+    );
+    const info = document.getElementById(
+      'inventoryImageInfo'
+    );
+    const removeButton = document.getElementById(
+      'inventoryRemoveImageButton'
+    );
+
+    if (clearInput && input) {
+      input.value = '';
+    }
+
+    if (preview) {
+      preview.removeAttribute('src');
+      preview.classList.add('hidden');
+    }
+
+    placeholder?.classList.remove('hidden');
+    removeButton?.classList.add('hidden');
+
+    if (info) {
+      info.textContent =
+        'Puedes usar una imagen diferente para cada cuenta.';
+    }
+  }
+
+  function showInventoryImagePreview(
+    objectUrl,
+    label
+  ) {
+    revokeInventoryFormImageUrl();
+    inventoryFormImageObjectUrl = objectUrl;
+
+    const preview = document.getElementById(
+      'inventoryImagePreview'
+    );
+    const placeholder = document.getElementById(
+      'inventoryImagePlaceholder'
+    );
+    const info = document.getElementById(
+      'inventoryImageInfo'
+    );
+    const removeButton = document.getElementById(
+      'inventoryRemoveImageButton'
+    );
+
+    if (preview) {
+      preview.src = objectUrl;
+      preview.classList.remove('hidden');
+    }
+
+    placeholder?.classList.add('hidden');
+    removeButton?.classList.remove('hidden');
+
+    if (info) {
+      info.textContent = label;
+    }
+  }
+
+  function previewInventoryImage(event) {
+    const input = event?.target;
+    const file = input?.files?.[0];
+
+    if (!file) {
+      clearInventoryImagePreview(false);
+      return;
+    }
+
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      if (input) input.value = '';
+      clearInventoryImagePreview(false);
+      alert('La imagen debe ser JPG, PNG o WEBP');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      if (input) input.value = '';
+      clearInventoryImagePreview(false);
+      alert('La imagen debe pesar máximo 2 MB');
+      return;
+    }
+
+    showInventoryImagePreview(
+      URL.createObjectURL(file),
+      `${file.name} · ${inventoryImageSize(file.size)}`
+    );
+  }
+
+  async function getInventoryImageResponse(id) {
+    const headers = {};
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(
+      `${API}/inventory/${encodeURIComponent(id)}/image`,
+      {
+        headers
+      }
+    );
+
+    if (!response.ok) {
+      let message =
+        `No se pudo cargar la imagen (HTTP ${response.status})`;
+
+      try {
+        const json = await response.json();
+        message = json.message || message;
+      } catch {
+        // La respuesta de error no siempre contiene JSON.
+      }
+
+      throw new Error(message);
+    }
+
+    return response;
+  }
+
+  async function loadInventoryFormImage(item) {
+    clearInventoryImagePreview();
+
+    if (!item?.hasImage) {
+      return;
+    }
+
+    try {
+      const response =
+        await getInventoryImageResponse(
+          item.id
+        );
+      const blob = await response.blob();
+
+      showInventoryImagePreview(
+        URL.createObjectURL(blob),
+        `${item.imageName || 'Imagen actual'}${
+          item.imageSize
+            ? ` · ${inventoryImageSize(item.imageSize)}`
+            : ''
+        }`
+      );
+    } catch (error) {
+      const info = document.getElementById(
+        'inventoryImageInfo'
+      );
+      if (info) info.textContent = error.message;
+    }
+  }
+
+  async function uploadInventoryImage(
+    id,
+    file
+  ) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    return request(
+      `${API}/inventory/${encodeURIComponent(id)}/image`,
+      {
+        method: 'POST',
+        body: formData
+      }
+    );
+  }
+
+  async function removeInventoryFormImage() {
+    const input = document.getElementById(
+      'inventoryImageInput'
+    );
+    const editingId = getInventoryFormValue(
+      'inventoryEditingId'
+    ).trim();
+    const item = inventoryItems.find(
+      current => current.id === editingId
+    );
+
+    if (!editingId || !item?.hasImage) {
+      clearInventoryImagePreview();
+      return;
+    }
+
+    if (!confirm('¿Eliminar la imagen de esta cuenta?')) {
+      return;
+    }
+
+    const message = document.getElementById(
+      'inventoryCreateMessage'
+    );
+
+    try {
+      await request(
+        `${API}/inventory/${encodeURIComponent(editingId)}/image`,
+        {
+          method: 'DELETE'
+        }
+      );
+
+      if (input) input.value = '';
+      clearInventoryImagePreview(false);
+
+      if (message) {
+        message.className = 'notice ok';
+        message.textContent =
+          'Imagen eliminada correctamente.';
+      }
+
+      await loadInventory();
+    } catch (error) {
+      if (message) {
+        message.className = 'notice error';
+        message.textContent = error.message;
+      }
+    }
+  }
+
   function resetInventoryForm() {
     const editingId = document.getElementById('inventoryEditingId');
     const title = document.getElementById('inventoryFormTitle');
@@ -10314,6 +10626,8 @@ html, body {
       message.textContent = '';
     }
 
+    clearInventoryImagePreview();
+
     fillInventoryVariants();
     closeInventoryCredentials();
   }
@@ -10323,6 +10637,9 @@ html, body {
 
     try {
       const editingId = getInventoryFormValue('inventoryEditingId').trim();
+      const imageFile = document.getElementById(
+        'inventoryImageInput'
+      )?.files?.[0] || null;
       const productVariantId = getInventoryFormValue('inventoryVariant');
       const accountEmail = getInventoryFormValue('inventoryAccountEmail').trim();
       const accountPassword = getInventoryFormValue('inventoryAccountPassword');
@@ -10396,12 +10713,33 @@ html, body {
       );
 
       const saved = extractData(json);
+      let imageWarning = '';
+
+      if (imageFile && saved?.id) {
+        message.textContent =
+          'Guardando imagen del inventario...';
+
+        try {
+          await uploadInventoryImage(
+            saved.id,
+            imageFile
+          );
+        } catch (imageError) {
+          imageWarning =
+            `La cuenta se guardó, pero la imagen no: ${imageError.message}`;
+        }
+      }
+
       resetInventoryForm();
 
-      message.className = 'notice ok';
-      message.textContent = editingId
-        ? 'Cuenta actualizada correctamente.'
-        : `Cuenta agregada correctamente al stock.\nID: ${saved?.id || ''}`;
+      message.className = imageWarning
+        ? 'notice error'
+        : 'notice ok';
+      message.textContent = imageWarning || (
+        editingId
+          ? 'Cuenta actualizada correctamente.'
+          : `Cuenta agregada correctamente al stock.\nID: ${saved?.id || ''}`
+      );
 
       await loadInventory();
       renderDashboard();
@@ -10411,7 +10749,7 @@ html, body {
     }
   }
 
-  function editInventoryItem(id) {
+  async function editInventoryItem(id) {
     const item = inventoryItems.find(current => current.id === id);
 
     if (!item) {
@@ -10438,6 +10776,8 @@ html, body {
     document.getElementById('inventoryFormTitle').textContent = 'Editar cuenta del stock';
     document.getElementById('inventorySaveButton').textContent = 'Actualizar cuenta';
     document.getElementById('inventoryCancelEditButton').classList.remove('hidden');
+
+    await loadInventoryFormImage(item);
 
     const message = document.getElementById('inventoryCreateMessage');
     message.className = 'notice';
@@ -10519,10 +10859,58 @@ html, body {
     return labels[status] || status || 'SIN ESTADO';
   }
 
+  function revokeInventoryCardImageUrls() {
+    inventoryCardImageObjectUrls.forEach(
+      objectUrl => {
+        URL.revokeObjectURL(objectUrl);
+      }
+    );
+    inventoryCardImageObjectUrls.clear();
+  }
+
+  async function loadInventoryCardImages() {
+    const images = Array.from(
+      document.querySelectorAll(
+        '#inventoryList img[data-inventory-image-id]'
+      )
+    );
+
+    await Promise.allSettled(
+      images.map(async image => {
+        const id =
+          image.dataset.inventoryImageId;
+
+        if (!id) return;
+
+        const response =
+          await getInventoryImageResponse(id);
+        const blob = await response.blob();
+        const objectUrl =
+          URL.createObjectURL(blob);
+
+        inventoryCardImageObjectUrls.set(
+          id,
+          objectUrl
+        );
+
+        image.src = objectUrl;
+        image.classList.remove('hidden');
+        image
+          .parentElement
+          ?.querySelector(
+            '.inventory-account-image-placeholder'
+          )
+          ?.classList.add('hidden');
+      })
+    );
+  }
+
   function renderInventory() {
     const container = document.getElementById('inventoryList');
 
     if (!container) return;
+
+    revokeInventoryCardImageUrls();
 
     if (!inventoryItems.length) {
       container.innerHTML = '<div class="row-meta">No hay cuentas con este filtro.</div>';
@@ -10568,36 +10956,58 @@ html, body {
         ? new Date(item.soldAt).toLocaleString('es-MX')
         : '';
       const itemId = JSON.stringify(item.id);
+      const platformInitial = String(
+        product.name || 'R'
+      )
+        .trim()
+        .charAt(0)
+        .toUpperCase() || 'R';
 
       return `
         <div class="row inventory-account-row">
-          <div class="row-title">
-            ${escapeHtml(product.name || 'Plataforma')}
-            <span class="badge">${escapeHtml(inventoryStatusLabel(item.status))}</span>
-          </div>
+          <div class="inventory-account-layout">
+            <div class="inventory-account-image">
+              ${
+                item.hasImage
+                  ? `<img class="hidden" data-inventory-image-id="${escapeHtml(item.id)}" alt="Imagen de ${escapeHtml(product.name || 'la cuenta')}">`
+                  : ''
+              }
+              <div class="inventory-account-image-placeholder">${escapeHtml(platformInitial)}</div>
+              <span class="inventory-image-chip">${item.hasImage ? 'IMAGEN PROPIA' : 'SIN IMAGEN'}</span>
+            </div>
 
-          <div class="inventory-account-grid">
-            <div>Plan<strong>${escapeHtml(variant.publicName || 'Sin plan')}</strong></div>
-            <div>Correo<strong>${escapeHtml(email)}</strong></div>
-            <div>Costo<strong>${escapeHtml(inventoryMoney(internalCost))}</strong></div>
-            <div>Precio de venta<strong>${salePrice === null ? 'Sin precio' : escapeHtml(inventoryMoney(salePrice))}</strong></div>
-            <div>Utilidad<strong class="${profitClass}">${escapeHtml(profitDisplay)}</strong></div>
-            <div>Vencimiento<strong>${escapeHtml(inventoryDisplayDate(item.expirationDate))}</strong></div>
-            ${soldAt ? `<div>Vendida<strong>${escapeHtml(soldAt)}</strong></div>` : ''}
-            <div>ID<strong>${escapeHtml(item.id)}</strong></div>
-          </div>
+            <div>
+              <div class="row-title">
+                ${escapeHtml(product.name || 'Plataforma')}
+                <span class="badge">${escapeHtml(inventoryStatusLabel(item.status))}</span>
+              </div>
 
-          ${item.notes ? `<div class="row-meta"><br>Notas: ${escapeHtml(item.notes)}</div>` : ''}
+              <div class="inventory-account-grid">
+                <div>Plan<strong>${escapeHtml(variant.publicName || 'Sin plan')}</strong></div>
+                <div>Correo<strong>${escapeHtml(email)}</strong></div>
+                <div>Costo<strong>${escapeHtml(inventoryMoney(internalCost))}</strong></div>
+                <div>Precio de venta<strong>${salePrice === null ? 'Sin precio' : escapeHtml(inventoryMoney(salePrice))}</strong></div>
+                <div>Utilidad<strong class="${profitClass}">${escapeHtml(profitDisplay)}</strong></div>
+                <div>Vencimiento<strong>${escapeHtml(inventoryDisplayDate(item.expirationDate))}</strong></div>
+                ${soldAt ? `<div>Vendida<strong>${escapeHtml(soldAt)}</strong></div>` : ''}
+                <div>ID<strong>${escapeHtml(item.id)}</strong></div>
+              </div>
 
-          <div class="row-actions inventory-actions">
-            <button type="button" class="secondary" onclick='viewInventoryCredentials(${itemId})'>Ver credenciales</button>
-            ${item.status !== 'REMOVED' ? `<button type="button" class="secondary" onclick='editInventoryItem(${itemId})'>Editar</button>` : ''}
-            ${item.status !== 'SOLD' && item.status !== 'REMOVED' ? `<button type="button" class="secondary" onclick='markInventorySold(${itemId})'>Marcar vendida</button>` : ''}
-            ${item.status !== 'SOLD' && item.status !== 'REMOVED' ? `<button type="button" class="red" onclick='removeInventoryAccount(${itemId})'>Remover</button>` : ''}
+              ${item.notes ? `<div class="row-meta"><br>Notas: ${escapeHtml(item.notes)}</div>` : ''}
+
+              <div class="row-actions inventory-actions">
+                <button type="button" class="secondary" onclick='viewInventoryCredentials(${itemId})'>Ver credenciales</button>
+                ${item.status !== 'REMOVED' ? `<button type="button" class="secondary" onclick='editInventoryItem(${itemId})'>Editar</button>` : ''}
+                ${item.status !== 'SOLD' && item.status !== 'REMOVED' ? `<button type="button" class="secondary" onclick='markInventorySold(${itemId})'>Marcar vendida</button>` : ''}
+                ${item.status !== 'SOLD' && item.status !== 'REMOVED' ? `<button type="button" class="red" onclick='removeInventoryAccount(${itemId})'>Remover</button>` : ''}
+              </div>
+            </div>
           </div>
         </div>
       `;
     }).join('');
+
+    void loadInventoryCardImages();
   }
 
   async function viewInventoryCredentials(id) {
