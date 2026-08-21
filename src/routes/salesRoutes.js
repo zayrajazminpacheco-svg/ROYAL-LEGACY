@@ -28,6 +28,15 @@ router.get(
 // ============================================================
 
 router.get(
+  '/my/:id/delivery',
+  authenticateToken,
+  authorizeRoles(
+    'CLIENT'
+  ),
+  saleController.getMySaleDelivery
+);
+
+router.get(
   '/my/:id',
   authenticateToken,
   authorizeRoles(

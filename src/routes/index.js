@@ -25,6 +25,9 @@ const codeRoutes =
 const inboxRoutes =
   require('./inboxRoutes');
 
+const mailboxRoutes =
+  require('./mailboxRoutes');
+
 const salesRoutes =
   require('./salesRoutes');
 
@@ -107,6 +110,15 @@ router.use(
 router.use(
   '/inbox',
   inboxRoutes
+);
+
+// ============================================================
+// BANDEJA PRIVADA POR CORREO Y CONTRASEÑA
+// ============================================================
+
+router.use(
+  '/mailbox',
+  mailboxRoutes
 );
 
 // ============================================================

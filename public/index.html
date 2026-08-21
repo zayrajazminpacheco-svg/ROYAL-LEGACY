@@ -4618,7 +4618,48 @@ html, body {
   }
 }
 
-</style>
+    .mailbox-credentials-box {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #45e9ff38;
+      border-radius: 16px;
+      background: #45e9ff0b;
+    }
+
+    .mailbox-credentials-box.hidden {
+      display: none;
+    }
+
+    .mailbox-credential-card {
+      padding: 12px 0;
+      border-top: 1px solid #ffffff16;
+    }
+
+    .mailbox-credential-card:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .mailbox-credential-card strong,
+    .mailbox-credential-card code {
+      display: block;
+      margin-top: 5px;
+      overflow-wrap: anywhere;
+    }
+
+    .mailbox-credential-card code {
+      color: #63efad;
+      font-size: 14px;
+    }
+
+    .mailbox-credential-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+  </style>
 
 <style id="ROYAL_REFERENCE_V4">
 #app.hidden{display:none!important;}
@@ -6129,6 +6170,11 @@ html, body {
         <div
           id="generateMessage"
           class="notice"
+        ></div>
+
+        <div
+          id="generatedMailboxCredentials"
+          class="mailbox-credentials-box hidden"
         ></div>
 
       </article>
@@ -8245,6 +8291,20 @@ html, body {
                   Copiar
                 </button>
 
+                <button
+                  class="ghost"
+                  onclick="showAliasAccess('${alias.id}', false)"
+                >
+                  Ver acceso
+                </button>
+
+                <button
+                  class="ghost"
+                  onclick="showAliasAccess('${alias.id}', true)"
+                >
+                  Cambiar contraseña
+                </button>
+
                 ${
                   alias.status ===
                   'ASSIGNED'
@@ -8268,6 +8328,239 @@ html, body {
   }
 
 
+  function renderMailboxCredentials(
+    value
+  ) {
+    const container =
+      document.getElementById(
+        'generatedMailboxCredentials'
+      );
+
+    const list =
+      Array.isArray(value)
+        ? value
+        : value
+          ? [value]
+          : [];
+
+    if (!list.length) {
+      container.innerHTML = '';
+      container.classList.add(
+        'hidden'
+      );
+      return;
+    }
+
+    container.innerHTML =
+      list.map(
+        item => {
+          const email =
+            item.email ||
+            item.fullAddress ||
+            '';
+
+          const password =
+            item.password ||
+            item.mailboxPassword ||
+            '';
+
+          const mailboxUrl =
+            item.mailboxUrl ||
+            `/correo?email=${encodeURIComponent(
+              email
+            )}`;
+
+          return `
+            <div class="mailbox-credential-card">
+              <div class="row-meta">
+                Correo privado
+              </div>
+              <strong>${escapeHtml(email)}</strong>
+
+              <div class="row-meta" style="margin-top:9px">
+                Contraseña exclusiva
+              </div>
+              <code>${escapeHtml(password)}</code>
+
+              <div class="mailbox-credential-actions">
+                <button
+                  class="ghost"
+                  type="button"
+                  data-mail-copy="${escapeHtml(email)}"
+                >
+                  Copiar correo
+                </button>
+
+                <button
+                  class="ghost"
+                  type="button"
+                  data-mail-copy="${escapeHtml(password)}"
+                >
+                  Copiar contraseña
+                </button>
+
+                <a
+                  class="ghost"
+                  href="${escapeHtml(mailboxUrl)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Abrir bandeja
+                </a>
+              </div>
+            </div>
+          `;
+        }
+      ).join('');
+
+    container.classList.remove(
+      'hidden'
+    );
+
+    container
+      .querySelectorAll(
+        '[data-mail-copy]'
+      )
+      .forEach(
+        button => {
+          button.addEventListener(
+            'click',
+            () =>
+              copyText(
+                button.dataset
+                  .mailCopy
+              )
+          );
+        }
+      );
+  }
+
+
+  async function showAliasAccess(
+    aliasId,
+    rotate
+  ) {
+    // data-access-scroll-fix="active"
+    if (
+      rotate &&
+      !window.confirm(
+        'La contraseña anterior dejará de funcionar. ¿Deseas continuar?'
+      )
+    ) {
+      return;
+    }
+
+    const message =
+      document.getElementById(
+        'generateMessage'
+      );
+
+    const credentialsBox =
+      document.getElementById(
+        'generatedMailboxCredentials'
+      );
+
+    const revealResult = target => {
+      if (!target) {
+        return;
+      }
+
+      window.requestAnimationFrame(
+        () => {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+
+          if (
+            typeof target.animate ===
+            'function'
+          ) {
+            target.animate(
+              [
+                {
+                  boxShadow:
+                    '0 0 0 rgba(99,239,173,0)'
+                },
+                {
+                  boxShadow:
+                    '0 0 30px rgba(99,239,173,.75)'
+                },
+                {
+                  boxShadow:
+                    '0 0 0 rgba(99,239,173,0)'
+                }
+              ],
+              {
+                duration: 1300,
+                easing: 'ease-out'
+              }
+            );
+          }
+        }
+      );
+    };
+
+    message.className =
+      'notice';
+
+    message.textContent =
+      rotate
+        ? 'Cambiando contraseña del correo...'
+        : 'Preparando acceso privado...';
+
+    revealResult(message);
+
+    try {
+      const json =
+        await request(
+          `${API}/mail/aliases/${encodeURIComponent(
+            aliasId
+          )}/access/${
+            rotate
+              ? 'reset'
+              : 'credentials'
+          }`,
+          {
+            method: 'POST'
+          }
+        );
+
+      renderMailboxCredentials(
+        extractData(json)
+      );
+
+      message.className =
+        'notice ok';
+
+      message.textContent =
+        rotate
+          ? 'Contraseña del correo actualizada'
+          : 'Acceso privado del correo listo';
+
+      revealResult(
+        credentialsBox &&
+        !credentialsBox.classList.contains(
+          'hidden'
+        )
+          ? credentialsBox
+          : message
+      );
+
+      await loadAliases();
+
+    } catch (error) {
+      message.className =
+        'notice error';
+
+      message.textContent =
+        error.message;
+
+      revealResult(message);
+    }
+  }
+
+
   async function generateEmail() {
 
     const message =
@@ -8277,6 +8570,8 @@ html, body {
         );
 
     try {
+
+      let generatedResponse;
 
       const domainId =
         document
@@ -8306,7 +8601,8 @@ html, body {
         custom
       ) {
 
-        await request(
+        generatedResponse =
+          await request(
           `${API}/mail/aliases`,
           {
             method:
@@ -8323,7 +8619,8 @@ html, body {
 
       } else {
 
-        await request(
+        generatedResponse =
+          await request(
           `${API}/mail/aliases/generate`,
           {
             method:
@@ -8362,6 +8659,12 @@ html, body {
 
       message.textContent =
         'Correo generado correctamente';
+
+      renderMailboxCredentials(
+        extractData(
+          generatedResponse
+        )
+      );
 
       await loadAliases();
 

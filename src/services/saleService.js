@@ -1,4 +1,15 @@
+const crypto = require('crypto');
 const prisma = require('../lib/prisma');
+
+const {
+  decryptSecret
+} = require('./secretService');
+
+const {
+  ensureSaleAliasAccess
+} = require('./mailboxAccessService');
+
+const PURCHASE_RETRY_LIMIT = 4;
 
 function createError(status, message) {
   const error = new Error(message);
@@ -12,6 +23,134 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(number)
     ? number
     : fallback;
+}
+
+function amountToCents(value) {
+  const amount =
+    Number(value);
+
+  if (!Number.isFinite(amount)) {
+    throw createError(
+      409,
+      'Uno de los importes no es válido'
+    );
+  }
+
+  return Math.round(
+    amount * 100
+  );
+}
+
+function centsToAmount(cents) {
+  return (
+    cents / 100
+  ).toFixed(2);
+}
+
+function formatMoney(cents) {
+  return Number(
+    centsToAmount(cents)
+  ).toLocaleString(
+    'es-MX',
+    {
+      style: 'currency',
+      currency: 'MXN'
+    }
+  );
+}
+
+function getWarrantyEndDate(
+  now,
+  durationDays,
+  inventoryExpirationDate
+) {
+  const days =
+    Math.max(
+      Number.parseInt(
+        durationDays || '0',
+        10
+      ) || 0,
+      0
+    );
+
+  const planEnd =
+    days > 0
+      ? new Date(
+          now.getTime() +
+          days * 24 * 60 * 60 * 1000
+        )
+      : null;
+
+  const inventoryEnd =
+    inventoryExpirationDate
+      ? new Date(
+          inventoryExpirationDate
+        )
+      : null;
+
+  if (
+    planEnd &&
+    inventoryEnd
+  ) {
+    return planEnd < inventoryEnd
+      ? planEnd
+      : inventoryEnd;
+  }
+
+  return (
+    planEnd ||
+    inventoryEnd ||
+    null
+  );
+}
+
+function isPurchaseConflict(error) {
+  return (
+    error?.code === 'P2034' ||
+    error?.code ===
+      'INVENTORY_RACE'
+  );
+}
+
+async function runPurchaseTransaction(
+  callback
+) {
+  let lastError;
+
+  for (
+    let attempt = 1;
+    attempt <=
+      PURCHASE_RETRY_LIMIT;
+    attempt += 1
+  ) {
+    try {
+      return await prisma.$transaction(
+        callback,
+        {
+          isolationLevel:
+            'Serializable',
+          maxWait:
+            10000,
+          timeout:
+            30000
+        }
+      );
+    } catch (error) {
+      lastError = error;
+
+      if (
+        !isPurchaseConflict(
+          error
+        ) ||
+        attempt ===
+          PURCHASE_RETRY_LIMIT
+      ) {
+        throw error;
+      }
+    }
+  }
+
+  throw lastError;
 }
 
 function normalizePagination(query = {}) {
@@ -361,7 +500,226 @@ async function getMySale(
 }
 
 // ============================================================
-// CLIENTE: CREAR PEDIDO SEGURO
+// CLIENTE: OBTENER CREDENCIALES DE MI PEDIDO
+// ============================================================
+
+async function getMySaleDelivery(
+  id,
+  userId
+) {
+  if (!id) {
+    throw createError(
+      400,
+      'El ID del pedido es obligatorio'
+    );
+  }
+
+  if (!userId) {
+    throw createError(
+      401,
+      'Debes iniciar sesión'
+    );
+  }
+
+  const sale =
+    await prisma.sale.findFirst({
+      where: {
+        id,
+        clientId:
+          userId
+      },
+
+      include: {
+        items: {
+          include: {
+            ProductVariant: {
+              include: {
+                product: {
+                  select: {
+                    id: true,
+                    name: true,
+                    slug: true
+                  }
+                }
+              }
+            },
+
+            InventoryItem: {
+              include: {
+                InventoryAlias: {
+                  where: {
+                    active: true
+                  },
+                  include: {
+                    EmailAlias: {
+                      select: {
+                        id: true,
+                        fullAddress: true,
+                        accessPasswordHash: true,
+                        accessPasswordEncrypted: true
+                      }
+                    }
+                  },
+                  orderBy: {
+                    assignedAt:
+                      'desc'
+                  },
+                  take: 1
+                }
+              }
+            }
+          },
+          orderBy: {
+            createdAt:
+              'asc'
+          }
+        }
+      }
+    });
+
+  if (!sale) {
+    throw createError(
+      404,
+      'Pedido no encontrado'
+    );
+  }
+
+  if (
+    sale.paymentStatus !==
+      'PAID' ||
+    ![
+      'PAID',
+      'PROCESSING',
+      'DELIVERED'
+    ].includes(
+      sale.status
+    )
+  ) {
+    throw createError(
+      409,
+      'Las credenciales estarán disponibles cuando el pedido esté pagado'
+    );
+  }
+
+  const items =
+    (
+      await Promise.all(
+        sale.items
+          .map(async item => {
+        const inventory =
+          item.InventoryItem;
+
+        if (!inventory) {
+          return null;
+        }
+
+        const linkedAlias =
+          inventory
+            .InventoryAlias?.[0]
+            ?.EmailAlias ||
+          null;
+
+        const linkedEmail =
+          linkedAlias
+            ?.fullAddress ||
+          null;
+
+        const mailboxAccess =
+          linkedAlias
+            ? await ensureSaleAliasAccess(
+                linkedAlias.id,
+                sale.id,
+                sale.deliveredAt ||
+                  sale.paidAt ||
+                  sale.createdAt
+              )
+            : null;
+
+        return {
+          saleItemId:
+            item.id,
+          inventoryItemId:
+            inventory.id,
+          product:
+            item.ProductVariant
+              ?.product ||
+            null,
+          variant: {
+            id:
+              item.ProductVariant
+                ?.id,
+            publicName:
+              item.ProductVariant
+                ?.publicName,
+            accessType:
+              item.ProductVariant
+                ?.accessType
+          },
+          email:
+            linkedEmail ||
+            decryptSecret(
+              inventory
+                .loginEmailEncrypted
+            ) ||
+            inventory
+              .loginEmailMasked ||
+            null,
+          password:
+            decryptSecret(
+              inventory
+                .passwordEncrypted
+            ),
+          passwordMode:
+            inventory.passwordMode,
+          mailboxAccess:
+            mailboxAccess
+              ? {
+                  email:
+                    linkedEmail,
+                  password:
+                    mailboxAccess.password,
+                  url:
+                    mailboxAccess.mailboxUrl
+                }
+              : null,
+          profileName:
+            decryptSecret(
+              inventory
+                .profileNameEncrypted
+            ),
+          profilePin:
+            decryptSecret(
+              inventory
+                .profilePinEncrypted
+            ),
+          expirationDate:
+            item.expirationDate ||
+            inventory.expirationDate ||
+            null,
+          warrantyEndDate:
+            item.warrantyEndDate ||
+            null
+        };
+          })
+      )
+    )
+      .filter(Boolean);
+
+  return {
+    saleId:
+      sale.id,
+    status:
+      sale.status,
+    paymentStatus:
+      sale.paymentStatus,
+    deliveredAt:
+      sale.deliveredAt,
+    items
+  };
+}
+
+// ============================================================
+// CLIENTE: COMPRAR CON SALDO Y RECIBIR AUTOMÁTICAMENTE
 // ============================================================
 
 async function createClientSale(
@@ -372,50 +730,6 @@ async function createClientSale(
     throw createError(
       401,
       'Debes iniciar sesión para comprar'
-    );
-  }
-
-  const client =
-    await prisma.user.findUnique({
-      where: {
-        id:
-          userId
-      },
-
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        role: true,
-        status: true
-      }
-    });
-
-  if (!client) {
-    throw createError(
-      404,
-      'Cliente no encontrado'
-    );
-  }
-
-  if (
-    client.status !==
-    'ACTIVE'
-  ) {
-    throw createError(
-      403,
-      'Tu cuenta no está activa'
-    );
-  }
-
-  if (
-    client.role !==
-    'CLIENT'
-  ) {
-    throw createError(
-      403,
-      'Esta cuenta no puede realizar compras'
     );
   }
 
@@ -464,18 +778,25 @@ async function createClientSale(
       );
     }
 
-    const quantity =
-      Math.min(
-        Math.max(
-          Number.parseInt(
-            rawItem.quantity ||
-            '1',
-            10
-          ),
-          1
-        ),
+    const requestedQuantity =
+      Number.parseInt(
+        rawItem.quantity ||
+        '1',
         10
       );
+
+    const quantity =
+      Number.isInteger(
+        requestedQuantity
+      )
+        ? Math.min(
+            Math.max(
+              requestedQuantity,
+              1
+            ),
+            10
+          )
+        : 1;
 
     quantities.set(
       productVariantId,
@@ -494,177 +815,560 @@ async function createClientSale(
     );
   }
 
-  const preparedItems = [];
-
-  let subtotal = 0;
-
-  for (
-    const [
-      productVariantId,
-      quantity
-    ]
-    of quantities.entries()
-  ) {
-    const variant =
-      await prisma
-        .productVariant
-        .findUnique({
-          where: {
-            id:
-              productVariantId
-          },
-
-          include: {
-            product: true
-          }
-        });
-
-    if (
-      !variant ||
-      variant.active === false ||
-      variant.product?.active === false
-    ) {
-      throw createError(
-        404,
-        'Uno de los planes ya no está disponible'
-      );
-    }
-
-    const available =
-      await prisma
-        .inventoryItem
-        .count({
-          where: {
-            productVariantId,
-            status:
-              'AVAILABLE'
-          }
-        });
-
-    if (
-      available <
-      quantity
-    ) {
-      throw createError(
-        409,
-
-        `No hay stock suficiente para ${
-          variant.product
-            ?.name ||
-          'el producto'
-        } - ${
-          variant.publicName
-        }`
-      );
-    }
-
-    const unitPrice =
-      toNumber(
-        variant.publicPrice,
-        0
-      );
-
-    if (
-      unitPrice <
-      0
-    ) {
-      throw createError(
-        409,
-        'El precio del plan no es válido'
-      );
-    }
-
-    subtotal +=
-      unitPrice *
-      quantity;
-
-    preparedItems.push({
-      productVariantId,
-      quantity,
-      unitPrice
-    });
-  }
-
-  const createdId =
-    await prisma.$transaction(
+  const purchase =
+    await runPurchaseTransaction(
       async tx => {
+        const now =
+          new Date();
+
+        const client =
+          await tx.user.findUnique({
+            where: {
+              id:
+                userId
+            },
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              role: true,
+              status: true
+            }
+          });
+
+        if (!client) {
+          throw createError(
+            404,
+            'Cliente no encontrado'
+          );
+        }
+
+        if (
+          client.status !==
+          'ACTIVE'
+        ) {
+          throw createError(
+            403,
+            'Tu cuenta no está activa'
+          );
+        }
+
+        if (
+          client.role !==
+          'CLIENT'
+        ) {
+          throw createError(
+            403,
+            'Esta cuenta no puede realizar compras'
+          );
+        }
+
+        const preparedItems = [];
+        let totalCents = 0;
+
+        for (
+          const [
+            productVariantId,
+            quantity
+          ]
+          of quantities.entries()
+        ) {
+          const variant =
+            await tx
+              .productVariant
+              .findUnique({
+                where: {
+                  id:
+                    productVariantId
+                },
+                include: {
+                  product: true
+                }
+              });
+
+          if (
+            !variant ||
+            variant.active ===
+              false ||
+            variant.product
+              ?.active ===
+              false
+          ) {
+            throw createError(
+              404,
+              'Uno de los planes ya no está disponible'
+            );
+          }
+
+          const unitPriceCents =
+            amountToCents(
+              variant.publicPrice
+            );
+
+          if (
+            unitPriceCents < 0
+          ) {
+            throw createError(
+              409,
+              'El precio del plan no es válido'
+            );
+          }
+
+          totalCents +=
+            unitPriceCents *
+            quantity;
+
+          preparedItems.push({
+            variant,
+            quantity,
+            unitPriceCents
+          });
+        }
+
+        const wallet =
+          await tx.wallet.upsert({
+            where: {
+              userId:
+                client.id
+            },
+            update: {},
+            create: {
+              id:
+                crypto.randomUUID(),
+              userId:
+                client.id,
+              balance:
+                '0.00',
+              reservedBalance:
+                '0.00',
+              currency:
+                'MXN',
+              status:
+                'ACTIVE',
+              createdAt:
+                now,
+              updatedAt:
+                now
+            }
+          });
+
+        if (
+          wallet.status !==
+          'ACTIVE'
+        ) {
+          throw createError(
+            403,
+            'Tu saldo no está habilitado para comprar'
+          );
+        }
+
+        const availableCents =
+          amountToCents(
+            wallet.balance
+          ) -
+          amountToCents(
+            wallet.reservedBalance
+          );
+
+        if (
+          availableCents <
+          totalCents
+        ) {
+          throw createError(
+            409,
+            `Saldo insuficiente. Tienes ${formatMoney(availableCents)} y el pedido cuesta ${formatMoney(totalCents)}.`
+          );
+        }
+
+        const totalAmount =
+          centsToAmount(
+            totalCents
+          );
+
+        const debited =
+          await tx.$executeRaw`
+            UPDATE "Wallet"
+            SET
+              "balance" = "balance" - CAST(${totalAmount} AS DECIMAL),
+              "updatedAt" = ${now}
+            WHERE
+              "id" = ${wallet.id}
+              AND "status" = 'ACTIVE'
+              AND (
+                "balance" -
+                "reservedBalance"
+              ) >= CAST(${totalAmount} AS DECIMAL)
+          `;
+
+        if (
+          Number(debited) !== 1
+        ) {
+          const currentWallet =
+            await tx.wallet.findUnique({
+              where: {
+                id:
+                  wallet.id
+              }
+            });
+
+          const currentAvailable =
+            amountToCents(
+              currentWallet
+                ?.balance ||
+              0
+            ) -
+            amountToCents(
+              currentWallet
+                ?.reservedBalance ||
+              0
+            );
+
+          throw createError(
+            409,
+            `Saldo insuficiente. Tienes ${formatMoney(currentAvailable)} y el pedido cuesta ${formatMoney(totalCents)}.`
+          );
+        }
+
         const sale =
           await tx.sale.create({
             data: {
               clientId:
                 client.id,
-
+              walletId:
+                wallet.id,
               status:
-                'PENDING',
-
+                'DELIVERED',
               channel:
                 'WEB',
-
+              paymentMethod:
+                'WALLET',
               paymentStatus:
-                'PENDING',
-
-              subtotal,
+                'PAID',
+              subtotal:
+                totalAmount,
               total:
-                subtotal,
-
+                totalAmount,
               internalCost:
-                0,
-
+                '0.00',
               profit:
-                0,
-
+                totalAmount,
               paymentReference:
                 null,
-
               customerName:
                 client.name,
-
               customerEmail:
                 client.email,
-
               customerPhone:
                 client.phone ||
-                null
+                null,
+              paidAt:
+                now,
+              deliveredAt:
+                now
             }
           });
 
+        let internalCostCents = 0;
+        const assignedInventoryIds = [];
+
         for (
-          const item
+          const prepared
           of preparedItems
         ) {
-          await tx
-            .saleItem
-            .create({
-              data: {
-                saleId:
-                  sale.id,
+          for (
+            let unit = 0;
+            unit <
+              prepared.quantity;
+            unit += 1
+          ) {
+            const inventory =
+              await tx
+                .inventoryItem
+                .findFirst({
+                  where: {
+                    productVariantId:
+                      prepared.variant.id,
+                    status:
+                      'AVAILABLE',
+                    saleItemId:
+                      null,
+                    OR: [
+                      {
+                        expirationDate:
+                          null
+                      },
+                      {
+                        expirationDate: {
+                          gt: now
+                        }
+                      }
+                    ]
+                  },
+                  orderBy: [
+                    {
+                      acquiredAt:
+                        'asc'
+                    },
+                    {
+                      id:
+                        'asc'
+                    }
+                  ]
+                });
 
-                productVariantId:
-                  item.productVariantId,
+            if (!inventory) {
+              throw createError(
+                409,
+                `No hay stock suficiente para ${prepared.variant.product?.name || 'el producto'} - ${prepared.variant.publicName}`
+              );
+            }
 
-                quantity:
-                  item.quantity,
+            const itemCostCents =
+              amountToCents(
+                inventory.internalCost ||
+                0
+              );
 
-                unitPrice:
-                  item.unitPrice,
+            const saleItem =
+              await tx.saleItem.create({
+                data: {
+                  saleId:
+                    sale.id,
+                  productVariantId:
+                    prepared.variant.id,
+                  providerId:
+                    inventory.providerId ||
+                    null,
+                  quantity: 1,
+                  unitPrice:
+                    centsToAmount(
+                      prepared
+                        .unitPriceCents
+                    ),
+                  internalCost:
+                    centsToAmount(
+                      itemCostCents
+                    ),
+                  expirationDate:
+                    inventory
+                      .expirationDate ||
+                    null,
+                  warrantyEndDate:
+                    getWarrantyEndDate(
+                      now,
+                      prepared.variant
+                        .durationDays,
+                      inventory
+                        .expirationDate
+                    ),
+                  updatedAt:
+                    now
+                }
+              });
 
-                internalCost:
-                  0,
+            const claimed =
+              await tx
+                .inventoryItem
+                .updateMany({
+                  where: {
+                    id:
+                      inventory.id,
+                    productVariantId:
+                      prepared.variant.id,
+                    status:
+                      'AVAILABLE',
+                    saleItemId:
+                      null,
+                    OR: [
+                      {
+                        expirationDate:
+                          null
+                      },
+                      {
+                        expirationDate: {
+                          gt: now
+                        }
+                      }
+                    ]
+                  },
+                  data: {
+                    saleItemId:
+                      saleItem.id,
+                    status:
+                      'SOLD',
+                    soldAt:
+                      now
+                  }
+                });
 
-                updatedAt:
-                  new Date()
-              }
-            });
+            if (
+              claimed.count !== 1
+            ) {
+              const conflict =
+                createError(
+                  409,
+                  'El stock cambió durante la compra. Intenta nuevamente.'
+                );
+
+              conflict.code =
+                'INVENTORY_RACE';
+
+              throw conflict;
+            }
+
+            internalCostCents +=
+              itemCostCents;
+
+            assignedInventoryIds.push(
+              inventory.id
+            );
+          }
         }
 
-        return sale.id;
+        const paymentReference =
+          `WALLET-${sale.id}`;
+
+        await tx.sale.update({
+          where: {
+            id:
+              sale.id
+          },
+          data: {
+            internalCost:
+              centsToAmount(
+                internalCostCents
+              ),
+            profit:
+              centsToAmount(
+                totalCents -
+                internalCostCents
+              ),
+            paymentReference
+          }
+        });
+
+        const walletAfter =
+          await tx.wallet.findUnique({
+            where: {
+              id:
+                wallet.id
+            }
+          });
+
+        await tx.walletTransaction.create({
+          data: {
+            id:
+              crypto.randomUUID(),
+            walletId:
+              wallet.id,
+            actorUserId:
+              client.id,
+            type:
+              'PURCHASE',
+            status:
+              'COMPLETED',
+            amount:
+              centsToAmount(
+                -totalCents
+              ),
+            balanceBefore:
+              centsToAmount(
+                amountToCents(
+                  wallet.balance
+                )
+              ),
+            balanceAfter:
+              centsToAmount(
+                amountToCents(
+                  walletAfter
+                    ?.balance ||
+                  0
+                )
+              ),
+            reference:
+              paymentReference,
+            concept:
+              'Compra en Legacy Royal',
+            metadata: {
+              itemCount:
+                assignedInventoryIds
+                  .length
+            },
+            saleId:
+              sale.id,
+            createdAt:
+              now
+          }
+        });
+
+        await tx.delivery.create({
+          data: {
+            id:
+              crypto.randomUUID(),
+            saleId:
+              sale.id,
+            status:
+              'DELIVERED',
+            method:
+              'PANEL',
+            recipientName:
+              client.name,
+            recipientEmail:
+              client.email,
+            recipientPhone:
+              client.phone ||
+              null,
+            deliveryText:
+              'Credenciales disponibles en el panel del cliente',
+            deliveryData: {
+              inventoryItemIds:
+                assignedInventoryIds
+            },
+            attempts: 1,
+            deliveredAt:
+              now,
+            createdAt:
+              now,
+            updatedAt:
+              now
+          }
+        });
+
+        return {
+          saleId:
+            sale.id,
+          balanceAfter:
+            Number(
+              walletAfter
+                ?.balance ||
+              0
+            )
+        };
       }
     );
 
-  return getMySale(
-    createdId,
-    client.id
-  );
+  const [
+    sale,
+    delivery
+  ] =
+    await Promise.all([
+      getMySale(
+        purchase.saleId,
+        userId
+      ),
+      getMySaleDelivery(
+        purchase.saleId,
+        userId
+      )
+    ]);
+
+  return {
+    ...sale,
+    walletBalance:
+      purchase.balanceAfter,
+    delivery
+  };
 }
 
 // ============================================================
@@ -1245,6 +1949,7 @@ module.exports = {
   getSale,
   listMySales,
   getMySale,
+  getMySaleDelivery,
   createClientSale,
   createSale,
   updateSale,

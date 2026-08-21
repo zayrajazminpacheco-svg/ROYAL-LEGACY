@@ -270,6 +270,11 @@ model EmailAlias {
   fullAddress               String           @unique
   destinationEmailEncrypted String?
   destinationEmailMasked    String?
+  accessPasswordHash        String?
+  accessPasswordEncrypted   String?
+  accessEnabled             Boolean          @default(true)
+  accessVersion             Int              @default(1)
+  accessPasswordChangedAt   DateTime?
   platformGroup             String?
   status                    AliasStatus      @default(AVAILABLE)
   assignedAt                DateTime?

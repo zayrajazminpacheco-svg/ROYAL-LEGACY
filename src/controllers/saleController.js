@@ -100,6 +100,32 @@ async function getMySale(
 }
 
 // ============================================================
+// CLIENTE: OBTENER CREDENCIALES DE MI PEDIDO
+// ============================================================
+
+async function getMySaleDelivery(
+  req,
+  res,
+  next
+) {
+  try {
+    const result =
+      await saleService
+        .getMySaleDelivery(
+          req.params.id,
+          req.user.id
+        );
+
+    return res.status(200).json({
+      success: true,
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// ============================================================
 // CLIENTE: CREAR PEDIDO DESDE LA TIENDA
 // ============================================================
 
@@ -118,7 +144,7 @@ async function createClientSale(
     return res.status(201).json({
       success: true,
       message:
-        'Pedido creado correctamente',
+        'Compra realizada y entregada correctamente',
       data: result
     });
   } catch (error) {
@@ -212,6 +238,7 @@ module.exports = {
   getSale,
   listMySales,
   getMySale,
+  getMySaleDelivery,
   createClientSale,
   createSale,
   updateSale,

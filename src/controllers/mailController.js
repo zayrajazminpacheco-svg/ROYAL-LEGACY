@@ -1,6 +1,14 @@
 const crypto = require('crypto');
 const prisma = require('../lib/prisma');
 
+const {
+  safeAlias,
+  getMailboxUrl,
+  createAliasPasswordData,
+  ensureAliasAccess,
+  resetAliasAccess
+} = require('../services/mailboxAccessService');
+
 
 function createError(status, message) {
   const error = new Error(message);
@@ -205,7 +213,11 @@ async function listAliases(req, res, next) {
 
     return res.status(200).json({
       success: true,
-      data: aliases
+      data:
+        aliases.map(
+          alias =>
+            safeAlias(alias)
+        )
     });
 
   } catch (error) {
@@ -316,6 +328,9 @@ async function createAlias(req, res, next) {
     const now =
       new Date();
 
+    const access =
+      await createAliasPasswordData();
+
     const alias =
       await prisma.emailAlias.create({
         data: {
@@ -334,6 +349,8 @@ async function createAlias(req, res, next) {
 
           destinationEmailMasked:
             null,
+
+          ...access.data,
 
           platformGroup:
             req.body?.platformGroup
@@ -366,8 +383,15 @@ async function createAlias(req, res, next) {
       message:
         'Correo generado correctamente',
 
-      data:
-        alias
+      data: {
+        ...safeAlias(alias),
+        mailboxPassword:
+          access.password,
+        mailboxUrl:
+          getMailboxUrl(
+            alias.fullAddress
+          )
+      }
     });
 
   } catch (error) {
@@ -499,6 +523,9 @@ async function generateAliases(
           const now =
             new Date();
 
+          const access =
+            await createAliasPasswordData();
+
           const alias =
             await prisma.emailAlias.create({
               data: {
@@ -517,6 +544,8 @@ async function generateAliases(
 
                 destinationEmailMasked:
                   null,
+
+                ...access.data,
 
                 platformGroup:
                   req.body?.platformGroup
@@ -542,9 +571,15 @@ async function generateAliases(
               }
             });
 
-          generated.push(
-            alias
-          );
+          generated.push({
+            ...safeAlias(alias),
+            mailboxPassword:
+              access.password,
+            mailboxUrl:
+              getMailboxUrl(
+                alias.fullAddress
+              )
+          });
 
           created =
             true;
@@ -572,6 +607,80 @@ async function generateAliases(
         generated
     });
 
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+// ============================================================
+// OBTENER / CREAR ACCESO PRIVADO DEL CORREO
+// ============================================================
+
+async function getAliasAccessCredentials(
+  req,
+  res,
+  next
+) {
+  try {
+    const result =
+      await ensureAliasAccess(
+        String(
+          req.params.aliasId ||
+          ''
+        ).trim()
+      );
+
+    return res.status(200).json({
+      success: true,
+      message:
+        'Acceso privado del correo listo',
+      data: {
+        email:
+          result.alias.fullAddress,
+        password:
+          result.password,
+        mailboxUrl:
+          result.mailboxUrl
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+// ============================================================
+// CAMBIAR CONTRASEÑA PRIVADA DEL CORREO
+// ============================================================
+
+async function resetAliasAccessCredentials(
+  req,
+  res,
+  next
+) {
+  try {
+    const result =
+      await resetAliasAccess(
+        String(
+          req.params.aliasId ||
+          ''
+        ).trim()
+      );
+
+    return res.status(200).json({
+      success: true,
+      message:
+        'Contraseña del correo actualizada',
+      data: {
+        email:
+          result.alias.fullAddress,
+        password:
+          result.password,
+        mailboxUrl:
+          result.mailboxUrl
+      }
+    });
   } catch (error) {
     next(error);
   }
@@ -1295,6 +1404,8 @@ module.exports = {
   listAliases,
   createAlias,
   generateAliases,
+  getAliasAccessCredentials,
+  resetAliasAccessCredentials,
   updateAliasStatus,
   assignAlias,
   assignAliasAutomatically,

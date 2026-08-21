@@ -1528,6 +1528,7 @@ async function getInbox(
 
     const email =
       normalizeEmail(
+        req.mailboxEmail ||
         req.query?.email
       );
 
@@ -1547,6 +1548,38 @@ async function getInbox(
     }
 
 
+    const isClientMailbox =
+      Boolean(
+        req.mailboxEmail
+      );
+
+    const visibleFrom =
+      req.mailboxVisibleFrom
+        ? new Date(
+            req.mailboxVisibleFrom
+          )
+        : null;
+
+    if (
+      isClientMailbox &&
+      (
+        !visibleFrom ||
+        Number.isNaN(
+          visibleFrom.getTime()
+        )
+      )
+    ) {
+      return res
+        .status(403)
+        .json({
+          success:
+            false,
+          message:
+            'La bandeja del cliente todavía no está habilitada para esta compra'
+        });
+    }
+
+
     const messages =
       await prisma
         .inboxMessage
@@ -1554,7 +1587,18 @@ async function getInbox(
 
           where: {
             recipient:
-              email
+              email,
+
+            ...(
+              isClientMailbox
+                ? {
+                    receivedAt: {
+                      gte:
+                        visibleFrom
+                    }
+                  }
+                : {}
+            )
           },
 
           orderBy: {

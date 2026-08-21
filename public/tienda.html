@@ -811,6 +811,88 @@
       color: var(--cyan);
     }
 
+    .order-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-top: 13px;
+    }
+
+    .delivery-list {
+      display: grid;
+      gap: 12px;
+      max-height: 58vh;
+      overflow: auto;
+      padding-right: 3px;
+      text-align: left;
+    }
+
+    .delivery-card {
+      padding: 15px;
+      border: 1px solid #63efad35;
+      border-radius: 16px;
+      background:
+        radial-gradient(
+          circle at 100% 0,
+          rgba(99, 239, 173, .10),
+          transparent 43%
+        ),
+        #080c18;
+    }
+
+    .delivery-title {
+      margin-bottom: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 1000;
+    }
+
+    .credential-row {
+      display: grid;
+      grid-template-columns:
+        minmax(85px, .35fr)
+        minmax(0, 1fr)
+        auto;
+      gap: 9px;
+      align-items: center;
+      padding: 9px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .credential-row span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .credential-row b {
+      overflow-wrap: anywhere;
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .delivery-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .mailbox-access-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 43px;
+      margin-top: 12px;
+      padding: 10px 13px;
+      border: 1px solid #45e9ff45;
+      border-radius: 12px;
+      color: var(--cyan);
+      font-weight: 950;
+      text-decoration: none;
+      background: #45e9ff0e;
+    }
+
     .portal-hero {
       padding: 24px;
 
@@ -1744,6 +1826,16 @@
         font-size: 18px;
       }
 
+      .credential-row {
+        grid-template-columns:
+          minmax(0, 1fr)
+          auto;
+      }
+
+      .credential-row span {
+        grid-column: 1 / -1;
+      }
+
       .mobile-nav {
         display: grid;
       }
@@ -2479,6 +2571,14 @@
 
       <div class="cart-summary">
         <div class="summary-row">
+          <span>Saldo disponible</span>
+
+          <strong id="cartWalletBalance">
+            Inicia sesión
+          </strong>
+        </div>
+
+        <div class="summary-row">
           <span>Total</span>
 
           <strong id="cartTotal">
@@ -2491,7 +2591,7 @@
           class="primary checkout"
           onclick="checkout()"
         >
-          Continuar con la compra
+          Pagar con mi saldo
         </button>
       </div>
     </aside>
@@ -2665,12 +2765,12 @@
         ✓
       </div>
 
-      <h2>¡Pedido recibido!</h2>
+      <h2>¡Compra entregada!</h2>
 
       <p>
-        Tu pedido quedó registrado y está
-        pendiente de pago. Conserva este
-        número para darle seguimiento:
+        El pago se descontó de tu saldo y
+        tu cuenta ya quedó asignada. Este
+        es el número de tu compra:
       </p>
 
       <div
@@ -2681,16 +2781,51 @@
       <p id="successTotal"></p>
 
       <p>
-        El equipo de Legacy Royal podrá
-        localizar tu pedido desde el panel.
+        Tus accesos están disponibles
+        inmediatamente y únicamente dentro
+        de tu panel de cliente.
       </p>
 
       <button
         class="primary"
-        onclick="finishSuccess()"
+        onclick="openLastDelivery()"
       >
-        Ver mis compras
+        Ver mis accesos
       </button>
+    </div>
+  </div>
+
+  <div
+    id="deliveryModal"
+    class="modal-wrap hidden"
+    onclick="modalClose(event,'deliveryModal')"
+  >
+    <div class="modal">
+      <button
+        class="close"
+        type="button"
+        onclick="closeDelivery()"
+        aria-label="Cerrar accesos"
+      >
+        ×
+      </button>
+
+      <h2>Mis accesos</h2>
+
+      <p class="delivery-note">
+        Por seguridad, estas credenciales
+        solo se muestran al propietario de
+        la compra.
+      </p>
+
+      <div
+        id="deliveryContent"
+        class="delivery-list"
+      >
+        <div class="loading">
+          Cargando accesos...
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2749,6 +2884,12 @@
 
     let checkoutBusy =
       false;
+
+    let lastDeliveredSaleId =
+      null;
+
+    let deliveryCopyValues =
+      [];
 
     let portalAfterLogin =
       null;
@@ -3468,6 +3609,25 @@
             cartTotal()
           );
 
+      document
+        .getElementById(
+          'cartWalletBalance'
+        )
+        .textContent =
+          token
+            ? (
+                clientWallet
+                  ? money(
+                      clientWallet
+                        .availableBalance ??
+                      clientWallet
+                        .balance ??
+                      0
+                    )
+                  : 'Consultando...'
+              )
+            : 'Inicia sesión';
+
       const container =
         document.getElementById(
           'cartItems'
@@ -3599,7 +3759,7 @@
       saveCart();
     }
 
-    function openCart() {
+    async function openCart() {
       renderCart();
 
       document
@@ -3613,6 +3773,32 @@
 
       document.body.style.overflow =
         'hidden';
+
+      if (token) {
+        try {
+          const walletJson =
+            await request(
+              '/wallet/me',
+              {},
+              true
+            );
+
+          clientWallet =
+            extractData(
+              walletJson
+            )?.wallet ||
+            null;
+
+          renderCart();
+        } catch {
+          document
+            .getElementById(
+              'cartWalletBalance'
+            )
+            .textContent =
+              'No disponible';
+        }
+      }
     }
 
     function closeCart() {
@@ -3696,6 +3882,12 @@
         id === 'successModal'
       ) {
         finishSuccess();
+      }
+
+      if (
+        id === 'deliveryModal'
+      ) {
+        closeDelivery();
       }
     }
 
@@ -4148,6 +4340,33 @@
             cartTotal()
           );
 
+        lastDeliveredSaleId =
+          order.id ||
+          null;
+
+        if (
+          Number.isFinite(
+            Number(
+              order.walletBalance
+            )
+          )
+        ) {
+          clientWallet = {
+            ...(
+              clientWallet ||
+              {}
+            ),
+            balance:
+              Number(
+                order.walletBalance
+              ),
+            availableBalance:
+              Number(
+                order.walletBalance
+              )
+          };
+        }
+
         cart = [];
         saveCart();
         closeCart();
@@ -4165,7 +4384,12 @@
             'successTotal'
           )
           .textContent =
-            `Total del pedido: ${money(total)}`;
+            `Total pagado: ${money(total)}${
+              order.walletBalance !==
+                undefined
+                ? ` · Saldo restante: ${money(order.walletBalance)}`
+                : ''
+            }`;
 
         document
           .getElementById(
@@ -4190,6 +4414,285 @@
 
         renderCart();
       }
+    }
+
+    function deliveryCredentialRow(
+      label,
+      value,
+      copyable = true
+    ) {
+      if (
+        value === undefined ||
+        value === null ||
+        String(value).trim() === ''
+      ) {
+        return '';
+      }
+
+      let copyButton = '';
+
+      if (copyable) {
+        const copyIndex =
+          deliveryCopyValues.push(
+            String(value)
+          ) - 1;
+
+        copyButton = `
+          <button
+            class="mini-btn"
+            type="button"
+            onclick="copyDeliveryValue(${copyIndex})"
+          >
+            Copiar
+          </button>
+        `;
+      }
+
+      return `
+        <div class="credential-row">
+          <span>${escapeHtml(label)}</span>
+          <b>${escapeHtml(value)}</b>
+          ${copyButton}
+        </div>
+      `;
+    }
+
+    function copyDeliveryValue(
+      index
+    ) {
+      const value =
+        deliveryCopyValues[
+          Number(index)
+        ];
+
+      if (value !== undefined) {
+        copyValue(value);
+      }
+    }
+
+    function renderDelivery(
+      delivery
+    ) {
+      const container =
+        document.getElementById(
+          'deliveryContent'
+        );
+
+      const items =
+        Array.isArray(
+          delivery?.items
+        )
+          ? delivery.items
+          : [];
+
+      deliveryCopyValues = [];
+
+      if (!items.length) {
+        container.innerHTML = `
+          <div class="empty">
+            No se encontraron accesos
+            para esta compra.
+          </div>
+        `;
+
+        return;
+      }
+
+      container.innerHTML =
+        items
+          .map(
+            item => {
+              const productName =
+                item.product?.name ||
+                'Plataforma';
+
+              const planName =
+                item.variant
+                  ?.publicName ||
+                'Plan';
+
+              const passwordText =
+                item.password ||
+                (
+                  item.passwordMode ===
+                  'RESET_IN_PANEL'
+                    ? 'Se restablece desde el panel'
+                    : null
+                );
+
+              const mailboxAccess =
+                item.mailboxAccess ||
+                null;
+
+              const mailboxUrl =
+                mailboxAccess?.email
+                  ? `/correo?email=${encodeURIComponent(
+                      mailboxAccess.email
+                    )}`
+                  : '';
+
+              return `
+                <article class="delivery-card">
+                  <div class="delivery-title">
+                    ${escapeHtml(productName)}
+                    ·
+                    ${escapeHtml(planName)}
+                  </div>
+
+                  ${deliveryCredentialRow(
+                    'Correo',
+                    item.email
+                  )}
+
+                  ${deliveryCredentialRow(
+                    'Contraseña de la plataforma',
+                    passwordText,
+                    Boolean(item.password)
+                  )}
+
+                  ${deliveryCredentialRow(
+                    'Contraseña del correo',
+                    mailboxAccess?.password
+                  )}
+
+                  ${
+                    mailboxUrl
+                      ? `
+                        <a
+                          class="mailbox-access-link"
+                          href="${escapeHtml(mailboxUrl)}"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Abrir bandeja privada
+                        </a>
+                      `
+                      : ''
+                  }
+
+                  ${deliveryCredentialRow(
+                    'Perfil',
+                    item.profileName
+                  )}
+
+                  ${deliveryCredentialRow(
+                    'PIN del perfil',
+                    item.profilePin
+                  )}
+
+                  ${deliveryCredentialRow(
+                    'Tipo de acceso',
+                    accessLabel(
+                      item.variant
+                        ?.accessType
+                    ),
+                    false
+                  )}
+
+                  ${deliveryCredentialRow(
+                    'Vencimiento',
+                    item.expirationDate
+                      ? formatDate(
+                          item.expirationDate
+                        )
+                      : null,
+                    false
+                  )}
+                </article>
+              `;
+            }
+          )
+          .join('');
+    }
+
+    async function openDelivery(
+      saleId
+    ) {
+      if (!saleId) {
+        showToast(
+          'No se encontró la compra'
+        );
+        return;
+      }
+
+      const modal =
+        document.getElementById(
+          'deliveryModal'
+        );
+
+      const container =
+        document.getElementById(
+          'deliveryContent'
+        );
+
+      container.innerHTML = `
+        <div class="loading">
+          Cargando accesos...
+        </div>
+      `;
+
+      modal.classList.remove(
+        'hidden'
+      );
+
+      document.body.style.overflow =
+        'hidden';
+
+      try {
+        const json =
+          await request(
+            `/sales/my/${encodeURIComponent(saleId)}/delivery`,
+            {},
+            true
+          );
+
+        renderDelivery(
+          extractData(json) ||
+          {}
+        );
+      } catch (error) {
+        container.innerHTML = `
+          <div class="empty">
+            ${escapeHtml(error.message)}
+          </div>
+        `;
+      }
+    }
+
+    function closeDelivery() {
+      document
+        .getElementById(
+          'deliveryModal'
+        )
+        .classList
+        .add(
+          'hidden'
+        );
+
+      document.body.style.overflow =
+        '';
+    }
+
+    function openLastDelivery() {
+      document
+        .getElementById(
+          'successModal'
+        )
+        .classList
+        .add(
+          'hidden'
+        );
+
+      if (
+        lastDeliveredSaleId
+      ) {
+        openDelivery(
+          lastDeliveredSaleId
+        );
+        return;
+      }
+
+      finishSuccess();
     }
 
     function finishSuccess() {
@@ -4972,6 +5475,29 @@
                       order.total
                     )}
                   </div>
+
+                  ${
+                    order.status ===
+                      'DELIVERED' &&
+                    order.paymentStatus ===
+                      'PAID'
+                      ? `
+                          <div class="order-actions">
+                            <button
+                              class="primary"
+                              type="button"
+                              onclick='openDelivery(${JSON.stringify(
+                                String(
+                                  order.id
+                                )
+                              )})'
+                            >
+                              Ver accesos
+                            </button>
+                          </div>
+                        `
+                      : ''
+                  }
                 </article>
               `
             )
@@ -6007,12 +6533,12 @@
           );
 
         showToast(
-          'Código copiado'
+          'Copiado correctamente'
         );
 
       } catch {
         showToast(
-          'No se pudo copiar el código'
+          'No se pudo copiar'
         );
       }
     }

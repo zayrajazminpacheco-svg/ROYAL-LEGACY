@@ -1,6 +1,11 @@
 const express = require('express');
 const inboxController = require('../controllers/inboxController');
 
+const {
+  authenticateToken,
+  authorizeRoles
+} = require('../middlewares/auth');
+
 const router = express.Router();
 
 
@@ -77,6 +82,11 @@ router.post(
 
 router.get(
   '/',
+  authenticateToken,
+  authorizeRoles(
+    'SUPER_ADMIN',
+    'ADMIN'
+  ),
   inboxController.getInbox
 );
 

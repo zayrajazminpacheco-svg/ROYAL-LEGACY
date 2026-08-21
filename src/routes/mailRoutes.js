@@ -1,7 +1,20 @@
 const express = require('express');
 const mailController = require('../controllers/mailController');
 
+const {
+  authenticateToken,
+  authorizeRoles
+} = require('../middlewares/auth');
+
 const router = express.Router();
+
+router.use(
+  authenticateToken,
+  authorizeRoles(
+    'SUPER_ADMIN',
+    'ADMIN'
+  )
+);
 
 // ==========================================
 // DOMINIOS
@@ -35,6 +48,16 @@ router.post(
 router.post(
   '/aliases/generate',
   mailController.generateAliases
+);
+
+router.post(
+  '/aliases/:aliasId/access/credentials',
+  mailController.getAliasAccessCredentials
+);
+
+router.post(
+  '/aliases/:aliasId/access/reset',
+  mailController.resetAliasAccessCredentials
 );
 
 
