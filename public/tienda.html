@@ -882,7 +882,7 @@
       display: grid;
 
       grid-template-columns:
-        repeat(3, 1fr);
+        repeat(4, 1fr);
 
       gap: 10px;
       margin-bottom: 18px;
@@ -1012,6 +1012,72 @@
       color: var(--muted);
       font-size: 10px;
       margin-top: 5px;
+    }
+
+    .wallet-balance-card {
+      padding: 19px;
+      margin-bottom: 15px;
+      border: 1px solid #63efad38;
+      border-radius: 18px;
+      background:
+        radial-gradient(
+          circle at 90% 0,
+          rgba(99, 239, 173, .13),
+          transparent 45%
+        ),
+        #080d19;
+    }
+
+    .wallet-balance-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .wallet-balance-card strong {
+      display: block;
+      margin-top: 6px;
+      color: var(--green);
+      font-size: clamp(30px, 7vw, 44px);
+    }
+
+    .bank-details {
+      display: grid;
+      gap: 9px;
+      margin: 14px 0;
+    }
+
+    .bank-detail {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #070a15;
+    }
+
+    .bank-detail span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .bank-detail b {
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
+    .spei-note {
+      padding: 12px;
+      border-left: 3px solid var(--gold);
+      border-radius: 10px;
+      background: #f5d2720b;
+      color: #e6ddba;
+      font-size: 11px;
+      line-height: 1.55;
     }
 
     .request-list {
@@ -1922,6 +1988,14 @@
         </button>
 
         <button
+          id="portalTabWallet"
+          class="portal-tab"
+          onclick="setPortalTab('wallet')"
+        >
+          Saldo
+        </button>
+
+        <button
           id="portalTabCodes"
           class="portal-tab"
           onclick="setPortalTab('codes')"
@@ -1967,6 +2041,157 @@
           <div class="loading">
             Cargando compras...
           </div>
+        </div>
+      </div>
+
+      <div
+        id="portalPanelWallet"
+        class="portal-panel"
+      >
+        <div class="portal-grid">
+          <article class="portal-card">
+            <div class="wallet-balance-card">
+              <span>Saldo disponible</span>
+              <strong id="clientWalletBalance">
+                $0.00
+              </strong>
+            </div>
+
+            <h3>Recargar por SPEI</h3>
+
+            <p>
+              Crea una solicitud, realiza la
+              transferencia y después adjunta
+              el CEP XML descargado de Banxico.
+            </p>
+
+            <div id="speiBankDetails" class="bank-details">
+              <div class="loading">
+                Cargando datos bancarios...
+              </div>
+            </div>
+
+            <form
+              class="portal-form"
+              onsubmit="createTopUpRequest(event)"
+            >
+              <div>
+                <label>Monto de la recarga</label>
+                <input
+                  id="topUpAmount"
+                  type="number"
+                  min="10"
+                  max="50000"
+                  step="0.01"
+                  inputmode="decimal"
+                  placeholder="Ej. 500.00"
+                  required
+                >
+              </div>
+
+              <div
+                id="topUpCreateMessage"
+                class="form-notice"
+              ></div>
+
+              <button
+                id="topUpCreateButton"
+                class="primary"
+                type="submit"
+              >
+                Crear solicitud
+              </button>
+            </form>
+
+            <div class="spei-note">
+              Tu saldo se acredita solamente
+              después de validar el CEP en el
+              portal oficial de Banco de México.
+            </div>
+          </article>
+
+          <article class="portal-card">
+            <h3>Enviar comprobante CEP</h3>
+
+            <p>
+              El archivo debe ser el XML oficial,
+              no una captura ni un PDF.
+            </p>
+
+            <form
+              id="topUpSubmitForm"
+              class="portal-form"
+              onsubmit="submitTopUpCep(event)"
+            >
+              <div>
+                <label>Solicitud pendiente</label>
+                <select id="topUpPendingSelect" required>
+                  <option value="">
+                    Cargando solicitudes...
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label>Fecha de transferencia</label>
+                <input
+                  id="topUpOperationDate"
+                  type="date"
+                  required
+                >
+              </div>
+
+              <div>
+                <label>Clave de rastreo</label>
+                <input
+                  id="topUpTrackingKey"
+                  maxlength="100"
+                  autocomplete="off"
+                  placeholder="Clave indicada por tu banco"
+                  required
+                >
+              </div>
+
+              <div>
+                <label>CEP de Banxico</label>
+                <input
+                  id="topUpCepFile"
+                  type="file"
+                  accept=".xml,application/xml,text/xml"
+                  required
+                >
+                <span class="file-note">
+                  Archivo XML · máximo 1 MB.
+                </span>
+              </div>
+
+              <div
+                id="topUpSubmitMessage"
+                class="form-notice"
+              ></div>
+
+              <button
+                id="topUpSubmitButton"
+                class="primary"
+                type="submit"
+              >
+                Enviar para revisión
+              </button>
+            </form>
+
+            <h3 style="margin-top:24px">
+              Mis recargas
+            </h3>
+
+            <div
+              id="clientTopUps"
+              class="request-list"
+            >
+              <div class="loading">
+                Cargando recargas...
+              </div>
+            </div>
+          </article>
         </div>
       </div>
 
@@ -2539,6 +2764,15 @@
 
     let clientReports =
       [];
+
+    let clientWallet =
+      null;
+
+    let clientTopUps =
+      [];
+
+    let speiBankInstructions =
+      null;
 
     function readJson(
       key,
@@ -4029,6 +4263,7 @@
     ) {
       const names = [
         'purchases',
+        'wallet',
         'codes',
         'reports'
       ];
@@ -4068,6 +4303,13 @@
         'purchases'
       ) {
         await loadOrders();
+      }
+
+      if (
+        tab ===
+        'wallet'
+      ) {
+        await loadWalletCenter();
       }
 
       if (
@@ -4153,6 +4395,425 @@
         : date.toLocaleString(
             'es-MX'
           );
+    }
+
+    function topUpStatusLabel(status) {
+      const labels = {
+        PENDING:
+          'PENDIENTE DE TRANSFERENCIA',
+        REVIEW:
+          'EN REVISIÓN',
+        APPROVED:
+          'SALDO ACREDITADO',
+        REJECTED:
+          'RECHAZADA',
+        EXPIRED:
+          'VENCIDA',
+        CANCELLED:
+          'CANCELADA'
+      };
+
+      return (
+        labels[status] ||
+        status ||
+        'PENDIENTE'
+      );
+    }
+
+    async function loadWalletCenter() {
+      const list =
+        document.getElementById(
+          'clientTopUps'
+        );
+
+      list.innerHTML =
+        '<div class="loading">Cargando recargas...</div>';
+
+      try {
+        const [walletJson, topUpsJson] =
+          await Promise.all([
+            request(
+              '/wallet/me',
+              {},
+              true
+            ),
+            request(
+              '/wallet/top-ups?page=1&pageSize=50',
+              {},
+              true
+            )
+          ]);
+
+        const walletData =
+          extractData(walletJson) ||
+          {};
+
+        clientWallet =
+          walletData.wallet ||
+          null;
+
+        speiBankInstructions =
+          walletData.bankInstructions ||
+          null;
+
+        clientTopUps =
+          extractItems(topUpsJson);
+
+        renderWalletCenter();
+      } catch (error) {
+        list.innerHTML =
+          `<div class="empty">${escapeHtml(error.message)}</div>`;
+
+        document
+          .getElementById(
+            'speiBankDetails'
+          )
+          .innerHTML =
+            `<div class="empty">${escapeHtml(error.message)}</div>`;
+      }
+    }
+
+    function renderWalletCenter() {
+      document
+        .getElementById(
+          'clientWalletBalance'
+        )
+        .textContent =
+          money(
+            clientWallet?.availableBalance ||
+            0
+          );
+
+      const bankBox =
+        document.getElementById(
+          'speiBankDetails'
+        );
+
+      if (
+        !speiBankInstructions?.configured
+      ) {
+        bankBox.innerHTML =
+          '<div class="empty">Las recargas SPEI todavía no están configuradas.</div>';
+      } else {
+        bankBox.innerHTML = `
+          <div class="bank-detail">
+            <span>Beneficiario</span>
+            <b>${escapeHtml(speiBankInstructions.receiverName)}</b>
+          </div>
+          <div class="bank-detail">
+            <span>Banco receptor</span>
+            <b>${escapeHtml(speiBankInstructions.receiverBank)}</b>
+          </div>
+          <div class="bank-detail">
+            <span>CLABE / cuenta</span>
+            <b>${escapeHtml(speiBankInstructions.receiverAccount)}</b>
+          </div>
+          <button
+            class="secondary"
+            type="button"
+            onclick='copyValue(${JSON.stringify(
+              speiBankInstructions.receiverAccount ||
+              ''
+            )})'
+          >
+            Copiar cuenta
+          </button>
+        `;
+
+        const amountInput =
+          document.getElementById(
+            'topUpAmount'
+          );
+
+        amountInput.min =
+          speiBankInstructions.minimum ||
+          10;
+
+        amountInput.max =
+          speiBankInstructions.maximum ||
+          50000;
+      }
+
+      const pendingSelect =
+        document.getElementById(
+          'topUpPendingSelect'
+        );
+
+      const pending =
+        clientTopUps.filter(
+          item =>
+            [
+              'PENDING',
+              'REJECTED'
+            ].includes(
+              item.status
+            )
+        );
+
+      pendingSelect.innerHTML =
+        pending.length
+          ? '<option value="">Selecciona una solicitud</option>' +
+            pending
+              .map(
+                item => `
+                  <option value="${escapeHtml(item.id)}">
+                    ${escapeHtml(item.reference)} · ${money(item.amount)}
+                  </option>
+                `
+              )
+              .join('')
+          : '<option value="">No hay solicitudes pendientes</option>';
+
+      const list =
+        document.getElementById(
+          'clientTopUps'
+        );
+
+      if (!clientTopUps.length) {
+        list.innerHTML =
+          '<div class="empty">Todavía no has solicitado ninguna recarga.</div>';
+        return;
+      }
+
+      list.innerHTML =
+        clientTopUps
+          .map(
+            item => `
+              <article class="request">
+                <div class="request-top">
+                  <div>
+                    <div class="request-title">
+                      ${money(item.amount)}
+                    </div>
+                    <div class="request-meta">
+                      Referencia: ${escapeHtml(item.reference)}<br>
+                      ${escapeHtml(formatDate(item.createdAt))}
+                      ${
+                        item.trackingKey
+                          ? `<br>Rastreo: ${escapeHtml(item.trackingKey)}`
+                          : ''
+                      }
+                    </div>
+                  </div>
+                  <span class="request-status">
+                    ${escapeHtml(topUpStatusLabel(item.status))}
+                  </span>
+                </div>
+                ${
+                  item.rejectedReason
+                    ? `<div class="admin-answer"><b>Motivo:</b><br>${escapeHtml(item.rejectedReason)}</div>`
+                    : ''
+                }
+                ${
+                  item.hasCep
+                    ? `
+                        <button
+                          class="attachment-btn"
+                          type="button"
+                          onclick='openReportAttachment(${JSON.stringify(item.cep.url)})'
+                        >
+                          Descargar mi CEP
+                        </button>
+                      `
+                    : ''
+                }
+              </article>
+            `
+          )
+          .join('');
+    }
+
+    async function createTopUpRequest(event) {
+      event.preventDefault();
+
+      const button =
+        document.getElementById(
+          'topUpCreateButton'
+        );
+
+      const message =
+        document.getElementById(
+          'topUpCreateMessage'
+        );
+
+      button.disabled = true;
+      message.className =
+        'form-notice';
+      message.textContent =
+        'Creando solicitud...';
+
+      try {
+        const json =
+          await request(
+            '/wallet/top-ups',
+            {
+              method: 'POST',
+              body: JSON.stringify({
+                amount:
+                  document
+                    .getElementById(
+                      'topUpAmount'
+                    )
+                    .value
+              })
+            },
+            true
+          );
+
+        const result =
+          extractData(json) ||
+          {};
+
+        message.className =
+          'form-notice ok';
+        message.textContent =
+          `Solicitud ${result.topUp?.reference || ''} creada. Realiza la transferencia y envía tu CEP XML.`;
+
+        document
+          .getElementById(
+            'topUpAmount'
+          )
+          .value = '';
+
+        showToast(
+          'Solicitud de recarga creada'
+        );
+
+        await loadWalletCenter();
+      } catch (error) {
+        message.className =
+          'form-notice error';
+        message.textContent =
+          error.message;
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function submitTopUpCep(event) {
+      event.preventDefault();
+
+      const button =
+        document.getElementById(
+          'topUpSubmitButton'
+        );
+
+      const message =
+        document.getElementById(
+          'topUpSubmitMessage'
+        );
+
+      const topUpId =
+        document
+          .getElementById(
+            'topUpPendingSelect'
+          )
+          .value;
+
+      const file =
+        document
+          .getElementById(
+            'topUpCepFile'
+          )
+          .files[0] ||
+        null;
+
+      if (!topUpId || !file) {
+        message.className =
+          'form-notice error';
+        message.textContent =
+          'Selecciona la solicitud y el CEP XML';
+        return;
+      }
+
+      if (
+        !file.name
+          .toLowerCase()
+          .endsWith('.xml')
+      ) {
+        message.className =
+          'form-notice error';
+        message.textContent =
+          'Debes seleccionar el archivo XML del CEP';
+        return;
+      }
+
+      if (
+        file.size >
+        1024 * 1024
+      ) {
+        message.className =
+          'form-notice error';
+        message.textContent =
+          'El CEP XML no puede superar 1 MB';
+        return;
+      }
+
+      button.disabled = true;
+      message.className =
+        'form-notice';
+      message.textContent =
+        'Validando coincidencias del CEP...';
+
+      try {
+        await request(
+          `/wallet/top-ups/${encodeURIComponent(topUpId)}/submit`,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              operationDate:
+                document
+                  .getElementById(
+                    'topUpOperationDate'
+                  )
+                  .value,
+              trackingKey:
+                document
+                  .getElementById(
+                    'topUpTrackingKey'
+                  )
+                  .value
+                  .trim(),
+              cep: {
+                name:
+                  file.name,
+                mimeType:
+                  file.type ||
+                  'application/xml',
+                data:
+                  await readFileAsDataUrl(
+                    file
+                  )
+              }
+            })
+          },
+          true
+        );
+
+        document
+          .getElementById(
+            'topUpSubmitForm'
+          )
+          .reset();
+
+        message.className =
+          'form-notice ok';
+        message.textContent =
+          'El CEP coincide y quedó pendiente de revisión.';
+
+        showToast(
+          'CEP enviado correctamente'
+        );
+
+        await loadWalletCenter();
+      } catch (error) {
+        message.className =
+          'form-notice error';
+        message.textContent =
+          error.message;
+      } finally {
+        button.disabled = false;
+      }
     }
 
     function orderItems(order) {

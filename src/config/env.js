@@ -28,5 +28,10 @@ module.exports = {
   superAdminEmail: getEnv('SUPER_ADMIN_EMAIL', ''),
   superAdminPassword: getEnv('SUPER_ADMIN_PASSWORD', ''),
   adminEmail: getEnv('ADMIN_EMAIL', ''),
-  adminPassword: getEnv('ADMIN_PASSWORD', '')
+  adminPassword: getEnv('ADMIN_PASSWORD', ''),
+  speiReceiverName: getEnv('SPEI_RECEIVER_NAME', ''),
+  speiReceiverBank: getEnv('SPEI_RECEIVER_BANK', ''),
+  speiReceiverAccount: getEnv('SPEI_RECEIVER_ACCOUNT', ''),
+  speiMinAmount: Number(getEnv('SPEI_MIN_AMOUNT', 10)),
+  speiMaxAmount: Number(getEnv('SPEI_MAX_AMOUNT', 50000))
 };

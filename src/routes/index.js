@@ -34,6 +34,9 @@ const inventoryRoutes =
 const supportReportRoutes =
   require('./supportReportRoutes');
 
+const walletRoutes =
+  require('./walletRoutes');
+
 const whatsappBotRoutes =
   require('./whatsappBotRoutes');
 
@@ -131,6 +134,15 @@ router.use(
 router.use(
   '/reports',
   supportReportRoutes
+);
+
+// ============================================================
+// SALDO Y RECARGAS SPEI
+// ============================================================
+
+router.use(
+  '/wallet',
+  walletRoutes
 );
 
 // ============================================================

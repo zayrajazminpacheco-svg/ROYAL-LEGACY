@@ -470,7 +470,17 @@ model SpeiTopUp {
   senderBank                        String?
   senderAccount                     String?
   receiverAccount                   String?
+  receiverBank                      String?
   receiptUrl                        String?
+  operationDate                     DateTime?
+  cepFileName                       String?
+  cepMimeType                       String?
+  cepSize                           Int?
+  cepData                           Bytes?
+  cepLocalMatch                     Boolean             @default(false)
+  banxicoValidated                  Boolean             @default(false)
+  banxicoValidatedAt                DateTime?
+  reviewNotes                       String?
   requestedAt                       DateTime            @default(now())
   expiresAt                         DateTime?
   verifiedAt                        DateTime?

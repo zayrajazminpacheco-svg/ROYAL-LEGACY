@@ -5471,6 +5471,21 @@ html, body {
     #inventory .inventory-account-layout{grid-template-columns:1fr}
     #inventory .inventory-account-image,#inventory .inventory-account-image-placeholder,#inventory .inventory-account-image img{min-height:190px;height:190px}
   }
+
+  .spei-admin-list{display:grid;gap:12px}
+  .spei-admin-item{padding:17px;border:1px solid rgba(74,211,255,.18);border-radius:17px;background:rgba(6,10,22,.76)}
+  .spei-admin-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+  .spei-admin-head h3{margin:0 0 5px;color:#f5fbff}
+  .spei-admin-meta{color:#8f9ab2;font-size:12px;line-height:1.55}
+  .spei-admin-status{padding:7px 9px;border:1px solid rgba(245,210,114,.25);border-radius:999px;color:#f5d272;background:rgba(245,210,114,.08);font-size:10px;font-weight:900;white-space:nowrap}
+  .spei-admin-checks{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}
+  .spei-admin-checks span{padding:6px 8px;border-radius:999px;color:#9aa6bc;background:rgba(255,255,255,.04);font-size:10px;font-weight:800}
+  .spei-admin-checks .ok{color:#63efad;background:rgba(99,239,173,.08)}
+  .spei-admin-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+  @media(max-width:720px){
+    .spei-admin-head{display:grid}
+    .spei-admin-actions button,.spei-admin-actions a{width:100%;text-align:center}
+  }
 </style>
 
 </head>
@@ -5597,6 +5612,7 @@ html, body {
 
   <div class="royal-nav-group-title royal-gestion">GESTIÓN</div>
   <button class="tab" data-tab="sales" onclick="showTab('sales')"><span class="tab-icon">&#9637;</span><span class="tab-label">Ventas</span></button>
+  <button class="tab" data-tab="topups" onclick="showTab('topups')"><span class="tab-icon">$</span><span class="tab-label">Recargas</span></button>
   <button class="tab" data-tab="whatsappBot" onclick="showTab('whatsappBot')"><span class="tab-icon">&#9673;</span><span class="tab-label">Bot WhatsApp</span></button>
 
   <div class="royal-nav-group-title royal-support-title">SOPORTE</div>
@@ -5881,6 +5897,12 @@ html, body {
             <span class="pc-action-icon">▣</span>
             <b>Ver bandeja</b>
             <small>Mensajes recibidos</small>
+          </button>
+
+          <button class="pc-action-btn cyan" onclick="showTab('topups')">
+            <span class="pc-action-icon">$</span>
+            <b>Revisar recargas</b>
+            <small>Validar CEP y acreditar saldo</small>
           </button>
         </div>
       </article>
@@ -6812,6 +6834,82 @@ html, body {
 
 
   <!-- =============================== -->
+  <!-- RECARGAS SPEI -->
+  <!-- =============================== -->
+
+  <section id="topups" class="section">
+    <div class="m-section-head">
+      <button type="button" onclick="mobileGo('home')" aria-label="Volver">←</button>
+      <div>
+        <strong>RECARGAS SPEI</strong>
+        <span>Validar CEP y acreditar saldo</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span>Total</span><strong id="speiTotal">0</strong></div>
+      <div class="stat"><span>En revisión</span><strong id="speiReview">0</strong></div>
+      <div class="stat"><span>Aprobadas</span><strong id="speiApproved">0</strong></div>
+      <div class="stat"><span>Rechazadas</span><strong id="speiRejected">0</strong></div>
+    </div>
+
+    <div class="grid">
+      <article class="card">
+        <h2>Filtrar solicitudes</h2>
+
+        <label>Estado</label>
+        <select id="speiStatusFilter" onchange="loadSpeiTopUps()">
+          <option value="">Todas</option>
+          <option value="REVIEW">En revisión</option>
+          <option value="PENDING">Pendientes</option>
+          <option value="APPROVED">Aprobadas</option>
+          <option value="REJECTED">Rechazadas</option>
+          <option value="CANCELLED">Canceladas</option>
+          <option value="EXPIRED">Vencidas</option>
+        </select>
+
+        <button class="primary" type="button" onclick="loadSpeiTopUps()">
+          Actualizar recargas
+        </button>
+
+        <div class="notice">
+          El sistema compara monto, fecha, clave de rastreo
+          y cuenta beneficiaria. La aprobación requiere
+          validar además el sello en Banxico.
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Validación oficial</h2>
+
+        <p class="row-meta">
+          Descarga el XML enviado por el cliente y súbelo
+          directamente al validador oficial.
+        </p>
+
+        <a
+          class="primary"
+          href="https://www.banxico.org.mx/validador-cep-spei/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="display:inline-block;text-decoration:none;text-align:center"
+        >
+          Abrir validador de Banxico
+        </a>
+      </article>
+
+      <article class="card full">
+        <h2>Solicitudes de recarga</h2>
+
+        <div id="speiTopUpList" class="spei-admin-list">
+          Cargando recargas...
+        </div>
+      </article>
+    </div>
+  </section>
+
+
+  <!-- =============================== -->
   <!-- BOT WHATSAPP -->
   <!-- =============================== -->
 
@@ -7049,7 +7147,7 @@ html, body {
     <button type="button" class="mnav" data-mobile-tab="catalog" onclick="mobileGo('catalog')"><span class="rl-nav-ico">☷</span><b>Catálogo</b></button>
     <button type="button" class="mnav crown" data-mobile-tab="inventory" onclick="mobileGo('inventory', true)"><span class="rl-crown-icon">♛</span></button>
     <button type="button" class="mnav" data-mobile-tab="sales" onclick="mobileGo('sales')"><span class="rl-nav-ico">◷</span><b>Ventas</b></button>
-    <button type="button" class="mnav" data-mobile-tab="profile" onclick="mobileProfile()"><span class="rl-nav-ico">♙</span><b>Perfil</b></button>
+    <button type="button" class="mnav" data-mobile-tab="topups" onclick="mobileGo('topups')"><span class="rl-nav-ico">$</span><b>Recargas</b></button>
   </nav>
 
 </main>
@@ -7102,6 +7200,9 @@ html, body {
     [];
 
   let inboxMessages =
+    [];
+
+  let speiTopUps =
     [];
 
 
@@ -7509,6 +7610,13 @@ html, body {
       fillInboxEmailSelect();
 
       loadInbox();
+    }
+
+    if (
+      tabId ===
+      'topups'
+    ) {
+      loadSpeiTopUps();
     }
 
     if (
@@ -12099,6 +12207,289 @@ html, body {
       await loadWhatsAppBotCommands();
     } catch (error) {
       alert(error.message || 'No se pudo eliminar el comando.');
+    }
+  }
+
+
+  // ===============================
+  // RECARGAS SPEI
+  // ===============================
+
+  function speiStatusLabel(status) {
+    const labels = {
+      PENDING: 'PENDIENTE',
+      REVIEW: 'EN REVISIÓN',
+      APPROVED: 'APROBADA',
+      REJECTED: 'RECHAZADA',
+      EXPIRED: 'VENCIDA',
+      CANCELLED: 'CANCELADA'
+    };
+
+    return labels[status] || status || 'PENDIENTE';
+  }
+
+
+  function formatSpeiDate(value) {
+    if (!value) return 'Sin fecha';
+
+    const date = new Date(value);
+
+    return Number.isNaN(date.getTime())
+      ? 'Sin fecha'
+      : date.toLocaleString('es-MX');
+  }
+
+
+  function updateSpeiStats() {
+    document.getElementById('speiTotal').textContent =
+      speiTopUps.length;
+
+    document.getElementById('speiReview').textContent =
+      speiTopUps.filter(item => item.status === 'REVIEW').length;
+
+    document.getElementById('speiApproved').textContent =
+      speiTopUps.filter(item => item.status === 'APPROVED').length;
+
+    document.getElementById('speiRejected').textContent =
+      speiTopUps.filter(item => item.status === 'REJECTED').length;
+  }
+
+
+  async function loadSpeiTopUps() {
+    const container =
+      document.getElementById('speiTopUpList');
+
+    if (!container) return;
+
+    container.innerHTML = 'Cargando recargas...';
+
+    try {
+      const status =
+        document.getElementById('speiStatusFilter')?.value || '';
+
+      const query = status
+        ? `?status=${encodeURIComponent(status)}&pageSize=100`
+        : '?pageSize=100';
+
+      const json =
+        await request(`${API}/wallet/admin/top-ups${query}`);
+
+      const data = extractData(json) || {};
+
+      speiTopUps = Array.isArray(data)
+        ? data
+        : Array.isArray(data.items)
+          ? data.items
+          : [];
+
+      updateSpeiStats();
+      renderSpeiTopUps();
+    } catch (error) {
+      container.innerHTML = `
+        <div class="error">
+          ${escapeHtml(error.message)}
+        </div>
+      `;
+    }
+  }
+
+
+  function renderSpeiTopUps() {
+    const container =
+      document.getElementById('speiTopUpList');
+
+    if (!speiTopUps.length) {
+      container.innerHTML =
+        '<div class="row-meta">No hay recargas con este filtro.</div>';
+      return;
+    }
+
+    container.innerHTML = speiTopUps.map(item => `
+      <article class="spei-admin-item">
+        <div class="spei-admin-head">
+          <div>
+            <h3>
+              ${escapeHtml(item.client?.name || 'Cliente')}
+              · $${Number(item.amount || 0).toFixed(2)}
+            </h3>
+            <div class="spei-admin-meta">
+              ${escapeHtml(item.client?.email || '')}<br>
+              Referencia: ${escapeHtml(item.reference || '')}<br>
+              Clave de rastreo: ${escapeHtml(item.trackingKey || 'Sin enviar')}<br>
+              Transferencia: ${escapeHtml(formatSpeiDate(item.operationDate))}<br>
+              Banco emisor: ${escapeHtml(item.senderBank || 'Sin identificar')}<br>
+              Cuenta destino: ${escapeHtml(item.receiverAccount || 'Sin identificar')}
+            </div>
+          </div>
+
+          <span class="spei-admin-status">
+            ${escapeHtml(speiStatusLabel(item.status))}
+          </span>
+        </div>
+
+        <div class="spei-admin-checks">
+          <span class="${item.cepLocalMatch ? 'ok' : ''}">
+            ${item.cepLocalMatch ? '✓ CEP coincide localmente' : 'CEP sin coincidencia'}
+          </span>
+          <span class="${item.banxicoValidated ? 'ok' : ''}">
+            ${item.banxicoValidated ? '✓ Validado en Banxico' : 'Falta validar en Banxico'}
+          </span>
+        </div>
+
+        ${
+          item.rejectedReason
+            ? `<div class="notice error">Motivo: ${escapeHtml(item.rejectedReason)}</div>`
+            : ''
+        }
+
+        <div class="spei-admin-actions">
+          ${
+            item.hasCep
+              ? `
+                  <button
+                    class="secondary"
+                    type="button"
+                    onclick='downloadSpeiCep(${JSON.stringify(item.id)})'
+                  >
+                    Descargar CEP XML
+                  </button>
+                `
+              : ''
+          }
+
+          <a
+            class="secondary"
+            href="https://www.banxico.org.mx/validador-cep-spei/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="display:inline-block;text-decoration:none"
+          >
+            Validar en Banxico
+          </a>
+
+          ${
+            item.status === 'REVIEW'
+              ? `
+                  <button
+                    class="primary"
+                    type="button"
+                    onclick='approveSpeiTopUp(${JSON.stringify(item.id)})'
+                  >
+                    Aprobar y acreditar
+                  </button>
+
+                  <button
+                    class="danger"
+                    type="button"
+                    onclick='rejectSpeiTopUp(${JSON.stringify(item.id)})'
+                  >
+                    Rechazar
+                  </button>
+                `
+              : ''
+          }
+        </div>
+      </article>
+    `).join('');
+  }
+
+
+  async function downloadSpeiCep(id) {
+    try {
+      const response = await fetch(
+        `${API}/wallet/top-ups/${encodeURIComponent(id)}/cep`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        let message = 'No se pudo descargar el CEP';
+
+        try {
+          const json = await response.json();
+          message = json.message || message;
+        } catch {}
+
+        throw new Error(message);
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const disposition = response.headers.get('content-disposition') || '';
+      const fileNameMatch = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileNameMatch
+        ? decodeURIComponent(fileNameMatch[1])
+        : 'cep.xml';
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.setTimeout(
+        () => URL.revokeObjectURL(url),
+        60000
+      );
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+
+  async function approveSpeiTopUp(id) {
+    const confirmed = window.confirm(
+      'Confirma que descargaste el XML y que el validador oficial de Banxico indicó que el CEP es auténtico. Al continuar, el saldo se acreditará inmediatamente y no podrá duplicarse.'
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await request(
+        `${API}/wallet/admin/top-ups/${encodeURIComponent(id)}/approve`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            banxicoValidated: true,
+            reviewNotes: 'CEP validado manualmente en el portal oficial de Banxico'
+          })
+        }
+      );
+
+      alert('Recarga acreditada correctamente.');
+      await loadSpeiTopUps();
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+
+  async function rejectSpeiTopUp(id) {
+    const reason = window.prompt(
+      'Escribe el motivo del rechazo:'
+    );
+
+    if (!reason?.trim()) return;
+
+    try {
+      await request(
+        `${API}/wallet/admin/top-ups/${encodeURIComponent(id)}/reject`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            reason: reason.trim()
+          })
+        }
+      );
+
+      alert('Recarga rechazada.');
+      await loadSpeiTopUps();
+    } catch (error) {
+      alert(error.message);
     }
   }
 
